@@ -1,0 +1,21 @@
+# -*- mode: web -*-
+# name: jest test
+# key: jest
+# --
+import React from 'react';
+import {mount} from 'enzyme';
+import ${1:component};
+
+describe('${2:testName}', () => {
+  function setup() {
+    const props = {};
+
+    const enzymeWrapper = mount(${3:element});
+    return {props, enzymeWrapper};
+  }
+
+  it('should render self', () => {
+    const {enzymeWrapper} = setup();
+    expect($0)
+  });
+});

@@ -1,0 +1,10 @@
+# -*- mode: js -*-
+# name: create redux action
+# key: ca
+# --
+/**
+ * ${3:comment}
+ */
+export const ${2:fn} = createAction(
+  ${1:name}
+);

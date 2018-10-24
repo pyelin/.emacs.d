@@ -194,7 +194,6 @@ Return nil if COMMAND is not found anywhere in `exec-path'."
 
 (use-package yasnippet
   :config
-  ;; (setq yas-snippet-dirs (append yas-snippet-dirs (relative-path "yasnippets")))
   (setq yas-snippet-dirs (list "~/.emacs.d/snippets" (relative-path "yasnippets")))
   (yas-reload-all)
   (add-hook 'prog-mode-hook 'yas-minor-mode))

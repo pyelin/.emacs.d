@@ -1,0 +1,11 @@
+# -*- mode: web -*-
+# name: PureComponent
+# key: pure
+# --
+class ${1:name} extends PureComponent {
+  render() {
+    return (
+      $0
+    );
+  }
+}

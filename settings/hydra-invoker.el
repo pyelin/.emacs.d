@@ -5,7 +5,7 @@
 
 
 (defun umbra () "Umbra." (propertize "u" 'face '(:foreground "sky blue" :bold t)))
-(defun electra () "Electra." (propertize "e" 'face '(:foreground "#C0362C" :bold t)))
+(defun exa () "Exa." (propertize "e" 'face '(:foreground "#C0362C" :bold t)))
 (defun ova () "Ova." (propertize "o" 'face '(:foreground "#ddbc91" :bold t)))
 (defun hydra-invoker-format (first second third name &optional is-last)
   "Format NAME spell using FIRST, SECOND, THIRD."
@@ -19,14 +19,13 @@
                                 (set-cursor-color "#40e0d0")
                                 (setq-default cursor-type 'box))
                           :post (progn
-                                  (set-cursor-color "#C0362C")
-                                  (setq-default cursor-type '(bar . 2)))
-                          :hint nil
-                          (global-map "M-SPC"))
+                                (set-cursor-color "#C0362C")
+                                (setq-default cursor-type '(bar . 2)))
+                          :hint nil)
   "
-?u u u? ?u e e? ?e e e? ?o o o? ?o e e?
-?u u e? ?u e u? ?e e u? ?o o u? ?o e u?
-?u u o? ?u e o? ?e e o? ?o o e? ?o e o?
+?u u u? ?u e e? ?e e e? ?o o o? ?o u u? ?o e e?
+?u u e? ?u e u? ?e e u? ?o o u? ?o u e? ?o e u?
+?u u o? ?u e o? ?e e o? ?o o e? ?o u o? ?o e o?
 "
   ;; char
   ("n" forward-char)
@@ -61,39 +60,39 @@
   ;; invoke
   ;; umbra
   ("u u u" save-buffer (hydra-invoker-format 'umbra 'umbra 'umbra "save"))
-	("u u e" avy-goto-char-2 (hydra-invoker-format 'umbra 'umbra 'electra "avy"))
-  ("u u o" swiper (hydra-invoker-format 'umbra 'umbra 'ova "swiper") :exit 1)
- 	("u e e" ivy-yasnippet (hydra-invoker-format 'umbra 'electra 'electra "yas") :exit 1)
-	("u e u" counsel-yank-pop (hydra-invoker-format 'umbra 'electra 'umbra "yank"))
-  ("u e o" counsel-yank-pop (hydra-invoker-format 'umbra 'electra 'ova "yank"))
+	("u u e" swiper (hydra-invoker-format 'umbra 'umbra 'exa "swiper") :exit 1)
+  ("u u o" avy-goto-char-2 (hydra-invoker-format 'umbra 'umbra 'ova "avy"))
+ 	("u e e" ivy-yasnippet (hydra-invoker-format 'umbra 'exa 'exa "yas") :exit 1)
+	("u e u" counsel-yank-pop (hydra-invoker-format 'umbra 'exa 'umbra "yank"))
+  ("u e o" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa 'ova "jump") :exit 1)
 	("u o u" nil)
 	("u o e" nil)
   ("u o o" nil)
-  ;; electra
-	("e e e" ag (hydra-invoker-format 'electra 'electra 'electra "ag") :exit t)
-	("e e u" query-replace (hydra-invoker-format 'electra 'electra 'umbra "replace") :exit t)
-	("e e o" hydra-rectangle/body (hydra-invoker-format 'electra 'electra 'ova "rect") :exit t)
+  ;; exa
+	("e e e" ag (hydra-invoker-format 'exa 'exa 'exa "ag") :exit t)
+	("e e u" query-replace (hydra-invoker-format 'exa 'exa 'umbra "replace") :exit t)
+	("e e o" hydra-rectangle/body (hydra-invoker-format 'exa 'exa 'ova "rect") :exit t)
 	("e u e" nil)
 	("e u u" nil)
 	("e u o" nil)
 	("e o e" nil)
 	("e o u" nil)
   ("e o o" nil)
-  ;; omega
+  ;; ova
   ("o o o" switch-to-buffer (hydra-invoker-format 'ova 'ova 'ova "buffer") :exit 1)
   ("o o u" next-buffer (hydra-invoker-format 'ova 'ova 'umbra "prev"))
-  ("o o e" previous-buffer (hydra-invoker-format 'ova 'ova 'electra "next"))
-  ("o u e" nil)
- 	("o u u" nil)
-	("o u o" nil)
-  ("o e e" dired-jump (hydra-invoker-format 'ova 'electra 'electra "dired" t))
-  ("o e u" counsel-find-file (hydra-invoker-format 'ova 'electra 'umbra "file" t) :exit t)
-  ("o e o" counsel-projectile-find-file (hydra-invoker-format 'ova 'electra 'ova "proj" t) :exit t)
+  ("o o e" previous-buffer (hydra-invoker-format 'ova 'ova 'exa "next"))
+  ("o u u" magit-status (hydra-invoker-format 'ova 'umbra 'umbra "git"))
+ 	("o u e" magit-status (hydra-invoker-format 'ova 'umbra 'exa ""))
+	("o u o" magit-status (hydra-invoker-format 'ova 'umbra 'ova ""))
+  ("o e e" dired-jump (hydra-invoker-format 'ova 'exa 'exa "dired" t))
+  ("o e u" counsel-find-file (hydra-invoker-format 'ova 'exa 'umbra "file" t) :exit t)
+  ("o e o" counsel-projectile-find-file (hydra-invoker-format 'ova 'exa 'ova "proj" t) :exit t)
   ("SPC" nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
-                            :color pink
-                            :post (deactivate-mark))
+                           :color pink
+                           :post (deactivate-mark))
   "
   ^_c_^     _d_elete    _s_tring
 _h_   _n_   _o_k        _y_ank
@@ -125,4 +124,8 @@ _h_   _n_   _o_k        _y_ank
   ("c" (apply-function-to-region 'string-inflection-lower-camelcase-function) "camel")
   ("C" (apply-function-to-region 'string-inflection-camelcase-function) "Camel"))
 
-(global-set-key (kbd "M-SPC") 'hydra-invoker/body)
+(defhydra hydra-dumb-jump ()
+  ("u" dumb-jump-go "Jump" :color blue)
+  ("e" dumb-jump-back "Back" :color pink))
+
+(global-set-key (kbd "M-h") 'hydra-invoker/body)

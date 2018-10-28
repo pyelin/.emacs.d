@@ -57,7 +57,7 @@
                                                           ("%b - Dir:  " default-directory)))))))
 
 ;; flash the screen on error; dont beep
-(setq-default visible-bell t)
+;; (setq-default visible-bell t)
 
 ;; default font
 (setq default-frame-alist '((font . "DejaVu Sans Mono-12")))

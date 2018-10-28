@@ -162,7 +162,7 @@ Return nil if COMMAND is not found anywhere in `exec-path'."
     (add-to-list 'company-backends 'company-tern))
   (setq company-show-numbers t))
 
-(use-package company-tern)
+(use-package dumb-jump)
 
 (use-package exec-path-from-shell
   ;; https://github.com/purcell/exe...

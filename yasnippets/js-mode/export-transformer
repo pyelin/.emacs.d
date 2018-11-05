@@ -1,0 +1,26 @@
+# -*- mode: snippet -*-
+# name: export transformer
+# key: export-transformer
+# --
+const ApiObjects = require('../../../libs/src/api/objects'),
+      {id,
+       referenceId} = require('../column_generators');
+
+module.exports = {
+  apiObject: ApiObjects.${1:apiObject},
+  columns: {
+    id: id(
+      'A unique identifier for the ${2:resource}.'
+    ),
+    personId: referenceId(
+      'person.id',
+      'A foreign key identifier to the person from whom the ${2:resource} was recorded.'),
+    visitId: referenceId(
+      'visit.id',
+      'A foreign key identifier to the visit during which the ${2:resource} was recorded.'),
+    conceptId: referenceId(
+      'concept.id',
+      ${3:conceptDescription}
+    )
+  }
+};

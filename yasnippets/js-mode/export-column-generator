@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: export-column-generator
+# key: export-column-generator
+# --
+const _ = require('lodash'),
+      PolyValueTypes = require('../../../libs/src/enums/poly_value_types'),
+      {Schemas} = require('../../../libs/src/enums/exported_datasets');
+
+module.exports = (path, description) => ({
+  schema: Schemas.${1:schema},
+  description,
+  format(apiInstance) {
+    return ${2};
+  }
+});

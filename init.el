@@ -155,6 +155,8 @@ Return nil if COMMAND is not found anywhere in `exec-path'."
 (use-package wgrep-ag
   :defer t)
 
+(use-package smooth-scroll)
+
 (use-package company
   :config
   (add-hook 'after-init-hook 'global-company-mode)

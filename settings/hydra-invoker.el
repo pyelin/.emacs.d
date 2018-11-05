@@ -4,9 +4,9 @@
 ;;; Code:
 
 
-(defun umbra () "Umbra." (propertize "u" 'face '(:foreground "sky blue" :bold t)))
-(defun exa () "Exa." (propertize "e" 'face '(:foreground "#C0362C" :bold t)))
-(defun ova () "Ova." (propertize "o" 'face '(:foreground "#ddbc91" :bold t)))
+(defun umbra () "Umbra." (propertize "u" 'face '(:foreground "#178ccb" :bold t)))
+(defun exa () "Exa." (propertize "e" 'face '(:foreground "#f48024" :bold t)))
+(defun ova () "Ova." (propertize "o" 'face '(:foreground "#90bd31" :bold t)))
 (defun hydra-invoker-format (first second third name &optional is-last)
   "Format NAME spell using FIRST, SECOND, THIRD."
   (format (if is-last "%s%s%s %s" "%s%s%s %-8s") (funcall first) (funcall second) (funcall third) name))
@@ -23,9 +23,9 @@
                                 (setq-default cursor-type '(bar . 2)))
                           :hint nil)
   "
-?u u u? ?u e e? ?e e e? ?o o o? ?o u u? ?o e e?
-?u u e? ?u e u? ?e e u? ?o o u? ?o u e? ?o e u?
-?u u o? ?u e o? ?e e o? ?o o e? ?o u o? ?o e o?
+?u u u? ?u e e? ?e e e? ?o o o? ?o e e?
+?u u e? ?u e u? ?e e u? ?o o u? ?o e u?
+?u u o? ?u e o? ?e e o? ?o o e? ?o e o?
 "
   ;; char
   ("n" forward-char)
@@ -48,6 +48,9 @@
   ("j" kill-ring-save)
   (";" undo)
   ("k" yank)
+  ;; scroll
+  ("M-c" (smooth-scroll/scroll-down 10))
+  ("M-t" (smooth-scroll/scroll-up 10))
   ;; window
   ("1" delete-other-windows :exit 1)
   ("2" (progn (split-window-below) (other-window 1)))
@@ -64,12 +67,12 @@
   ("u u o" avy-goto-char-2 (hydra-invoker-format 'umbra 'umbra 'ova "avy"))
  	("u e e" ivy-yasnippet (hydra-invoker-format 'umbra 'exa 'exa "yas") :exit 1)
 	("u e u" counsel-yank-pop (hydra-invoker-format 'umbra 'exa 'umbra "yank"))
-  ("u e o" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa 'ova "jump") :exit 1)
+  ("u e o" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa 'ova "dj") :exit 1)
 	("u o u" nil)
 	("u o e" nil)
   ("u o o" nil)
   ;; exa
-	("e e e" ag (hydra-invoker-format 'exa 'exa 'exa "ag") :exit t)
+	("e e e" counsel-ag (hydra-invoker-format 'exa 'exa 'exa "ag") :exit t)
 	("e e u" query-replace (hydra-invoker-format 'exa 'exa 'umbra "replace") :exit t)
 	("e e o" hydra-rectangle/body (hydra-invoker-format 'exa 'exa 'ova "rect") :exit t)
 	("e u e" nil)
@@ -82,15 +85,15 @@
   ("o o o" switch-to-buffer (hydra-invoker-format 'ova 'ova 'ova "buffer") :exit 1)
   ("o o u" next-buffer (hydra-invoker-format 'ova 'ova 'umbra "prev"))
   ("o o e" previous-buffer (hydra-invoker-format 'ova 'ova 'exa "next"))
-  ("o u u" magit-status (hydra-invoker-format 'ova 'umbra 'umbra "git"))
- 	("o u e" magit-status (hydra-invoker-format 'ova 'umbra 'exa ""))
-	("o u o" magit-status (hydra-invoker-format 'ova 'umbra 'ova ""))
-  ("o e e" dired-jump (hydra-invoker-format 'ova 'exa 'exa "dired" t))
-  ("o e u" counsel-find-file (hydra-invoker-format 'ova 'exa 'umbra "file" t) :exit t)
-  ("o e o" counsel-projectile-find-file (hydra-invoker-format 'ova 'exa 'ova "proj" t) :exit t)
+  ("o u u" nil)
+ 	("o u e" nil)
+	("o u o" nil)
+  ("o e e" magit-status (hydra-invoker-format 'ova 'exa 'exa "git" t) :exit t)
+  ("o e u" counsel-projectile-find-file (hydra-invoker-format 'ova 'exa 'umbra "open" t) :exit t)
+  ("o e o" kill-buffer (hydra-invoker-format 'ova 'exa 'ova "close" t) :exit t)
   ("SPC" nil))
 
-(defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
+(defhydra Hydra-rectangle (:body-pre (rectangle-mark-mode 1)
                            :color pink
                            :post (deactivate-mark))
   "
@@ -125,7 +128,19 @@ _h_   _n_   _o_k        _y_ank
   ("C" (apply-function-to-region 'string-inflection-camelcase-function) "Camel"))
 
 (defhydra hydra-dumb-jump ()
+  "djump"
   ("u" dumb-jump-go "Jump" :color blue)
   ("e" dumb-jump-back "Back" :color pink))
 
-(global-set-key (kbd "M-h") 'hydra-invoker/body)
+(setq counsel-projectile-find-file-action
+  '(1
+     ("o" counsel-projectile-find-file-action
+       "current window")
+     ("e" counsel-projectile-action-other-window
+       "other window")
+     ("u" (lambda (current-file) (interactive) (counsel-find-file nil))
+       "find file manually")))
+
+
+(global-set-key (kbd "<f8>") 'hydra-invoker/body)
+(global-set-key (kbd "M-SPC") 'hydra-invoker/body)

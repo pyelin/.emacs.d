@@ -134,7 +134,8 @@ Return nil if COMMAND is not found anywhere in `exec-path'."
 
 (use-package counsel
   :config
-  (global-set-key (kbd "M-x") 'counsel-M-x))
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (setq counsel-ag-base-command "ag --nocolor --nogroup --smart-case --ignore-dir=public %s"))
 
 (use-package counsel-projectile
   :ensure projectile
@@ -205,6 +206,10 @@ Return nil if COMMAND is not found anywhere in `exec-path'."
 (use-package restclient
   :mode ("\\.rest\\'" . restclient-mode))
 
+;;;; tramp
+;; eg. ssh:test@host#2222:/tmp
+(setq tramp-default-method "ssh")
+
 ;;;; settings
 (setq settings-dir (relative-path "settings"))
 (mapc 'load
@@ -218,6 +223,7 @@ Return nil if COMMAND is not found anywhere in `exec-path'."
        "python"
        "markdown"
        "org"
+       "rust"
      )))
 
 

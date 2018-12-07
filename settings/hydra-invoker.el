@@ -82,18 +82,18 @@
 	("e o u" nil)
   ("e o o" nil)
   ;; ova
-  ("o o o" switch-to-buffer (hydra-invoker-format 'ova 'ova 'ova "buffer") :exit 1)
+  ("o o o" switch-to-buffer (hydra-invoker-format 'ova 'ova 'ova "buffer"))
   ("o o u" next-buffer (hydra-invoker-format 'ova 'ova 'umbra "prev"))
   ("o o e" previous-buffer (hydra-invoker-format 'ova 'ova 'exa "next"))
   ("o u u" nil)
  	("o u e" nil)
 	("o u o" nil)
   ("o e e" magit-status (hydra-invoker-format 'ova 'exa 'exa "git" t) :exit t)
-  ("o e u" counsel-projectile-find-file (hydra-invoker-format 'ova 'exa 'umbra "open" t) :exit t)
-  ("o e o" kill-buffer (hydra-invoker-format 'ova 'exa 'ova "close" t) :exit t)
+  ("o e u" counsel-projectile-find-file (hydra-invoker-format 'ova 'exa 'umbra "open" t))
+  ("o e o" kill-buffer (hydra-invoker-format 'ova 'exa 'ova "close" t))
   ("SPC" nil))
 
-(defhydra Hydra-rectangle (:body-pre (rectangle-mark-mode 1)
+(defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
                            :color pink
                            :post (deactivate-mark))
   "

@@ -2,25 +2,25 @@
 # name: export transformer
 # key: export-transformer
 # --
-const ApiObjects = require('../../../libs/src/api/objects'),
+const {Schemas} = require('../../../libs/src/enums/exported_datasets'),
       {id,
+       mapTo,
        referenceId} = require('../column_generators');
 
 module.exports = {
-  apiObject: ApiObjects.${1:apiObject},
   columns: {
-    id: id(
-      'A unique identifier for the ${2:resource}.'
+    ${2}Id: id(
+      'A unique identifier for the ${3}.'
     ),
     personId: referenceId(
       'person.id',
-      'A foreign key identifier to the person from whom the ${2:resource} was recorded.'),
+      'A foreign key identifier to the person from whom the ${3} was recorded.'),
     visitId: referenceId(
       'visit.id',
-      'A foreign key identifier to the visit during which the ${2:resource} was recorded.'),
+      'A foreign key identifier to the visit during which the ${3} was recorded.'),
     conceptId: referenceId(
       'concept.id',
-      ${3:conceptDescription}
+      ${4:conceptDescription}
     )
   }
 };

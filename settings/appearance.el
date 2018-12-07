@@ -2,9 +2,9 @@
   :config
   (load-theme 'ample-flat t)
   ;; ;; international orange cursor and selection background color
-  (setq-default cursor-type '(bar . 2))
+  (setq-default cursor-type '(bar . 3))
   (global-hl-line-mode t)
-  (set-cursor-color "#C0362C")
+  (set-cursor-color "white")
   (set-face-attribute 'region nil :background "#C0362C"))
 
 (use-package highlight-indent-guides

@@ -23,9 +23,9 @@
                                 (setq-default cursor-type '(bar . 2)))
                           :hint nil)
   "
-?u u u? ?u e e? ?e e e? ?o o o? ?o e e?
-?u u e? ?u e u? ?e e u? ?o o u? ?o e u?
-?u u o? ?u e o? ?e e o? ?o o e? ?o e o?
+?u u u? ?u e e? ?u o u? ?e e e? ?o o o? ?o e e?
+?u u e? ?u e u? ?u o e? ?e e u? ?o o u? ?o e u?
+?u u o? ?u e o? ?u o o? ?e e o? ?o o e? ?o e o?
 "
   ;; char
   ("n" forward-char)
@@ -46,20 +46,14 @@
   ("m" set-mark-command)
   ("q" kill-region)
   ("j" kill-ring-save)
-  (";" undo)
+  ("z" undo)
   ("k" yank)
   ;; scroll
-  ("M-c" (smooth-scroll/scroll-down 10))
-  ("M-t" (smooth-scroll/scroll-up 10))
-  ;; window
-  ("1" delete-other-windows :exit 1)
-  ("2" (progn (split-window-below) (other-window 1)))
-  ("3" (progn (split-window-right) (other-window 1)))
-  ("4" delete-window)
+  ("v" (smooth-scroll/scroll-down 10))
+  ("V" (smooth-scroll/scroll-up 10))
   ;; sexp
-  ("7" er/mark-inside-pairs)
-  ("8" er/expand-region)
-  ("*" er/contract-region)
+  ("x" er/expand-region)
+  ("X" er/contract-region)
   ;; invoke
   ;; umbra
   ("u u u" save-buffer (hydra-invoker-format 'umbra 'umbra 'umbra "save"))
@@ -68,9 +62,9 @@
  	("u e e" ivy-yasnippet (hydra-invoker-format 'umbra 'exa 'exa "yas") :exit 1)
 	("u e u" counsel-yank-pop (hydra-invoker-format 'umbra 'exa 'umbra "yank"))
   ("u e o" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa 'ova "dj") :exit 1)
-	("u o u" nil)
-	("u o e" nil)
-  ("u o o" nil)
+	("u o u" hydra-goto-line/body (hydra-invoker-format 'umbra 'ova 'umbra "line") :exit 1)
+	("u o e" hydra-move-text/body (hydra-invoker-format 'umbra 'ova 'exa "move") :exit 1)
+  ("u o o" hydra-unicode/body (hydra-invoker-format 'umbra 'ova 'ova "uni") :exit 1)
   ;; exa
 	("e e e" counsel-ag (hydra-invoker-format 'exa 'exa 'exa "ag") :exit t)
 	("e e u" query-replace (hydra-invoker-format 'exa 'exa 'umbra "replace") :exit t)
@@ -132,6 +126,17 @@ _h_   _n_   _o_k        _y_ank
   ("u" dumb-jump-go "Jump" :color blue)
   ("e" dumb-jump-back "Back" :color pink))
 
+(defhydra hydra-goto-line (goto-map ""
+                           :pre (linum-mode 1)
+                           :post (linum-mode -1))
+  "goto-line"
+  ("u" goto-line "go"))
+
+(defhydra hydra-move-text ()
+  "Move text"
+  ("c" move-text-up "up")
+  ("t" move-text-down "down"))
+
 (setq counsel-projectile-find-file-action
   '(1
      ("o" counsel-projectile-find-file-action
@@ -141,6 +146,44 @@ _h_   _n_   _o_k        _y_ank
      ("u" (lambda (current-file) (interactive) (counsel-find-file nil))
        "find file manually")))
 
+(defhydra hydra-transpose (:color red)
+  "Transpose"
+  ("c" transpose-chars "characters")
+  ("w" transpose-words "words")
+  ("o" org-transpose-words "Org mode words")
+  ("l" transpose-lines "lines")
+  ("s" transpose-sentences "sentences")
+  ("e" org-transpose-elements "Org mode elements")
+  ("p" transpose-paragraphs "paragraphs")
+  ("t" org-table-transpose-table-at-point "Org mode table")
+  ("q" nil "cancel" :color blue))
+
+(defun insert-unicode (unicode-name)
+  "Same as C-x 8 enter UNICODE-NAME."
+  (insert-char (gethash unicode-name (ucs-names))))
+
+(defhydra hydra-unicode (:hint nil)
+  "
+_a_ →  _c_ ✓  _l_ 𝛌  _N_ ♫
+_e_ €  _o_ °  _i_ ‽  _s_ ★
+_f_ ♀  _p_ π  _m_ µ  _S_ ∑
+_F_ ♂  ^ ^    _n_ ❄  _w_ ♥
+"
+  ("c" (insert-unicode "CHECK MARK"))
+  ("e" (insert-unicode "EURO SIGN"))
+  ("F" (insert-unicode "MALE SIGN"))
+  ("f" (insert-unicode "FEMALE SIGN"))
+  ("i" (insert-unicode "INTERROBANG"))
+  ("l" (insert-unicode "MATHEMATICAL BOLD SMALL LAMDA"))
+  ("o" (insert-unicode "DEGREE SIGN"))
+  ("a" (insert-unicode "RIGHTWARDS ARROW"))
+  ("m" (insert-unicode "MICRO SIGN"))
+  ("n" (insert-unicode "SNOWFLAKE"))
+  ("N" (insert-unicode "BEAMED EIGHTH NOTES"))
+  ("p" (insert-unicode "GREEK SMALL LETTER PI"))
+  ("s" (insert-unicode "BLACK STAR"))
+  ("S" (insert-unicode "N-ARY SUMMATION"))
+  ("w" (insert-unicode "BLACK HEART SUIT")))
 
 (global-set-key (kbd "<f8>") 'hydra-invoker/body)
 (global-set-key (kbd "M-SPC") 'hydra-invoker/body)

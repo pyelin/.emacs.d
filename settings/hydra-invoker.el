@@ -15,6 +15,22 @@
   :init
   (setq hydra-is-helpful t))
 
+(defun smart-open-line ()
+  "Insert an empty line after the current line.
+Position the cursor at its beginning, according to the current mode."
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(defun smart-open-line-above ()
+  "Insert an empty line above the current line.
+Position the cursor at it's beginning, according to the current mode."
+  (interactive)
+  (move-beginning-of-line nil)
+  (newline-and-indent)
+  (forward-line -1)
+  (indent-according-to-mode))
+
 (defhydra hydra-invoker (:pre (progn
                                 (set-cursor-color "#40e0d0")
                                 (setq-default cursor-type 'box))
@@ -39,18 +55,24 @@
   ("M-h" backward-word)
   ("M-g" backward-kill-word)
   ("M-r" kill-word)
+  ;; line
+  ("l" smart-open-line)
+  ("M-l" smart-open-line-above)
+  ("M-c" (previous-line 10))
+  ("M-t" (next-line 10))
   ;; forward
   ("s" end-of-line)
   ("d" beginning-of-line)
   ;; mark
   ("m" set-mark-command)
+  ;; expand
+  ("x" er/expand-region)
+  ("X" er/contract-region)
+  ;; cut copy paste
   ("q" kill-region)
   ("j" kill-ring-save)
   ("z" undo)
   ("k" yank)
-  ;; scroll
-  ("v" (smooth-scroll/scroll-down 10))
-  ("V" (smooth-scroll/scroll-up 10))
   ;; sexp
   ("x" er/expand-region)
   ("X" er/contract-region)

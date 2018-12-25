@@ -3,8 +3,8 @@
   (load-theme 'ample-flat t)
   ;; ;; international orange cursor and selection background color
   (setq-default cursor-type '(bar . 3))
-  (set-face-background hl-line-face "gray25")
   (global-hl-line-mode t)
+  (set-face-background hl-line-face "gray25")
   (set-cursor-color "white")
   (set-face-attribute 'region nil :background "#C0362C"))
 

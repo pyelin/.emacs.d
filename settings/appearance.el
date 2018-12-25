@@ -3,6 +3,7 @@
   (load-theme 'ample-flat t)
   ;; ;; international orange cursor and selection background color
   (setq-default cursor-type '(bar . 3))
+  (set-face-background hl-line-face "gray25")
   (global-hl-line-mode t)
   (set-cursor-color "white")
   (set-face-attribute 'region nil :background "#C0362C"))
@@ -143,7 +144,16 @@
                     :foreground "#718c00")
 (set-face-attribute 'mode-line-80col-face nil
                     :inherit 'mode-line-position-face
-                    :foreground "black" :background "#eab700")
+  :foreground "black" :background "#eab700")
+
+;; subtly flash the modeline for alert
+(setq ring-bell-function
+      (lambda ()
+        (let ((orig-fg (face-foreground 'mode-line)))
+          (set-face-foreground 'mode-line "#F2804F")
+          (run-with-idle-timer 0.1 nil
+                               (lambda (fg) (set-face-foreground 'mode-line fg))
+                               orig-fg))))
 
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 (add-to-list 'default-frame-alist '(ns-appearance . dark))

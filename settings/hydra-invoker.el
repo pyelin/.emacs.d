@@ -35,8 +35,8 @@ Position the cursor at it's beginning, according to the current mode."
                                 (set-cursor-color "#40e0d0")
                                 (setq-default cursor-type 'box))
                           :post (progn
-                                (set-cursor-color "#C0362C")
-                                (setq-default cursor-type '(bar . 2)))
+                                (set-cursor-color "white")
+                                (setq-default cursor-type '(bar . 3)))
                           :hint nil)
   "
 ?u u u? ?u e e? ?u o u? ?e e e? ?o o o? ?o e e?

@@ -84,7 +84,7 @@ Position the cursor at it's beginning, according to the current mode."
  	("u e e" ivy-yasnippet (hydra-invoker-format 'umbra 'exa 'exa "yas") :exit 1)
 	("u e u" counsel-yank-pop (hydra-invoker-format 'umbra 'exa 'umbra "yank"))
   ("u e o" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa 'ova "dj") :exit 1)
-	("u o u" hydra-goto-line/body (hydra-invoker-format 'umbra 'ova 'umbra "line") :exit 1)
+	("u o u" goto-line (hydra-invoker-format 'umbra 'exa 'ova "line"))
 	("u o e" hydra-move-text/body (hydra-invoker-format 'umbra 'ova 'exa "move") :exit 1)
   ("u o o" hydra-unicode/body (hydra-invoker-format 'umbra 'ova 'ova "uni") :exit 1)
   ;; exa
@@ -147,12 +147,6 @@ _h_   _n_   _o_k        _y_ank
   "djump"
   ("u" dumb-jump-go "Jump" :color blue)
   ("e" dumb-jump-back "Back" :color pink))
-
-(defhydra hydra-goto-line (goto-map ""
-                           :pre (linum-mode 1)
-                           :post (linum-mode -1))
-  "goto-line"
-  ("u" goto-line "go"))
 
 (defhydra hydra-move-text ()
   "Move text"

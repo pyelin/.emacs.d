@@ -121,6 +121,19 @@ Return nil if COMMAND is not found anywhere in `exec-path'."
 ;; use emacs pinenttry for EasyPG
 (setq epa-pinentry-mode 'loopback)
 
+;;;; dired
+(setq dired-listing-switches "-alh")
+ (defun dired-get-size ()
+  (interactive)
+  (let ((files (dired-get-marked-files)))
+    (with-temp-buffer
+      (apply 'call-process "/usr/bin/du" nil t nil "-sch" files)
+      (message "Size of all marked files: %s"
+               (progn
+                 (re-search-backward "\\(^[0-9.,]+[A-Za-z]+\\).*total$")
+                 (match-string 1))))))
+
+
 (use-package ivy
   :config
   (setq ivy-use-virtual-buffers t)

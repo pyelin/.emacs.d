@@ -39,9 +39,9 @@ Position the cursor at it's beginning, according to the current mode."
                                 (setq-default cursor-type '(bar . 3)))
                           :hint nil)
   "
-?u u u? ?u e e? ?u o u? ?e e e? ?o o o? ?o e e?
-?u u e? ?u e u? ?u o e? ?e e u? ?o o u? ?o e u?
-?u u o? ?u e o? ?u o o? ?e e o? ?o o e? ?o e o?
+?u u u? ?u e e? ?u o u? ?e e e? ?o o o? ?o u u? ?o e e?
+?u u e? ?u e u? ?u o e? ?e e u? ?o o u? ?o u e? ?o e u?
+?u u o? ?u e o? ?u o o? ?e e o? ?o o e? ?o u o? ?o e o?
 "
   ;; char
   ("n" forward-char)
@@ -86,11 +86,11 @@ Position the cursor at it's beginning, according to the current mode."
   ("u e o" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa 'ova "dj") :exit 1)
 	("u o u" goto-line (hydra-invoker-format 'umbra 'exa 'ova "line"))
 	("u o e" hydra-move-text/body (hydra-invoker-format 'umbra 'ova 'exa "move") :exit 1)
-  ("u o o" hydra-unicode/body (hydra-invoker-format 'umbra 'ova 'ova "uni") :exit 1)
+  ("u o o" hydra-unicode/body (hydra-invoker-format 'umbra 'ova 'ova "π") :exit 1)
   ;; exa
 	("e e e" counsel-ag (hydra-invoker-format 'exa 'exa 'exa "ag") :exit t)
 	("e e u" query-replace (hydra-invoker-format 'exa 'exa 'umbra "replace") :exit t)
-	("e e o" hydra-rectangle/body (hydra-invoker-format 'exa 'exa 'ova "rect") :exit t)
+	("e e o" hydra-rectangle/body (hydra-invoker-format 'exa 'exa 'ova "▩") :exit t)
 	("e u e" nil)
 	("e u u" nil)
 	("e u o" nil)
@@ -98,15 +98,15 @@ Position the cursor at it's beginning, according to the current mode."
 	("e o u" nil)
   ("e o o" nil)
   ;; ova
-  ("o o o" switch-to-buffer (hydra-invoker-format 'ova 'ova 'ova "buffer"))
-  ("o o u" next-buffer (hydra-invoker-format 'ova 'ova 'umbra "prev"))
-  ("o o e" previous-buffer (hydra-invoker-format 'ova 'ova 'exa "next"))
-  ("o u u" nil)
- 	("o u e" nil)
-	("o u o" nil)
+  ("o o o" switch-to-buffer (hydra-invoker-format 'ova 'ova 'ova "buf"))
+  ("o o u" next-buffer (hydra-invoker-format 'ova 'ova 'umbra "<-"))
+  ("o o e" previous-buffer (hydra-invoker-format 'ova 'ova 'exa "->"))
+  ("o u u" ibuffer (hydra-invoker-format 'ova 'umbra 'umbra "ibuf"))
+ 	("o u e" kill-buffer (hydra-invoker-format 'ova 'umbra 'exa "close"))
+	("o u o" nil (hydra-invoker-format 'ova 'umbra 'ova ""))
   ("o e e" magit-status (hydra-invoker-format 'ova 'exa 'exa "git" t) :exit t)
-  ("o e u" counsel-projectile-find-file (hydra-invoker-format 'ova 'exa 'umbra "open" t))
-  ("o e o" kill-buffer (hydra-invoker-format 'ova 'exa 'ova "close" t))
+  ("o e u" counsel-projectile-find-file (hydra-invoker-format 'ova 'exa 'umbra "popen" t))
+  ("o e o" find-file (hydra-invoker-format 'ova 'exa 'ova "open" t))
   ("SPC" nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
@@ -152,6 +152,7 @@ _h_   _n_   _o_k        _y_ank
   "Move text"
   ("c" move-text-up "up")
   ("t" move-text-down "down"))
+
 
 (setq counsel-projectile-find-file-action
   '(1

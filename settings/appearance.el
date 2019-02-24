@@ -26,8 +26,8 @@
  (setq shr-color-visible-luminance-min 60))
 
 ;; maximize
-(custom-set-variables
- '(initial-frame-alist (quote ((fullscreen . maximized)))))
+;; (custom-set-variables
+;;  '(initial-frame-alist (quote ((fullscreen . maximized)))))
 
 ;; show scratch buffer at startup
 (setq inhibit-startup-message t)

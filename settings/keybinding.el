@@ -86,7 +86,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("u e o" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa 'ova "dj") :exit 1)
 	("u o u" goto-line (hydra-invoker-format 'umbra 'exa 'ova "line"))
 	("u o e" hydra-move-text/body (hydra-invoker-format 'umbra 'ova 'exa "move") :exit 1)
-  ("u o o" hydra-unicode/body (hydra-invoker-format 'umbra 'ova 'ova "π") :exit 1)
+  ("u o o" counsel-unicode-char (hydra-invoker-format 'umbra 'ova 'ova "π") :exit 1)
   ;; exa
 	("e e e" counsel-ag (hydra-invoker-format 'exa 'exa 'exa "ag") :exit t)
 	("e e u" query-replace (hydra-invoker-format 'exa 'exa 'umbra "replace") :exit t)
@@ -174,33 +174,6 @@ _h_   _n_   _o_k        _y_ank
   ("p" transpose-paragraphs "paragraphs")
   ("t" org-table-transpose-table-at-point "Org mode table")
   ("q" nil "cancel" :color blue))
-
-(defun insert-unicode (unicode-name)
-  "Same as C-x 8 enter UNICODE-NAME."
-  (insert-char (gethash unicode-name (ucs-names))))
-
-(defhydra hydra-unicode (:hint nil)
-  "
-_a_ →  _c_ ✓  _l_ 𝛌  _N_ ♫
-_e_ €  _o_ °  _i_ ‽  _s_ ★
-_f_ ♀  _p_ π  _m_ µ  _S_ ∑
-_F_ ♂  ^ ^    _n_ ❄  _w_ ♥
-"
-  ("c" (insert-unicode "CHECK MARK"))
-  ("e" (insert-unicode "EURO SIGN"))
-  ("F" (insert-unicode "MALE SIGN"))
-  ("f" (insert-unicode "FEMALE SIGN"))
-  ("i" (insert-unicode "INTERROBANG"))
-  ("l" (insert-unicode "MATHEMATICAL BOLD SMALL LAMDA"))
-  ("o" (insert-unicode "DEGREE SIGN"))
-  ("a" (insert-unicode "RIGHTWARDS ARROW"))
-  ("m" (insert-unicode "MICRO SIGN"))
-  ("n" (insert-unicode "SNOWFLAKE"))
-  ("N" (insert-unicode "BEAMED EIGHTH NOTES"))
-  ("p" (insert-unicode "GREEK SMALL LETTER PI"))
-  ("s" (insert-unicode "BLACK STAR"))
-  ("S" (insert-unicode "N-ARY SUMMATION"))
-  ("w" (insert-unicode "BLACK HEART SUIT")))
 
 (global-set-key (kbd "<f8>") 'hydra-invoker/body)
 (global-set-key (kbd "M-SPC") 'hydra-invoker/body)

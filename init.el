@@ -75,6 +75,19 @@ Return nil if COMMAND is not found anywhere in `exec-path'."
 (setq package-enable-at-startup nil)
 (package-initialize)
 
+(defun full-comment-box (b e)
+  "Draw a box comment around the region but arrange for the region
+  to extend to at least the fill column. Place the point after the
+  comment box."
+  (interactive "r")
+  (let ((e (copy-marker e t)))
+    (goto-char b)
+    (end-of-line)
+    (insert-char ?  (- fill-column (current-column)))
+    (comment-box b e 1)
+    (goto-char e)
+    (set-marker e nil)))
+
 ;; Set the initial state to non-refreshed. This can also be set back
 ;; to nil if we want to run a refresh on the next install.
 (defvar refreshed-package-list nil)
@@ -200,6 +213,10 @@ Version 2019-01-18"
 
 (use-package switch-window
   :config
+  (define-key switch-window-extra-map (kbd "c") 'switch-window-mvborder-up)
+  (define-key switch-window-extra-map (kbd "t") 'switch-window-mvborder-down)
+  (define-key switch-window-extra-map (kbd "h") 'switch-window-mvborder-left)
+  (define-key switch-window-extra-map (kbd "n") 'switch-window-mvborder-right)
   (global-set-key (kbd "M-p") 'switch-window))
 
 (use-package ag

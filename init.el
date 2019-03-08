@@ -180,6 +180,8 @@ Version 2019-01-18"
          (lambda ($fpath) (let ((process-connection-type nil))
                             (start-process "" nil "xdg-open" $fpath))) $file-list))))))
 
+(use-package dired-single)
+
 (add-hook 'dired-mode-hook
   (lambda ()
     (dired-hide-details-mode)

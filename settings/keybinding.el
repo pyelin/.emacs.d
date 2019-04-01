@@ -46,8 +46,8 @@ Position the cursor at it's beginning, according to the current mode."
                                 (set-face-background hl-line-face "gray25"))
                           :hint none)
   "
-?u u u? ?u u e? ?u u o? ?u e e? ?u e u? ?u e o? ?u o e? ?u o u? ?u o o? ?o u e?
-?e e e? ?e e u? ?e e o? ?o o o? ?o o u? ?o o e? ?o u u? ?o e e? ?o e o? ?o e u?
+?u u u? ?u u e? ?u u o? ?u e e? ?u e u? ?u e o? ?u o e? ?u o o? ?o u e?
+?e e e? ?e e u? ?e e o? ?o o o? ?o o u? ?o o e? ?o u u? ?o e o? ?o e u?
 "
   ;; char
   ("n" forward-char)
@@ -92,7 +92,7 @@ Position the cursor at it's beginning, according to the current mode."
  	("u e e" ivy-yasnippet (hydra-invoker-format 'umbra 'exa 'exa "yas") :exit 1)
 	("u e u" counsel-yank-pop (hydra-invoker-format 'umbra 'exa 'umbra "yank"))
   ("u e o" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa 'ova "dj") :exit 1)
-	("u o u" goto-line (hydra-invoker-format 'umbra 'exa 'ova "l"))
+	("u o u" nil)
 	("u o e" hydra-move-text/body (hydra-invoker-format 'umbra 'ova 'exa "↕") :exit 1)
   ("u o o" counsel-unicode-char (hydra-invoker-format 'umbra 'ova 'ova "π") :exit 1)
   ;; exa
@@ -112,7 +112,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("o u u" ibuffer (hydra-invoker-format 'ova 'umbra 'umbra "ibuf"))
  	("o u e" kill-buffer (hydra-invoker-format 'ova 'umbra 'exa "close" t))
 	("o u o" nil (hydra-invoker-format 'ova 'umbra 'ova ""))
-  ("o e e" magit-status (hydra-invoker-format 'ova 'exa 'exa "git") :exit t)
+  ("o e e" nil)
   ("o e u" counsel-projectile-find-file (hydra-invoker-format 'ova 'exa 'umbra "popen" t))
   ("o e o" find-file (hydra-invoker-format 'ova 'exa 'ova "open"))
   ("SPC" nil))

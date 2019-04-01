@@ -82,6 +82,8 @@ Position the cursor at it's beginning, according to the current mode."
   ;; sexp
   ("x" er/expand-region)
   ("X" er/contract-region)
+  ;;; avy
+  ("v" avy-goto-char-2)
   ;; invoke
   ;; umbra
   ("u u u" save-buffer (hydra-invoker-format 'umbra 'umbra 'umbra "save"))

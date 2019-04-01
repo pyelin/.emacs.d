@@ -3,13 +3,12 @@
 
 ;;; Code:
 
-
 (defun umbra () "Umbra." (propertize "u" 'face '(:foreground "#178ccb" :bold t)))
 (defun exa () "Exa." (propertize "e" 'face '(:foreground "#f48024" :bold t)))
 (defun ova () "Ova." (propertize "o" 'face '(:foreground "#90bd31" :bold t)))
 (defun hydra-invoker-format (first second third name &optional is-last)
   "Format NAME spell using FIRST, SECOND, THIRD."
-  (format (if is-last "%s%s%s %s" "%s%s%s %-8s") (funcall first) (funcall second) (funcall third) name))
+  (format (if is-last "%s%s%s %s" "%s%s%s %-6s") (funcall first) (funcall second) (funcall third) name))
 
 (use-package hydra
   :init
@@ -22,6 +21,12 @@ Position the cursor at its beginning, according to the current mode."
   (move-end-of-line nil)
   (newline-and-indent))
 
+  "
+?u u u? ?u e e? ?u o u? ?e e e? ?o o o? ?o u u? ?o e e?
+?u u e? ?u e u? ?u o e? ?e e u? ?o o u? ?o u e? ?o e u?
+?u u o? ?u e o? ?u o o? ?e e o? ?o o e? ?o u o? ?o e o?
+"
+
 (defun smart-open-line-above ()
   "Insert an empty line above the current line.
 Position the cursor at it's beginning, according to the current mode."
@@ -33,15 +38,16 @@ Position the cursor at it's beginning, according to the current mode."
 
 (defhydra hydra-invoker (:pre (progn
                                 (set-cursor-color "#40e0d0")
-                                (setq-default cursor-type 'box))
+                                (setq-default cursor-type 'box)
+                                (set-face-background hl-line-face "#1c6861"))
                           :post (progn
                                 (set-cursor-color "white")
-                                (setq-default cursor-type '(bar . 3)))
-                          :hint nil)
+                                (setq-default cursor-type '(bar . 3))
+                                (set-face-background hl-line-face "gray25"))
+                          :hint none)
   "
-?u u u? ?u e e? ?u o u? ?e e e? ?o o o? ?o u u? ?o e e?
-?u u e? ?u e u? ?u o e? ?e e u? ?o o u? ?o u e? ?o e u?
-?u u o? ?u e o? ?u o o? ?e e o? ?o o e? ?o u o? ?o e o?
+?u u u? ?u u e? ?u u o? ?u e e? ?u e u? ?u e o? ?u o e? ?u o u? ?u o o? ?o u e?
+?e e e? ?e e u? ?e e o? ?o o o? ?o o u? ?o o e? ?o u u? ?o e e? ?o e o? ?o e u?
 "
   ;; char
   ("n" forward-char)
@@ -79,17 +85,17 @@ Position the cursor at it's beginning, according to the current mode."
   ;; invoke
   ;; umbra
   ("u u u" save-buffer (hydra-invoker-format 'umbra 'umbra 'umbra "save"))
-	("u u e" swiper (hydra-invoker-format 'umbra 'umbra 'exa "swiper") :exit 1)
+	("u u e" swiper (hydra-invoker-format 'umbra 'umbra 'exa "swipe") :exit 1)
   ("u u o" avy-goto-char-2 (hydra-invoker-format 'umbra 'umbra 'ova "avy"))
  	("u e e" ivy-yasnippet (hydra-invoker-format 'umbra 'exa 'exa "yas") :exit 1)
 	("u e u" counsel-yank-pop (hydra-invoker-format 'umbra 'exa 'umbra "yank"))
   ("u e o" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa 'ova "dj") :exit 1)
-	("u o u" goto-line (hydra-invoker-format 'umbra 'exa 'ova "line"))
-	("u o e" hydra-move-text/body (hydra-invoker-format 'umbra 'ova 'exa "move") :exit 1)
+	("u o u" goto-line (hydra-invoker-format 'umbra 'exa 'ova "l"))
+	("u o e" hydra-move-text/body (hydra-invoker-format 'umbra 'ova 'exa "↕") :exit 1)
   ("u o o" counsel-unicode-char (hydra-invoker-format 'umbra 'ova 'ova "π") :exit 1)
   ;; exa
 	("e e e" counsel-ag (hydra-invoker-format 'exa 'exa 'exa "ag") :exit t)
-	("e e u" query-replace (hydra-invoker-format 'exa 'exa 'umbra "replace") :exit t)
+	("e e u" query-replace (hydra-invoker-format 'exa 'exa 'umbra "?    ") :exit t)
 	("e e o" hydra-rectangle/body (hydra-invoker-format 'exa 'exa 'ova "▩") :exit t)
 	("e u e" nil)
 	("e u u" nil)
@@ -99,14 +105,14 @@ Position the cursor at it's beginning, according to the current mode."
   ("e o o" nil)
   ;; ova
   ("o o o" switch-to-buffer (hydra-invoker-format 'ova 'ova 'ova "buf"))
-  ("o o u" next-buffer (hydra-invoker-format 'ova 'ova 'umbra "<-"))
-  ("o o e" previous-buffer (hydra-invoker-format 'ova 'ova 'exa "->"))
+  ("o o u" next-buffer (hydra-invoker-format 'ova 'ova 'umbra "<"))
+  ("o o e" previous-buffer (hydra-invoker-format 'ova 'ova 'exa ">"))
   ("o u u" ibuffer (hydra-invoker-format 'ova 'umbra 'umbra "ibuf"))
- 	("o u e" kill-buffer (hydra-invoker-format 'ova 'umbra 'exa "close"))
+ 	("o u e" kill-buffer (hydra-invoker-format 'ova 'umbra 'exa "close" t))
 	("o u o" nil (hydra-invoker-format 'ova 'umbra 'ova ""))
-  ("o e e" magit-status (hydra-invoker-format 'ova 'exa 'exa "git" t) :exit t)
+  ("o e e" magit-status (hydra-invoker-format 'ova 'exa 'exa "git") :exit t)
   ("o e u" counsel-projectile-find-file (hydra-invoker-format 'ova 'exa 'umbra "popen" t))
-  ("o e o" find-file (hydra-invoker-format 'ova 'exa 'ova "open" t))
+  ("o e o" find-file (hydra-invoker-format 'ova 'exa 'ova "open"))
   ("SPC" nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)

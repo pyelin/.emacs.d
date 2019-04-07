@@ -13,42 +13,6 @@
   "Check if a system is running Linux."
   (eq system-type 'gnu/linux))
 
-(defun server-shutdown ()
-  "Save buffers, Quit, and Shutdown (kill) server."
-  (interactive)
-  (save-some-buffers)
-  (kill-emacs))
-
-(defun executable-find (command)
-  "Search for COMMAND in `exec-path' and return the absolute file name.
-Return nil if COMMAND is not found anywhere in `exec-path'."
-  ;; Use 1 rather than file-executable-p to better match the behavior of
-  ;; call-process.
-  (interactive "executable:")
-  (locate-file command exec-path exec-suffixes 1))
-
-
-(defun fib (n)
-  "Calculate fibonacci number, given the index as N."
-  (cond
-   ((= n 1) 1)
-   ((= n 2) 1)
-   (t (+ (fib (- n 1)) (fib (- n 2))))))
-
-(defun collatz (n)
-  "Collatz conjecture: no matter what number as N you start with, you will always eventually reach 1."
-  (let ((next (cond ((= (% n 2) 0) (/ n 2))
-                  (t (+ (* n 3) 1)))))
-       (cond ((> next 1) (collatz next))
-             (t next))))
-
-(defvar-local display-images t)
-(defun toggle-image-display ()
-  "Toggle images display on current buffer."
-  (interactive)
-  (setq display-images (null display-images))
-  (backup-display-property display-images))
-
 (defun relative-path (path)
   "Return the full path of a file (PATH) in the user's Emacs directory."
   (concat (file-name-directory (or load-file-name buffer-file-name)) path))
@@ -145,41 +109,6 @@ Return nil if COMMAND is not found anywhere in `exec-path'."
           (re-search-backward "\\(^[0-9.,]+[A-Za-z]+\\).*total$")
           (match-string 1))))))
 
-(defun xah-open-in-external-app (&optional @fname)
-  "Open the current file or dired marked files in external app.
-The app is chosen from your OS's preference.
-
-When called in emacs lisp, if @fname is given, open that.
-
-URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
-Version 2019-01-18"
-  (interactive)
-  (let* (
-         ($file-list
-          (if @fname
-              (progn (list @fname))
-            (if (string-equal major-mode "dired-mode")
-                (dired-get-marked-files)
-              (list (buffer-file-name)))))
-         ($do-it-p (if (<= (length $file-list) 5)
-                       t
-                     (y-or-n-p "Open more than 5 files? "))))
-    (when $do-it-p
-      (cond
-       ((string-equal system-type "windows-nt")
-        (mapc
-         (lambda ($fpath)
-           (w32-shell-execute "open" (replace-regexp-in-string "/" "\\" $fpath t t))) $file-list))
-       ((string-equal system-type "darwin")
-        (mapc
-         (lambda ($fpath)
-           (shell-command
-            (concat "open " (shell-quote-argument $fpath))))  $file-list))
-       ((string-equal system-type "gnu/linux")
-        (mapc
-         (lambda ($fpath) (let ((process-connection-type nil))
-                            (start-process "" nil "xdg-open" $fpath))) $file-list))))))
-
 (use-package dired-single)
 
 (add-hook 'dired-mode-hook
@@ -188,9 +117,6 @@ Version 2019-01-18"
     (define-key dired-mode-map [return] 'dired-single-buffer)
     (define-key dired-mode-map [backspace] 'dired-single-up-directory)
     (define-key dired-mode-map [o] 'xah-open-in-external-app)))
-
-
-(use-package ibuffer)
 
 (use-package ivy
   :config
@@ -220,7 +146,7 @@ Version 2019-01-18"
   (define-key switch-window-extra-map (kbd "h") 'switch-window-mvborder-left)
   (define-key switch-window-extra-map (kbd "n") 'switch-window-mvborder-right)
   (global-set-key (kbd "M-p") 'switch-window))
-
+1
 (use-package ag
   :init
   (setq ag-reuse-window 't)  ;; use same result buffer

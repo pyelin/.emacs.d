@@ -129,10 +129,12 @@
   :config
   (setq ivy-display-style 'fancy))
 
+(use-package rg
+  :defer t)
+
 (use-package counsel
   :config
-  (global-set-key (kbd "M-x") 'counsel-M-x)
-  (setq counsel-ag-base-command "ag --nocolor --nogroup --smart-case --ignore-dir=public %s"))
+  (global-set-key (kbd "M-x") 'counsel-M-x))
 
 (use-package counsel-projectile
   :ensure projectile
@@ -146,16 +148,6 @@
   (define-key switch-window-extra-map (kbd "h") 'switch-window-mvborder-left)
   (define-key switch-window-extra-map (kbd "n") 'switch-window-mvborder-right)
   (global-set-key (kbd "M-p") 'switch-window))
-1
-(use-package ag
-  :init
-  (setq ag-reuse-window 't)  ;; use same result buffer
-  (setq ag-highlight-search t)
-  (setq ag-arguments '("--smart-case" "--stats" "--ignore-dir=public"))
-  :defer t)
-
-(use-package wgrep-ag
-  :defer t)
 
 (use-package smooth-scroll)
 

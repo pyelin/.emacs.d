@@ -87,7 +87,7 @@ Position the cursor at it's beginning, according to the current mode."
   ;; invoke
   ;; umbra
   ("u u u" save-buffer (hydra-invoker-format 'umbra 'umbra 'umbra "save"))
-	("u u e" swiper (hydra-invoker-format 'umbra 'umbra 'exa "swipe") :exit 1)
+	("u u e" swiper-isearch (hydra-invoker-format 'umbra 'umbra 'exa "swipe") :exit 1)
   ("u u o" hydra-flycheck/body (hydra-invoker-format 'umbra 'umbra 'ova "chk") :exit 1)
  	("u e e" ivy-yasnippet (hydra-invoker-format 'umbra 'exa 'exa "yas") :exit 1)
 	("u e u" counsel-yank-pop (hydra-invoker-format 'umbra 'exa 'umbra "yank") :exit 1)
@@ -96,7 +96,7 @@ Position the cursor at it's beginning, according to the current mode."
 	("u o e" hydra-move-text/body (hydra-invoker-format 'umbra 'ova 'exa "↕") :exit 1)
   ("u o o" counsel-unicode-char (hydra-invoker-format 'umbra 'ova 'ova "π") :exit 1)
   ;; exa
-	("e e e" counsel-ag (hydra-invoker-format 'exa 'exa 'exa "ag") :exit t)
+	("e e e" counsel-rg (hydra-invoker-format 'exa 'exa 'exa "rg") :exit t)
 	("e e u" query-replace (hydra-invoker-format 'exa 'exa 'umbra "?    ") :exit t)
 	("e e o" hydra-rectangle/body (hydra-invoker-format 'exa 'exa 'ova "▩") :exit t)
 	("e u e" nil)

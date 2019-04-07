@@ -88,9 +88,9 @@ Position the cursor at it's beginning, according to the current mode."
   ;; umbra
   ("u u u" save-buffer (hydra-invoker-format 'umbra 'umbra 'umbra "save"))
 	("u u e" swiper (hydra-invoker-format 'umbra 'umbra 'exa "swipe") :exit 1)
-  ("u u o" avy-goto-char-2 (hydra-invoker-format 'umbra 'umbra 'ova "avy"))
+  ("u u o" hydra-flycheck/body (hydra-invoker-format 'umbra 'umbra 'ova "chk") :exit 1)
  	("u e e" ivy-yasnippet (hydra-invoker-format 'umbra 'exa 'exa "yas") :exit 1)
-	("u e u" counsel-yank-pop (hydra-invoker-format 'umbra 'exa 'umbra "yank"))
+	("u e u" counsel-yank-pop (hydra-invoker-format 'umbra 'exa 'umbra "yank") :exit 1)
   ("u e o" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa 'ova "dj") :exit 1)
 	("u o u" nil)
 	("u o e" hydra-move-text/body (hydra-invoker-format 'umbra 'ova 'exa "↕") :exit 1)
@@ -109,7 +109,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("o o o" switch-to-buffer (hydra-invoker-format 'ova 'ova 'ova "buf"))
   ("o o u" next-buffer (hydra-invoker-format 'ova 'ova 'umbra "<"))
   ("o o e" previous-buffer (hydra-invoker-format 'ova 'ova 'exa ">"))
-  ("o u u" ibuffer (hydra-invoker-format 'ova 'umbra 'umbra "ibuf"))
+  ("o u u" ibuffer (hydra-invoker-format 'ova 'umbra 'umbra "ibuf")) ;
  	("o u e" kill-buffer (hydra-invoker-format 'ova 'umbra 'exa "close" t))
 	("o u o" nil (hydra-invoker-format 'ova 'umbra 'ova ""))
   ("o e e" nil)
@@ -142,6 +142,18 @@ _h_   _n_   _o_k        _y_ank
   ("s" string-rectangle nil)
   ("p" kill-rectangle nil)
   ("o" nil nil))
+
+(defhydra hydra-flycheck
+  (:pre (progn (setq hydra-lv t) (flycheck-list-errors))
+   :post (progn (setq hydra-lv nil) (quit-windows-on "*Flycheck errors*"))
+   :hint nil)
+  "Errors"
+  ("f"  flycheck-error-list-set-filter                            "Filter")
+  ("j"  flycheck-next-error                                       "Next")
+  ("k"  flycheck-previous-error                                   "Previous")
+  ("gg" flycheck-first-error                                      "First")
+  ("G"  (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
+  ("q"  nil))
 
 (defhydra hydra-string-inflection (global-map "C-c u")
   "String inflection"

@@ -13,4 +13,4 @@ Then add this to your .emacs:
 
 ## Keybinding: hydra-invoker
 
-The key binding is optimized for Dvorak keyboard. It is based on vim-like modal editing and invoking commands by combining 3 keys based on Dota 2 invoker.
+The key binding is optimized for Dvorak keyboard. It is based on vim-like modal editing and invoking commands by combining 3 reagents: **O**va, **E**xa, and **U**mbra (Inspired by on Dota 2 [Invoker](https://dota2.gamepedia.com/Invoker)'s **Q**uas, **W**ex, and **E**xort)

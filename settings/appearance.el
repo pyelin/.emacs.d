@@ -1,3 +1,7 @@
+;;; package --- All configs related to appearance
+;;; Code:
+;;; Commentary:
+
 (use-package ample-theme
   :config
   (load-theme 'ample-flat t)
@@ -18,29 +22,9 @@
   ;; enable rainbow delimiters in all programming-related modes
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
-;; Make show-trailing-whitespace default  ;;;;
-(setq-default show-trailing-whitespace t)
-(add-hook
- 'eww-mode-hook
- (lambda() (setq show-trailing-whitespace nil))
- (setq shr-color-visible-luminance-min 60))
-
 ;; maximize
 ;; (custom-set-variables
 ;;  '(initial-frame-alist (quote ((fullscreen . maximized)))))
-
-;; show scratch buffer at startup
-(setq inhibit-startup-message t)
-(setq initial-scratch-message "")
-
-;; auto indent
-;; (define-key global-map (kbd "RET") 'newline-and-indent)
-
-;; hide toolbar
-(tool-bar-mode -1)
-
-;; hide menu
-(menu-bar-mode -1)
 
 ;; full path on title barf
 (setq-default
@@ -60,9 +44,17 @@
 ;; flash the screen on error; dont beep
 ;; (setq-default visible-bell t)
 
+;; Make show-trailing-whitespace default  ;;;;
+(setq-default show-trailing-whitespace t)
+;; hide toolbar
+(tool-bar-mode -1)
+;; hide menu
+(menu-bar-mode -1)
+  ;;; make scratch as startup page
+(setq inhibit-startup-message t)
+(setq initial-scratch-message "")
 ;; default font
 (setq default-frame-alist '((font . "DejaVu Sans Mono-12")))
-
 ;; disable scrollbar
 (scroll-bar-mode -1)
 

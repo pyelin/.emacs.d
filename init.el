@@ -216,7 +216,6 @@
        "python"
        "markdown"
        "org"
-       "rust"
      )))
 
 

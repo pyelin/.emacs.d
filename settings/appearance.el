@@ -15,7 +15,14 @@
 (use-package highlight-indent-guides
   :defer t
   :config
-  (setq highlight-indent-guides-method 'character))
+  (setq highlight-indent-guides-method 'character)
+  (defun dont-highlight-first-level (level responsive display)
+    (if (> 1 level) ; replace `1' with the number of guides you want to hide
+        nil
+      (highlight-indent-guides--highlighter-default level responsive display)))
+
+  (setq highlight-indent-guides-highlighter-function 'dont-highlight-first-level))
+
 
 (use-package rainbow-delimiters
   :config

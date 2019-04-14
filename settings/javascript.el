@@ -6,9 +6,10 @@
   :mode ("\\.js\\'" . js2-mode)
   :config
   (add-hook 'js2-mode-hook
-          (lambda ()
-            (push '("function" . ?ƒ) prettify-symbols-alist)
-            (prettify-symbols-mode)))
+    (lambda ()
+      (push '("function" . ?ƒ) prettify-symbols-alist)
+      (prettify-symbols-mode)
+      (highlight-indent-guides-mode)))
   ;; disable jshint since we prefer eslint checking
   ;; run "$ npm install -g eslint babel-eslint eslint-plugin-react" and other dependencies in console
   ;; check if eslist is working by running M-x: "flycheck-verify-setup" and console: "eslint --print-config ."
@@ -17,7 +18,7 @@
       '(javascript-jshint))))
 
 (use-package rjsx-mode
-  :mode ("\\.js\\'" . rjsx-mode))
+  :mode ("\\.jsx\\'" . rjsx-mode))
 
 (use-package json-mode
   :mode ("\\.json\\'" . json-mode))

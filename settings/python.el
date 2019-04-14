@@ -1,7 +1,5 @@
 ;;; Python
 
-(use-package elpy
+(use-package python-mode
   :mode ("\\.py\\'" . python-mode)
-  :init (with-eval-after-load 'python (elpy-enable))
-  :config
-  (add-hook 'python-mode-hook 'highlight-indent-guides-mode))
+  :config (add-hook 'python-mode-hook 'highlight-indent-guides-mode))

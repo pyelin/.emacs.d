@@ -86,7 +86,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("v" avy-goto-char-2)
   ;; invoke
   ;; umbra
-  ("u u u" save-buffer (hydra-invoker-format 'umbra 'umbra 'umbra "save"))
+  ("u u u" projectile-switch-to-buffer (hydra-invoker-format 'umbra 'umbra 'umbra "pb"))
 	("u u e" swiper-isearch (hydra-invoker-format 'umbra 'umbra 'exa "swipe") :exit 1)
   ("u u o" hydra-flycheck/body (hydra-invoker-format 'umbra 'umbra 'ova "chk") :exit 1)
  	("u e e" ivy-yasnippet (hydra-invoker-format 'umbra 'exa 'exa "yas") :exit 1)

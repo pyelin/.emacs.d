@@ -4,6 +4,7 @@
   :config
   (setq org-image-actual-width nil)
   (setq org-log-done t)
+  (setq org-babel-python-command "python3")
   (define-key global-map "\C-c l" 'org-store-link)
   (define-key global-map "\C-c a" 'org-agenda)
   (add-hook 'org-mode-hook

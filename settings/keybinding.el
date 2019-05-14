@@ -6,9 +6,10 @@
 (defun umbra () "Umbra." (propertize "u" 'face '(:foreground "#178ccb" :bold t)))
 (defun exa () "Exa." (propertize "e" 'face '(:foreground "#f48024" :bold t)))
 (defun ova () "Ova." (propertize "o" 'face '(:foreground "#90bd31" :bold t)))
-(defun hydra-invoker-format (first second third name &optional is-last)
+(defun io () "Io." (propertize "i" 'face '(:foreground "violet" :bold t)))
+(defun hydra-invoker-format (first second name &optional is-last)
   "Format NAME spell using FIRST, SECOND, THIRD."
-  (format (if is-last "%s%s%s %s" "%s%s%s %-6s") (funcall first) (funcall second) (funcall third) name))
+  (format (if is-last "%s%s %s" "%s%s %-5s") (funcall first) (funcall second) name))
 
 (use-package hydra
   :init
@@ -20,12 +21,6 @@ Position the cursor at its beginning, according to the current mode."
   (interactive)
   (move-end-of-line nil)
   (newline-and-indent))
-
-  "
-?u u u? ?u e e? ?u o u? ?e e e? ?o o o? ?o u u? ?o e e?
-?u u e? ?u e u? ?u o e? ?e e u? ?o o u? ?o u e? ?o e u?
-?u u o? ?u e o? ?u o o? ?e e o? ?o o e? ?o u o? ?o e o?
-"
 
 (defun smart-open-line-above ()
   "Insert an empty line above the current line.
@@ -46,8 +41,8 @@ Position the cursor at it's beginning, according to the current mode."
                                 (set-face-background hl-line-face "gray25"))
                           :hint none)
   "
-?u u u? ?u u e? ?u u o? ?u e e? ?u e u? ?u e o? ?u o e? ?u o o? ?o u e?
-?e e e? ?e e u? ?e e o? ?o o o? ?o o u? ?o o e? ?o u u? ?o e o? ?o e u?
+?u u? ?u i? ?u e? ?u o? ?e e? ?e i? ?e u? ?e o?
+?o o? ?o i? ?o u? ?o e? ?i i? ?i u? ?i e? ?i o?
 "
   ;; char
   ("n" forward-char)
@@ -66,6 +61,8 @@ Position the cursor at it's beginning, according to the current mode."
   ("M-l" smart-open-line-above)
   ("M-c" (previous-line 10))
   ("M-t" (next-line 10))
+  ;; find
+  ("f" find-file)
   ;; forward
   ("s" end-of-line)
   ("d" beginning-of-line)
@@ -82,39 +79,27 @@ Position the cursor at it's beginning, according to the current mode."
   ;; sexp
   ("x" er/expand-region)
   ("X" er/contract-region)
-  ;;; avy
-  ("v" avy-goto-char-2)
   ;; invoke
   ;; umbra
-  ("u u u" projectile-switch-to-buffer (hydra-invoker-format 'umbra 'umbra 'umbra "pb"))
-	("u u e" swiper-isearch (hydra-invoker-format 'umbra 'umbra 'exa "swipe") :exit 1)
-  ("u u o" hydra-flycheck/body (hydra-invoker-format 'umbra 'umbra 'ova "chk") :exit 1)
- 	("u e e" ivy-yasnippet (hydra-invoker-format 'umbra 'exa 'exa "yas") :exit 1)
-	("u e u" counsel-yank-pop (hydra-invoker-format 'umbra 'exa 'umbra "yank") :exit 1)
-  ("u e o" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa 'ova "dj") :exit 1)
-	("u o u" nil)
-	("u o e" hydra-move-text/body (hydra-invoker-format 'umbra 'ova 'exa "↕") :exit 1)
-  ("u o o" counsel-unicode-char (hydra-invoker-format 'umbra 'ova 'ova "π") :exit 1)
+  ("u u" save-buffer (hydra-invoker-format 'umbra 'umbra "save"))
+  ("u i" avy-goto-word-1 (hydra-invoker-format 'umbra 'io "avy") :exit 1)
+  ("u e" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa "dj") :exit 1)
+ 	("u o" query-replace (hydra-invoker-format 'umbra 'ova "?") :exit t)
   ;; exa
-	("e e e" counsel-rg (hydra-invoker-format 'exa 'exa 'exa "rg") :exit t)
-	("e e u" query-replace (hydra-invoker-format 'exa 'exa 'umbra "?    ") :exit t)
-	("e e o" hydra-rectangle/body (hydra-invoker-format 'exa 'exa 'ova "▩") :exit t)
-	("e u e" nil)
-	("e u u" nil)
-	("e u o" nil)
-	("e o e" nil)
-	("e o u" nil)
-  ("e o o" nil)
+  ("e u" swiper-isearch (hydra-invoker-format 'exa 'umbra "swipe") :exit 1)
+  ("e i" hydra-scratch/body (hydra-invoker-format 'exa 'io "note " t))
+  ("e e" counsel-rg (hydra-invoker-format 'exa 'exa "rg") :exit t)
+  ("e o" hydra-rectangle/body (hydra-invoker-format 'exa 'ova "▩" t) :exit t)
   ;; ova
-  ("o o o" switch-to-buffer (hydra-invoker-format 'ova 'ova 'ova "buf"))
-  ("o o u" next-buffer (hydra-invoker-format 'ova 'ova 'umbra "<"))
-  ("o o e" previous-buffer (hydra-invoker-format 'ova 'ova 'exa ">"))
-  ("o u u" ibuffer (hydra-invoker-format 'ova 'umbra 'umbra "ibuf")) ;
- 	("o u e" kill-buffer (hydra-invoker-format 'ova 'umbra 'exa "close" t))
-	("o u o" nil (hydra-invoker-format 'ova 'umbra 'ova ""))
-  ("o e e" nil)
-  ("o e u" counsel-projectile-find-file (hydra-invoker-format 'ova 'exa 'umbra "popen" t))
-  ("o e o" find-file (hydra-invoker-format 'ova 'exa 'ova "open"))
+	("o o" counsel-yank-pop (hydra-invoker-format 'ova 'ova "yank") :exit 1)
+	("o i" hydra-scratch/body (hydra-invoker-format 'ova 'io "note") :exit 1)
+  ("o u" hydra-flycheck/body (hydra-invoker-format 'ova 'umbra "chk") :exit 1)
+	("o e" ivy-yasnippet (hydra-invoker-format 'ova 'exa "yas") :exit 1)
+  ;; io
+  ("i i" projectile-switch-to-buffer (hydra-invoker-format 'io 'io "buf"))
+  ("i e" previous-buffer (hydra-invoker-format 'io 'exa "<"))
+  ("i u" next-buffer (hydra-invoker-format 'io 'umbra ">"))
+  ("i o" projectile-find-file (hydra-invoker-format 'io 'ova "file" t)) ;
   ("SPC" nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
@@ -168,12 +153,6 @@ _h_   _n_   _o_k        _y_ank
   ("u" dumb-jump-go "Jump" :color blue)
   ("e" dumb-jump-back "Back" :color pink))
 
-(defhydra hydra-move-text ()
-  "Move text"
-  ("c" move-text-up "up")
-  ("t" move-text-down "down"))
-
-
 (setq counsel-projectile-find-file-action
   '(1
      ("o" counsel-projectile-find-file-action
@@ -193,6 +172,13 @@ _h_   _n_   _o_k        _y_ank
   ("e" org-transpose-elements "Org mode elements")
   ("p" transpose-paragraphs "paragraphs")
   ("t" org-table-transpose-table-at-point "Org mode table")
+  ("q" nil "cancel" :color blue))
+
+(defhydra hydra-scratch (:color red)
+  "Scratch"
+  ("u" (find-file "~/Dropbox/Notes/scratch.org.txt") "org")
+  ("e" (find-file "~/Dropbox/Notes/scratch.sql") "sql")
+  ("o" (find-file "~/Dropbox/Notes/scratch.rest") "rest")
   ("q" nil "cancel" :color blue))
 
 (global-set-key (kbd "<f8>") 'hydra-invoker/body)

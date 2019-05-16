@@ -118,6 +118,10 @@
     (define-key dired-mode-map [backspace] 'dired-single-up-directory)
     (define-key dired-mode-map [o] 'xah-open-in-external-app)))
 
+(setq uniquify-buffer-name-style 'forward)
+
+(use-package ibuffer)
+
 (use-package ivy
   :config
   (setq ivy-use-virtual-buffers t)

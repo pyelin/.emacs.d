@@ -1,0 +1,30 @@
+# -*- mode: snippet -*-
+# name: migrate
+# key: migrate
+# --
+'use strict';
+
+const helpers = require('../helpers/migration_helpers');
+
+const $1 = {
+  up(queryInterface, Sequelize, transaction) {
+    $2
+  },
+  down(queryInterface, Sequelize, transaction) {
+
+  }
+};
+
+module.exports = {
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.sequelize.transaction(t => {
+      await $1.up(queryInterface, Sequelize, t);
+    });
+  },
+
+  down: (queryInterface, Sequelize) => {
+    return queryInterface.sequelize.transaciton(t => {
+      await $1.down(queryInterface, Sequelize, t);
+    });
+  }
+};

@@ -81,7 +81,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("X" er/contract-region)
   ;; invoke
   ;; umbra
-  ("u u" save-buffer (hydra-invoker-format 'umbra 'umbra "save"))
+  ("u u" projectile-find-file (hydra-invoker-format 'umbra 'umbra "file"))
   ("u i" avy-goto-word-1 (hydra-invoker-format 'umbra 'io "avy") :exit 1)
   ("u e" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa "dj") :exit 1)
  	("u o" query-replace (hydra-invoker-format 'umbra 'ova "?") :exit t)
@@ -96,10 +96,10 @@ Position the cursor at it's beginning, according to the current mode."
   ("o u" hydra-flycheck/body (hydra-invoker-format 'ova 'umbra "chk") :exit 1)
 	("o e" ivy-yasnippet (hydra-invoker-format 'ova 'exa "yas") :exit 1)
   ;; io
-  ("i i" projectile-switch-to-buffer (hydra-invoker-format 'io 'io "buf"))
+  ("i i" projectile-switch-to-buffer (hydra-invoker-format 'io 'io "b"))
   ("i e" previous-buffer (hydra-invoker-format 'io 'exa "<"))
   ("i u" next-buffer (hydra-invoker-format 'io 'umbra ">"))
-  ("i o" projectile-find-file (hydra-invoker-format 'io 'ova "file" t)) ;
+  ("i o" ibuffer (hydra-invoker-format 'io 'ova "buf" t)) ;
   ("SPC" nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)

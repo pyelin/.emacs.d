@@ -13,5 +13,4 @@
   (org-babel-do-load-languages 'org-babel-load-languages '((js . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((sql . t)))
-  (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)))
-  (setq org-ditaa-jar-path "/usr/local/Cellar/ditaa/0.11.0/libexec/ditaa-0.11.0-standalone.jar"))
+  (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t))))

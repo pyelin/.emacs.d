@@ -6,9 +6,8 @@
 (defun umbra () "Umbra." (propertize "u" 'face '(:foreground "#178ccb" :bold t)))
 (defun exa () "Exa." (propertize "e" 'face '(:foreground "#f48024" :bold t)))
 (defun ova () "Ova." (propertize "o" 'face '(:foreground "#90bd31" :bold t)))
-(defun io () "Io." (propertize "i" 'face '(:foreground "violet" :bold t)))
 (defun hydra-invoker-format (first second name &optional is-last)
-  "Format NAME spell using FIRST, SECOND, THIRD."
+  "Format NAME spell using FIRST, SECOND."
   (format (if is-last "%s%s %s" "%s%s %-5s") (funcall first) (funcall second) name))
 
 (use-package hydra
@@ -41,8 +40,7 @@ Position the cursor at it's beginning, according to the current mode."
                                 (set-face-background hl-line-face "gray25"))
                           :hint none)
   "
-?u u? ?u i? ?u e? ?u o? ?e e? ?e i? ?e u? ?e o?
-?o o? ?o i? ?o u? ?o e? ?i i? ?i u? ?i e? ?i o?
+?u u? ?u e? ?u o? ?e e? ?e u? ?e o? ?o o? ?o e?
 "
   ;; char
   ("n" forward-char)
@@ -79,27 +77,24 @@ Position the cursor at it's beginning, according to the current mode."
   ;; sexp
   ("x" er/expand-region)
   ("X" er/contract-region)
+  ;; jump
+  ("v" avy-goto-word-1)
   ;; invoke
+  ("S" hydra-scratch/body)
+  ;; buffer
+  ("b" projectile-switch-to-buffer)
+  ("B" ibuffer)
   ;; umbra
-  ("u u" projectile-find-file (hydra-invoker-format 'umbra 'umbra "file"))
-  ("u i" avy-goto-word-1 (hydra-invoker-format 'umbra 'io "avy") :exit 1)
+  ("u u" swiper-isearch (hydra-invoker-format 'umbra 'umbra "find"))
   ("u e" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa "dj") :exit 1)
  	("u o" query-replace (hydra-invoker-format 'umbra 'ova "?") :exit t)
   ;; exa
-  ("e u" swiper-isearch (hydra-invoker-format 'exa 'umbra "swipe") :exit 1)
-  ("e i" hydra-scratch/body (hydra-invoker-format 'exa 'io "note " t))
+  ("e u" projectile-find-file (hydra-invoker-format 'exa 'umbra "file") :exit 1)
   ("e e" counsel-rg (hydra-invoker-format 'exa 'exa "rg") :exit t)
-  ("e o" hydra-rectangle/body (hydra-invoker-format 'exa 'ova "▩" t) :exit t)
-  ;; ova
+  ("e o" hydra-rectangle/body (hydra-invoker-format 'exa 'ova "▩") :exit t)
+  ;; ;; ova
 	("o o" counsel-yank-pop (hydra-invoker-format 'ova 'ova "yank") :exit 1)
-	("o i" hydra-scratch/body (hydra-invoker-format 'ova 'io "note") :exit 1)
-  ("o u" hydra-flycheck/body (hydra-invoker-format 'ova 'umbra "chk") :exit 1)
-	("o e" ivy-yasnippet (hydra-invoker-format 'ova 'exa "yas") :exit 1)
-  ;; io
-  ("i i" projectile-switch-to-buffer (hydra-invoker-format 'io 'io "b"))
-  ("i e" previous-buffer (hydra-invoker-format 'io 'exa "<"))
-  ("i u" next-buffer (hydra-invoker-format 'io 'umbra ">"))
-  ("i o" ibuffer (hydra-invoker-format 'io 'ova "buf" t)) ;
+	("o e" ivy-yasnippet (hydra-invoker-format 'ova 'exa "yas" t) :exit 1)
   ("SPC" nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
@@ -127,18 +122,6 @@ _h_   _n_   _o_k        _y_ank
   ("s" string-rectangle nil)
   ("p" kill-rectangle nil)
   ("o" nil nil))
-
-(defhydra hydra-flycheck
-  (:pre (progn (setq hydra-lv t) (flycheck-list-errors))
-   :post (progn (setq hydra-lv nil) (quit-windows-on "*Flycheck errors*"))
-   :hint nil)
-  "Errors"
-  ("f"  flycheck-error-list-set-filter                            "Filter")
-  ("j"  flycheck-next-error                                       "Next")
-  ("k"  flycheck-previous-error                                   "Previous")
-  ("gg" flycheck-first-error                                      "First")
-  ("G"  (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
-  ("q"  nil))
 
 (defhydra hydra-string-inflection (global-map "C-c u")
   "String inflection"

@@ -127,9 +127,10 @@ _h_   _n_   _o_k        _y_ank
   "String inflection"
   ("_" (apply-function-to-region 'string-inflection-underscore-function) "underscore")
   ("-" (apply-function-to-region 'string-inflection-kebab-case-function) "kebab")
-  ("u" (apply-function-to-region 'string-inflection-upcase-function) "uppercase")
   ("c" (apply-function-to-region 'string-inflection-lower-camelcase-function) "camel")
-  ("C" (apply-function-to-region 'string-inflection-camelcase-function) "Camel"))
+  ("C" (apply-function-to-region 'string-inflection-camelcase-function) "Camel")
+  ("u" (upcase-region (region-beginning) (region-end)) "UPPER")
+  ("l" (downcase-region (region-beginning) (region-end)) "lower"))
 
 (defhydra hydra-dumb-jump ()
   "djump"

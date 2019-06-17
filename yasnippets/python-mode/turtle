@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: turtle
+# key: turtle
+# --
+[("TURTLE", 100, (0.1, 0.1, 0.1, 0.1))]

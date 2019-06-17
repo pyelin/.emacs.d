@@ -26,6 +26,10 @@
     (kill-region beg end)
     (insert resulting-text)))
 
+(defun pye/now ()
+  "Insert the current timestamp."
+  (interactive)
+  (insert (format-time-string "%Y-%m-%dT%H:%M:%S")))
 
 ;;; Package setup
 ;; Have to make sure it's loaded before we do anything with it.
@@ -111,6 +115,7 @@
 
 (use-package dired-single)
 
+(setq dired-dwim-target t)
 (add-hook 'dired-mode-hook
   (lambda ()
     (dired-hide-details-mode)
@@ -158,8 +163,6 @@
 (use-package company
   :config
   (add-hook 'after-init-hook 'global-company-mode)
-  (with-eval-after-load 'company
-    (add-to-list 'company-backends 'company-tern))
   (setq company-show-numbers t))
 
 (use-package dumb-jump)

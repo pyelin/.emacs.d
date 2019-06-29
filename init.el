@@ -179,10 +179,13 @@
 
 (use-package flycheck
   :config
+  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
   (add-hook 'after-init-hook #'global-flycheck-mode))
 
 (use-package magit
-  :bind ("C-c C-g" . magit-status))
+  :bind ("C-c C-g" . magit-status)
+  :config
+  (setq transient-default-level 5))
 
 (use-package smartparens
   :config

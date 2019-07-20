@@ -6,6 +6,7 @@
   :init
   (advice-add 'python-mode :before 'elpy-enable)
   :config
+  (setq elpy-rpc-python-command "python3")
   (setq python-shell-interpreter "python3")
   (setq python-indent-guess-indent-offset nil)
   (setq elpy-modules '(elpy-module-sane-defaults

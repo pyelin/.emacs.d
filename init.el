@@ -132,6 +132,8 @@
   (setq ivy-use-virtual-buffers t)
   (setq ivy-count-format "(%d/%d) ")
   (global-set-key (kbd "<f6>") 'ivy-resume)
+  (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
+  (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
   (ivy-mode 1))
 
 (use-package swiper

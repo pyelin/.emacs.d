@@ -18,7 +18,7 @@
       '(javascript-jshint))))
 
 (use-package rjsx-mode
-  :mode ("\\.jsx\\'" . rjsx-mode))
+  :mode ("\\.*sx\\'" . rjsx-mode))
 
 (use-package json-mode
   :mode ("\\.json\\'" . json-mode))

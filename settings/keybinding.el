@@ -6,9 +6,9 @@
 (defun umbra () "Umbra." (propertize "u" 'face '(:foreground "#178ccb" :bold t)))
 (defun exa () "Exa." (propertize "e" 'face '(:foreground "#f48024" :bold t)))
 (defun ova () "Ova." (propertize "o" 'face '(:foreground "#90bd31" :bold t)))
-(defun hydra-invoker-format (first second name &optional is-last)
+(defun hydra-invoker-format (first name &optional is-last)
   "Format NAME spell using FIRST, SECOND."
-  (format (if is-last "%s%s %s" "%s%s %-5s") (funcall first) (funcall second) name))
+  (format (if is-last "[%s] %s" "[%s] %-5s") (funcall first) name))
 
 (use-package hydra
   :init
@@ -39,8 +39,8 @@ Position the cursor at it's beginning, according to the current mode."
                                 (setq-default cursor-type '(bar . 3))
                                 (set-face-background hl-line-face "gray25"))
                           :hint none)
-  "
-?u u? ?u e? ?u o? ?e e? ?e u? ?e o? ?o o? ?o e?
+"
+?u? ?e? ?o?
 "
   ;; char
   ("n" forward-char)
@@ -59,43 +59,52 @@ Position the cursor at it's beginning, according to the current mode."
   ("M-l" smart-open-line-above)
   ("M-c" (previous-line 10))
   ("M-t" (next-line 10))
-  ;; find
-  ("f" find-file)
   ;; forward
   ("s" end-of-line)
   ("d" beginning-of-line)
   ;; mark
   ("m" set-mark-command)
-  ;; expand
-  ("x" er/expand-region)
-  ("X" er/contract-region)
   ;; cut copy paste
   ("q" kill-region)
   ("j" kill-ring-save)
   ("z" undo)
   ("k" yank)
-  ;; sexp
-  ("x" er/expand-region)
-  ("X" er/contract-region)
-  ;; jump
-  ("v" avy-goto-word-1)
-  ;; invoke
-  ("S" hydra-scratch/body)
+  ("S" hydra-scratch/body nil :exit t)
   ;; buffer
   ("b" projectile-switch-to-buffer)
   ("B" ibuffer)
-  ;; umbra
-  ("u u" swiper-isearch (hydra-invoker-format 'umbra 'umbra "find"))
-  ("u e" hydra-dumb-jump/body (hydra-invoker-format 'umbra 'exa "dj") :exit 1)
- 	("u o" query-replace (hydra-invoker-format 'umbra 'ova "?") :exit t)
-  ;; exa
-  ("e u" projectile-find-file (hydra-invoker-format 'exa 'umbra "file") :exit 1)
-  ("e e" counsel-rg (hydra-invoker-format 'exa 'exa "rg") :exit t)
-  ("e o" hydra-rectangle/body (hydra-invoker-format 'exa 'ova "▩") :exit t)
-  ;; ;; ova
-	("o o" counsel-yank-pop (hydra-invoker-format 'ova 'ova "yank") :exit 1)
-	("o e" ivy-yasnippet (hydra-invoker-format 'ova 'exa "yas" t) :exit 1)
-  ("SPC" nil))
+  ("u" hydra-find/body (hydra-invoker-format 'umbra "find") :exit t)
+  ("e" hydra-select/body (hydra-invoker-format 'exa "select") :exit t)
+  ("o" hydra-paste/body (hydra-invoker-format 'ova "paste") :exit t)
+  ("q" nil))
+
+(defhydra hydra-find (:hint none :exit 1)
+"
+?a? ?u? ?e? ?o? ?i?
+"
+  ("a" avy-goto-word-1 "[a] avy")
+  ("u" swiper-isearch (hydra-invoker-format 'umbra "swiper"))
+  ("e" counsel-rg (hydra-invoker-format 'exa "rg"))
+  ("o" projectile-find-file (hydra-invoker-format 'ova "projectile"))
+  ("i" dumb-jump-go "[i] dj")
+  ("q" nil nil))
+
+(defhydra hydra-select (:hint none :exit 1)
+"
+?o? ?e? ?i?
+"
+  ("i" er/contract-region "[i] contract")
+  ("e" er/expand-region (hydra-invoker-format 'exa "expand"))
+  ("o" hydra-rectangle/body (hydra-invoker-format 'ova "rectangle") :exit t)
+  ("q" nil nil))
+
+(defhydra hydra-paste (:hint none :exit 1)
+"
+?u? ?e?
+"
+  ("u" counsel-yank-pop (hydra-invoker-format 'umbra "yank"))
+  ("e" ivy-yasnippet (hydra-invoker-format 'exa "yasnippet"))
+  ("q" nil nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
                            :color pink
@@ -131,11 +140,6 @@ _h_   _n_   _o_k        _y_ank
   ("C" (apply-function-to-region 'string-inflection-camelcase-function) "Camel")
   ("u" (upcase-region (region-beginning) (region-end)) "UPPER")
   ("l" (downcase-region (region-beginning) (region-end)) "lower"))
-
-(defhydra hydra-dumb-jump ()
-  "djump"
-  ("u" dumb-jump-go "Jump" :color blue)
-  ("e" dumb-jump-back "Back" :color pink))
 
 (setq counsel-projectile-find-file-action
   '(1

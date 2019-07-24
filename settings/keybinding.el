@@ -3,16 +3,28 @@
 
 ;;; Code:
 
+(defvar pye/invoke-color "#40e0d0")
 (defun umbra () "Umbra." (propertize "u" 'face '(:foreground "#178ccb" :bold t)))
 (defun exa () "Exa." (propertize "e" 'face '(:foreground "#f48024" :bold t)))
 (defun ova () "Ova." (propertize "o" 'face '(:foreground "#90bd31" :bold t)))
+(defun hora () "Umbra." (propertize "h" 'face '(:foreground "#178ccb" :bold t)))
+(defun tera () "Exa." (propertize "t" 'face '(:foreground "#f48024" :bold t)))
+(defun nora () "Ova." (propertize "n" 'face '(:foreground "#90bd31" :bold t)))
 (defun hydra-invoker-format (first name &optional is-last)
   "Format NAME spell using FIRST, SECOND."
   (format (if is-last "[%s] %s" "[%s] %-5s") (funcall first) name))
 
+(use-package posframe)
+
 (use-package hydra
   :init
-  (setq hydra-is-helpful t))
+  (setq hydra-is-helpful t)
+  (setq hydra-hint-display-type 'posframe)
+  (setq hydra-posframe-show-params
+    '(
+       :poshandler posframe-poshandler-point-bottom-left-corner
+       :internal-border-width 4
+       :background-color "gray30")))
 
 (defun smart-open-line ()
   "Insert an empty line after the current line.
@@ -31,7 +43,7 @@ Position the cursor at it's beginning, according to the current mode."
   (indent-according-to-mode))
 
 (defhydra hydra-invoker (:pre (progn
-                                (set-cursor-color "#40e0d0")
+                                (set-cursor-color pye/invoke-color)
                                 (setq-default cursor-type 'box)
                                 (set-face-background hl-line-face "#1c6861"))
                           :post (progn
@@ -40,7 +52,7 @@ Position the cursor at it's beginning, according to the current mode."
                                 (set-face-background hl-line-face "gray25"))
                           :hint none)
 "
-?u? ?e? ?o?
+?o? ?e? ?u?
 "
   ;; char
   ("n" forward-char)
@@ -73,37 +85,33 @@ Position the cursor at it's beginning, according to the current mode."
   ;; buffer
   ("b" projectile-switch-to-buffer)
   ("B" ibuffer)
-  ("u" hydra-find/body (hydra-invoker-format 'umbra "find") :exit t)
+  ("u" hydra-go/body (hydra-invoker-format 'umbra "go") :exit t)
   ("e" hydra-select/body (hydra-invoker-format 'exa "select") :exit t)
   ("o" hydra-paste/body (hydra-invoker-format 'ova "paste") :exit t)
   ("q" nil))
 
-(defhydra hydra-find (:hint none :exit 1)
+(defhydra hydra-umbra (:hint none :exit 1)
 "
-?a? ?u? ?e? ?o? ?i?
+?o? ?e? ?u?        ?h? ?t? ?n?
 "
-  ("a" avy-goto-word-1 "[a] avy")
-  ("u" swiper-isearch (hydra-invoker-format 'umbra "swiper"))
-  ("e" counsel-rg (hydra-invoker-format 'exa "rg"))
-  ("o" projectile-find-file (hydra-invoker-format 'ova "projectile"))
-  ("i" dumb-jump-go "[i] dj")
+  ("u" swiper-isearch (hydra-invoker-format 'umbra "SWIPER"))
+  ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY"))
+  ("o" dump-jump-go (hydra-invoker-format 'ova "JUMP"))
+  ("h" counsel-rg (hydra-invoker-format 'hora "RG"))
+  ("t" projectile-find-file (hydra-invoker-format 'tera "PROJECTILE"))
+  ("n" counsel-find-file (hydra-invoker-format 'nora "FILE"))
   ("q" nil nil))
 
-(defhydra hydra-select (:hint none :exit 1)
+(defhydra hydra-exa (:hint none :exit 1)
 "
-?o? ?e? ?i?
+?o? ?e? ?u?        ?h? ?t? ?n?
 "
-  ("i" er/contract-region "[i] contract")
-  ("e" er/expand-region (hydra-invoker-format 'exa "expand"))
-  ("o" hydra-rectangle/body (hydra-invoker-format 'ova "rectangle") :exit t)
-  ("q" nil nil))
-
-(defhydra hydra-paste (:hint none :exit 1)
-"
-?u? ?e?
-"
-  ("u" counsel-yank-pop (hydra-invoker-format 'umbra "yank"))
-  ("e" ivy-yasnippet (hydra-invoker-format 'exa "yasnippet"))
+  ("e" er/expand-region (hydra-invoker-format 'exa "EXPAND"))
+  ("o" hydra-rectangle/body (hydra-invoker-format 'ova "RECTANGLE") :exit t)
+  ("u" counsel-yank-pop (hydra-invoker-format 'umbra "YANK"))
+  ("h" ivy-yasnippet (hydra-invoker-format 'hora "YASNIPPET"))
+  ("t" counsel-switch-to-buffer (hydra-invoker-format 'tera "SWITCH"))
+  ("n" ibuffer (hydra-invoker-format 'nora "IBUFFER"))
   ("q" nil nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
@@ -170,4 +178,5 @@ _h_   _n_   _o_k        _y_ank
   ("q" nil "cancel" :color blue))
 
 (global-set-key (kbd "<f8>") 'hydra-invoker/body)
-(global-set-key (kbd "M-SPC") 'hydra-invoker/body)
+(global-set-key (kbd "M-u") 'hydra-umbra/body)
+(global-set-key (kbd "M-e") 'hydra-exa/body)

@@ -42,6 +42,16 @@ Position the cursor at it's beginning, according to the current mode."
   (forward-line -1)
   (indent-according-to-mode))
 
+(defun pye/before-invoke ()
+  (set-cursor-color pye/invoke-color)
+  (setq-default cursor-type 'box)
+  (set-face-background hl-line-face "#1c6861"))
+
+(defun pye/after-invoke ()
+  (set-cursor-color "white")
+  (setq-default cursor-type '(bar . 3))
+  (set-face-background hl-line-face "gray25"))
+
 (defhydra hydra-invoker (:pre (progn
                                 (set-cursor-color pye/invoke-color)
                                 (setq-default cursor-type 'box)
@@ -90,7 +100,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("o" hydra-paste/body (hydra-invoker-format 'ova "paste") :exit t)
   ("q" nil))
 
-(defhydra hydra-umbra (:hint none :exit 1)
+(defhydra hydra-umbra (:pre 'pye/before-invoke :hint none :exit 1)
 "
 ?o? ?e? ?u?        ?h? ?t? ?n?
 "
@@ -107,11 +117,18 @@ Position the cursor at it's beginning, according to the current mode."
 ?o? ?e? ?u?        ?h? ?t? ?n?
 "
   ("e" er/expand-region (hydra-invoker-format 'exa "EXPAND"))
-  ("o" hydra-rectangle/body (hydra-invoker-format 'ova "RECTANGLE") :exit t)
+  ("o" hydra-rectangle/body (hydra-invoker-format 'ova "RECTANGLE"))
   ("u" counsel-yank-pop (hydra-invoker-format 'umbra "YANK"))
   ("h" ivy-yasnippet (hydra-invoker-format 'hora "YASNIPPET"))
-  ("t" counsel-switch-to-buffer (hydra-invoker-format 'tera "SWITCH"))
+  ("t" switch-buffer (hydra-invoker-format 'tera "SWITCH"))
   ("n" ibuffer (hydra-invoker-format 'nora "IBUFFER"))
+  ("q" nil nil))
+
+(defhydra hydra-ova (:hint none :exit 1)
+"
+?o?
+"
+  ("o" picnic (hydra-invoker-format 'ova "PICNIC"))
   ("q" nil nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
@@ -180,3 +197,4 @@ _h_   _n_   _o_k        _y_ank
 (global-set-key (kbd "<f8>") 'hydra-invoker/body)
 (global-set-key (kbd "M-u") 'hydra-umbra/body)
 (global-set-key (kbd "M-e") 'hydra-exa/body)
+(global-set-key (kbd "M-o") 'hydra-ova/body)

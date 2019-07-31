@@ -14,12 +14,10 @@
   "Format NAME spell using FIRST, SECOND."
   (format (if is-last "[%s] %s" "[%s] %-5s") (funcall first) name))
 
-(use-package posframe)
-
 (use-package hydra
   :init
   (setq hydra-is-helpful t)
-  (setq hydra-hint-display-type 'posframe)
+  (setq hydra-hint-display-type 'lv)
   (setq hydra-posframe-show-params
     '(
        :poshandler posframe-poshandler-point-bottom-left-corner
@@ -109,7 +107,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("o" dump-jump-go (hydra-invoker-format 'ova "JUMP"))
   ("h" counsel-rg (hydra-invoker-format 'hora "RG"))
   ("t" projectile-find-file (hydra-invoker-format 'tera "PROJECTILE"))
-  ("n" counsel-find-file (hydra-invoker-format 'nora "FILE"))
+  ("n" counsel-find-file (hydra-invoker-format 'nora "FILE" t))
   ("q" nil nil))
 
 (defhydra hydra-exa (:hint none :exit 1)

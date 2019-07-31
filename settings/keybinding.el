@@ -50,19 +50,19 @@ Position the cursor at it's beginning, according to the current mode."
   (setq-default cursor-type '(bar . 3))
   (set-face-background hl-line-face "gray25"))
 
-(defhydra hydra-invoker (:pre (progn
-                                (set-cursor-color pye/invoke-color)
-                                (setq-default cursor-type 'box)
-                                (set-face-background hl-line-face "#1c6861"))
-                          :post (progn
-                                (set-cursor-color "white")
-                                (setq-default cursor-type '(bar . 3))
-                                (set-face-background hl-line-face "gray25"))
-                          :hint none)
+(defhydra hydra-umbra (:pre 'pye/before-invoke
+                       :post 'pye/after-invoke
+                       :hint none)
 "
-?o? ?e? ?u?
+?o? ?e? ?u?        ?h? ?t? ?n?
 "
-  ;; char
+  ("u" swiper-isearch (hydra-invoker-format 'umbra "SWIPER"))
+  ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY"))
+  ("o" dump-jump-go (hydra-invoker-format 'ova "JUMP"))
+  ("h" counsel-rg (hydra-invoker-format 'hora "RG"))
+  ("t" projectile-find-file (hydra-invoker-format 'tera "PROJECTILE"))
+  ("n" counsel-find-file (hydra-invoker-format 'nora "FILE" t))
+  ;;;;
   ("n" forward-char)
   ("h" backward-char)
   ("t" next-line)
@@ -82,32 +82,6 @@ Position the cursor at it's beginning, according to the current mode."
   ;; forward
   ("s" end-of-line)
   ("d" beginning-of-line)
-  ;; mark
-  ("m" set-mark-command)
-  ;; cut copy paste
-  ("q" kill-region)
-  ("j" kill-ring-save)
-  ("z" undo)
-  ("k" yank)
-  ("S" hydra-scratch/body nil :exit t)
-  ;; buffer
-  ("b" projectile-switch-to-buffer)
-  ("B" ibuffer)
-  ("u" hydra-go/body (hydra-invoker-format 'umbra "go") :exit t)
-  ("e" hydra-select/body (hydra-invoker-format 'exa "select") :exit t)
-  ("o" hydra-paste/body (hydra-invoker-format 'ova "paste") :exit t)
-  ("q" nil))
-
-(defhydra hydra-umbra (:pre 'pye/before-invoke :hint none :exit 1)
-"
-?o? ?e? ?u?        ?h? ?t? ?n?
-"
-  ("u" swiper-isearch (hydra-invoker-format 'umbra "SWIPER"))
-  ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY"))
-  ("o" dump-jump-go (hydra-invoker-format 'ova "JUMP"))
-  ("h" counsel-rg (hydra-invoker-format 'hora "RG"))
-  ("t" projectile-find-file (hydra-invoker-format 'tera "PROJECTILE"))
-  ("n" counsel-find-file (hydra-invoker-format 'nora "FILE" t))
   ("q" nil nil))
 
 (defhydra hydra-exa (:hint none :exit 1)
@@ -124,9 +98,10 @@ Position the cursor at it's beginning, according to the current mode."
 
 (defhydra hydra-ova (:hint none :exit 1)
 "
-?o?
+?o? ?e?
 "
   ("o" picnic (hydra-invoker-format 'ova "PICNIC"))
+  ("e" hydra-scratch/body (hydra-invoker-format 'exa "SCRATCH"))
   ("q" nil nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)

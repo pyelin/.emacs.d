@@ -7,7 +7,7 @@
 (defun umbra () "Umbra." (propertize "u" 'face '(:foreground "#178ccb" :bold t)))
 (defun exa () "Exa." (propertize "e" 'face '(:foreground "#f48024" :bold t)))
 (defun ova () "Ova." (propertize "o" 'face '(:foreground "#90bd31" :bold t)))
-(defun hora () "Umbra." (propertize "h" 'face '(:foreground "#178ccb" :bold t)))
+(defun hyper () "Umbra." (propertize "h" 'face '(:foreground "#178ccb" :bold t)))
 (defun tera () "Exa." (propertize "t" 'face '(:foreground "#f48024" :bold t)))
 (defun nora () "Ova." (propertize "n" 'face '(:foreground "#90bd31" :bold t)))
 (defun hydra-invoker-format (first name &optional is-last)
@@ -17,12 +17,7 @@
 (use-package hydra
   :init
   (setq hydra-is-helpful t)
-  (setq hydra-hint-display-type 'lv)
-  (setq hydra-posframe-show-params
-    '(
-       :poshandler posframe-poshandler-point-bottom-left-corner
-       :internal-border-width 4
-       :background-color "gray30")))
+  (setq hydra-hint-display-type 'lv))
 
 (defun smart-open-line ()
   "Insert an empty line after the current line.
@@ -50,19 +45,39 @@ Position the cursor at it's beginning, according to the current mode."
   (setq-default cursor-type '(bar . 3))
   (set-face-background hl-line-face "gray25"))
 
-(defhydra hydra-umbra (:pre 'pye/before-invoke
-                       :post 'pye/after-invoke
-                       :hint none)
+(defhydra hydra-umbra (:hint none :exit 1)
 "
 ?o? ?e? ?u?        ?h? ?t? ?n?
 "
   ("u" swiper-isearch (hydra-invoker-format 'umbra "SWIPER"))
   ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY"))
   ("o" dump-jump-go (hydra-invoker-format 'ova "JUMP"))
-  ("h" counsel-rg (hydra-invoker-format 'hora "RG"))
+  ("h" counsel-rg (hydra-invoker-format 'hyper "RG"))
   ("t" projectile-find-file (hydra-invoker-format 'tera "PROJECTILE"))
   ("n" counsel-find-file (hydra-invoker-format 'nora "FILE" t))
-  ;;;;
+  ("q" nil nil))
+
+(defhydra hydra-exa (:hint none :exit 1)
+"
+?o? ?e? ?u?        ?h? ?t? ?n?
+"
+  ("e" er/expand-region (hydra-invoker-format 'exa "EXPAND"))
+  ("o" hydra-rectangle/body (hydra-invoker-format 'ova "RECTANGLE"))
+  ("u" counsel-yank-pop (hydra-invoker-format 'umbra "YANK"))
+  ("h" ivy-yasnippet (hydra-invoker-format 'hyper "YASNIPPET"))
+  ("t" switch-to-buffer (hydra-invoker-format 'tera "SWITCH"))
+  ("n" ibuffer (hydra-invoker-format 'nora "IBUFFER"))
+  ("q" nil nil))
+
+(defhydra hydra-ova (:hint none :exit 1)
+"
+?o? ?e?
+"
+  ("o" picnic (hydra-invoker-format 'ova "PICNIC"))
+  ("e" hydra-scratch/body (hydra-invoker-format 'exa "SCRATCH"))
+  ("q" nil nil))
+
+(defhydra hydra-hyper (:hint none :pre pye/before-invoke :post pye/after-invoke)
   ("n" forward-char)
   ("h" backward-char)
   ("t" next-line)
@@ -82,26 +97,6 @@ Position the cursor at it's beginning, according to the current mode."
   ;; forward
   ("s" end-of-line)
   ("d" beginning-of-line)
-  ("q" nil nil))
-
-(defhydra hydra-exa (:hint none :exit 1)
-"
-?o? ?e? ?u?        ?h? ?t? ?n?
-"
-  ("e" er/expand-region (hydra-invoker-format 'exa "EXPAND"))
-  ("o" hydra-rectangle/body (hydra-invoker-format 'ova "RECTANGLE"))
-  ("u" counsel-yank-pop (hydra-invoker-format 'umbra "YANK"))
-  ("h" ivy-yasnippet (hydra-invoker-format 'hora "YASNIPPET"))
-  ("t" switch-buffer (hydra-invoker-format 'tera "SWITCH"))
-  ("n" ibuffer (hydra-invoker-format 'nora "IBUFFER"))
-  ("q" nil nil))
-
-(defhydra hydra-ova (:hint none :exit 1)
-"
-?o? ?e?
-"
-  ("o" picnic (hydra-invoker-format 'ova "PICNIC"))
-  ("e" hydra-scratch/body (hydra-invoker-format 'exa "SCRATCH"))
   ("q" nil nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
@@ -171,3 +166,4 @@ _h_   _n_   _o_k        _y_ank
 (global-set-key (kbd "M-u") 'hydra-umbra/body)
 (global-set-key (kbd "M-e") 'hydra-exa/body)
 (global-set-key (kbd "M-o") 'hydra-ova/body)
+(global-set-key (kbd "M-h") 'hydra-hyper/body)

@@ -215,6 +215,10 @@
 ;; eg. ssh:test@host#2222:/tmp
 (setq tramp-default-method "ssh")
 
+(add-hook 'term-mode-hook
+  (lambda ()
+    (setq show-trailing-whitespace nil)))
+
 ;;;; settings
 (setq settings-dir (relative-path "settings"))
 (mapc 'load

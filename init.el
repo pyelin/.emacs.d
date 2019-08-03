@@ -165,7 +165,9 @@
 (use-package company
   :config
   (add-hook 'after-init-hook 'global-company-mode)
-  (setq company-show-numbers t))
+  (setq company-idle-delay 0.2)
+  (setq company-show-numbers t)
+  (setq company-dabbrev-downcase nil))
 
 (use-package dumb-jump)
 

@@ -138,7 +138,13 @@
 
 (use-package swiper
   :config
-  (setq ivy-display-style 'fancy))
+  (setq ivy-display-style 'fancy)
+  (setq avy-background t)
+  (setq avy-all-windows t))
+
+(use-package avy
+  :config
+  (setq avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)))
 
 (use-package rg
   :defer t)

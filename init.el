@@ -26,6 +26,13 @@
     (kill-region beg end)
     (insert resulting-text)))
 
+(defun pye/kill-other-buffers ()
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer
+    (delq (current-buffer)
+      (cl-remove-if-not 'buffer-file-name (buffer-list)))))
+
 (defun pye/now ()
   "Insert the current timestamp."
   (interactive)
@@ -124,8 +131,6 @@
     (define-key dired-mode-map [o] 'xah-open-in-external-app)))
 
 (setq uniquify-buffer-name-style 'forward)
-
-(use-package ibuffer)
 
 (use-package ivy
   :config

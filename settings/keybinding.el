@@ -45,14 +45,14 @@ Position the cursor at it's beginning, according to the current mode."
   (setq-default cursor-type '(bar . 3))
   (set-face-background hl-line-face "gray25"))
 
-(defhydra hydra-umbra (:hint none :exit 1)
+(defhydra hydra-umbra (:hint none)
 "
 ?o? ?e? ?u?        ?h? ?t? ?n?
 "
-  ("u" swiper-isearch (hydra-invoker-format 'umbra "SWIPER"))
-  ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY"))
+  ("u" swiper-isearch (hydra-invoker-format 'umbra "SWIPER") :exit 1)
+  ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY") :exit 1)
   ("o" dump-jump-go (hydra-invoker-format 'ova "JUMP"))
-  ("h" counsel-rg (hydra-invoker-format 'hyper "RG"))
+  ("h" counsel-rg (hydra-invoker-format 'hyper "RG") :exit 1)
   ("t" projectile-find-file (hydra-invoker-format 'tera "PROJECTILE"))
   ("n" counsel-find-file (hydra-invoker-format 'nora "FILE" t))
   ("q" nil nil))
@@ -66,7 +66,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("u" counsel-yank-pop (hydra-invoker-format 'umbra "YANK"))
   ("h" ivy-yasnippet (hydra-invoker-format 'hyper "YASNIPPET"))
   ("t" switch-to-buffer (hydra-invoker-format 'tera "SWITCH"))
-  ("n" ibuffer (hydra-invoker-format 'nora "IBUFFER"))
+  ("n" list-buffers (hydra-invoker-format 'nora "IBUFFER"))
   ("q" nil nil))
 
 (defhydra hydra-ova (:hint none :exit 1)
@@ -162,7 +162,7 @@ _h_   _n_   _o_k        _y_ank
   ("o" (find-file "~/Dropbox/Notes/scratch.rest") "rest")
   ("q" nil "cancel" :color blue))
 
-(global-set-key (kbd "<f8>") 'hydra-invoker/body)
+(global-set-key (kbd "<f5>") 'pye/kill-other-buffers)
 (global-set-key (kbd "M-u") 'hydra-umbra/body)
 (global-set-key (kbd "M-e") 'hydra-exa/body)
 (global-set-key (kbd "M-o") 'hydra-ova/body)

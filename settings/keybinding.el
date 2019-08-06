@@ -51,7 +51,7 @@ Position the cursor at it's beginning, according to the current mode."
 "
   ("u" swiper-isearch (hydra-invoker-format 'umbra "SWIPER") :exit 1)
   ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY") :exit 1)
-  ("o" dump-jump-go (hydra-invoker-format 'ova "JUMP"))
+  ("o" dumb-jump-go (hydra-invoker-format 'ova "JUMP"))
   ("h" counsel-rg (hydra-invoker-format 'hyper "RG") :exit 1)
   ("t" projectile-find-file (hydra-invoker-format 'tera "PROJECTILE"))
   ("n" counsel-find-file (hydra-invoker-format 'nora "FILE" t))

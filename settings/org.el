@@ -8,7 +8,7 @@
   (define-key global-map "\C-c l" 'org-store-link)
   (define-key global-map "\C-c a" 'org-agenda)
   (add-hook 'org-mode-hook
-            (lambda () (setq show-trailing-whitespace f)))
+    (lambda () (setq show-trailing-whitespace nil)))
   (add-hook 'org-mode-hook 'flyspell-mode)
   (org-babel-do-load-languages 'org-babel-load-languages '((js . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))

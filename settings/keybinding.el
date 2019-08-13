@@ -45,7 +45,9 @@ Position the cursor at it's beginning, according to the current mode."
   (setq-default cursor-type '(bar . 3))
   (set-face-background hl-line-face "gray25"))
 
-(defhydra hydra-umbra (:hint none)
+(defhydra hydra-umbra (:hint none
+                       :pre pye/before-invoke
+                       :post pye/after-invoke)
 "
 ?o? ?e? ?u?        ?h? ?t? ?n?
 "
@@ -57,7 +59,10 @@ Position the cursor at it's beginning, according to the current mode."
   ("n" counsel-find-file (hydra-invoker-format 'nora "FILE" t))
   ("q" nil nil))
 
-(defhydra hydra-exa (:hint none :exit 1)
+(defhydra hydra-exa (:hint none
+                     :pre pye/before-invoke
+                     :post pye/after-invoke
+                     :exit 1)
 "
 ?o? ?e? ?u?        ?h? ?t? ?n?
 "
@@ -69,34 +74,15 @@ Position the cursor at it's beginning, according to the current mode."
   ("n" list-buffers (hydra-invoker-format 'nora "IBUFFER"))
   ("q" nil nil))
 
-(defhydra hydra-ova (:hint none :exit 1)
+(defhydra hydra-ova (:hint none
+                     :pre pye/before-invoke
+                     :post pye/after-invoke
+                     :exit 1)
 "
 ?o? ?e?
 "
   ("o" picnic (hydra-invoker-format 'ova "PICNIC"))
   ("e" hydra-scratch/body (hydra-invoker-format 'exa "SCRATCH"))
-  ("q" nil nil))
-
-(defhydra hydra-hyper (:hint none :pre pye/before-invoke :post pye/after-invoke)
-  ("n" forward-char)
-  ("h" backward-char)
-  ("t" next-line)
-  ("c" previous-line)
-  ("g" delete-backward-char)
-  ("r" delete-char)
-  ;; word
-  ("M-n" forward-word)
-  ("M-h" backward-word)
-  ("M-g" backward-kill-word)
-  ("M-r" kill-word)
-  ;; line
-  ("l" smart-open-line)
-  ("M-l" smart-open-line-above)
-  ("M-c" (previous-line 10))
-  ("M-t" (next-line 10))
-  ;; forward
-  ("s" end-of-line)
-  ("d" beginning-of-line)
   ("q" nil nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
@@ -166,4 +152,3 @@ _h_   _n_   _o_k        _y_ank
 (global-set-key (kbd "M-u") 'hydra-umbra/body)
 (global-set-key (kbd "M-e") 'hydra-exa/body)
 (global-set-key (kbd "M-o") 'hydra-ova/body)
-(global-set-key (kbd "M-h") 'hydra-hyper/body)

@@ -152,3 +152,21 @@ _h_   _n_   _o_k        _y_ank
 (global-set-key (kbd "M-u") 'hydra-umbra/body)
 (global-set-key (kbd "M-e") 'hydra-exa/body)
 (global-set-key (kbd "M-o") 'hydra-ova/body)
+
+(use-package ryo-modal
+  :commands ryo-modal-mode
+  :bind ("M-SPC" . ryo-modal-mode)
+  :config
+  (ryo-modal-keys
+    ("r" delete-char)
+    ("g" backward-delete-char-untabify)
+    ;; cursor movement
+    ("h" backward-char)
+    ("t" next-line)
+    ("c" previous-line)
+    ("n" forward-char)
+    ;; line
+    ("d" beginning-of-line)
+    ("s" end-of-line)
+    ;; marking
+    ("m" set-mark-command)))

@@ -70,7 +70,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("o" hydra-rectangle/body (hydra-invoker-format 'ova "RECTANGLE"))
   ("u" counsel-yank-pop (hydra-invoker-format 'umbra "YANK"))
   ("h" ivy-yasnippet (hydra-invoker-format 'hyper "YASNIPPET"))
-  ("t" switch-to-buffer (hydra-invoker-format 'tera "SWITCH"))
+  ("t" ivy-switch-buffer (hydra-invoker-format 'tera "SWITCH"))
   ("n" list-buffers (hydra-invoker-format 'nora "IBUFFER"))
   ("q" nil nil))
 

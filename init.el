@@ -120,7 +120,7 @@
 (setq epa-pinentry-mode 'loopback)
 
 ;;;; dired
-(defun dired-get-size ()
+(defun pye/dired-get-size ()
   (interactive)
   (let ((files (dired-get-marked-files)))
     (with-temp-buffer
@@ -138,7 +138,7 @@
     (dired-hide-details-mode)
     (define-key dired-mode-map [return] 'dired-single-buffer)
     (define-key dired-mode-map [backspace] 'dired-single-up-directory)
-    (define-key dired-mode-map [o] 'xah-open-in-external-app)))
+    (define-key dired-mode-map (kbd "?") 'pye/dired-get-size)))
 
 (setq uniquify-buffer-name-style 'forward)
 

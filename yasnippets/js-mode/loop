@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: Operation on collection
-# key: loop
-# --
-${1:method}(${2:list}, ${3:item} => $0);

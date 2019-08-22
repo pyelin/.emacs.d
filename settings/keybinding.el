@@ -82,7 +82,7 @@ Position the cursor at it's beginning, according to the current mode."
 ?o? ?e?
 "
   ("o" picnic (hydra-invoker-format 'ova "PICNIC"))
-  ("e" hydra-scratch/body (hydra-invoker-format 'exa "SCRATCH"))
+  ("e" pye/ivy-scratch (hydra-invoker-format 'exa "SCRATCH"))
   ("q" nil nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
@@ -110,6 +110,7 @@ _h_   _n_   _o_k        _y_ank
   ("s" string-rectangle nil)
   ("p" kill-rectangle nil)
   ("o" nil nil))
+
 
 (defhydra hydra-string-inflection (global-map "C-c u")
   "String inflection"
@@ -139,13 +140,6 @@ _h_   _n_   _o_k        _y_ank
   ("e" org-transpose-elements "Org mode elements")
   ("p" transpose-paragraphs "paragraphs")
   ("t" org-table-transpose-table-at-point "Org mode table")
-  ("q" nil "cancel" :color blue))
-
-(defhydra hydra-scratch (:color red)
-  "Scratch"
-  ("u" (find-file "~/Dropbox/Notes/scratch.org.txt") "org")
-  ("e" (find-file "~/Dropbox/Notes/scratch.sql") "sql")
-  ("o" (find-file "~/Dropbox/Notes/scratch.rest") "rest")
   ("q" nil "cancel" :color blue))
 
 (global-set-key (kbd "<f5>") 'pye/kill-other-buffers)

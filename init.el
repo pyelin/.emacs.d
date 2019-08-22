@@ -38,6 +38,16 @@
   (interactive)
   (insert (format-time-string "%Y-%m-%dT%H:%M:%S")))
 
+(defun pye/ivy-scratch ()
+  "Open scratch file"
+  (interactive)
+  (find-file
+    (format
+      "~/Dropbox/Notes/scratch.%s"
+      (ivy-read
+        "scratch: "
+        '("org.txt" "sql" "rest")))))
+
 ;;; Package setup
 ;; Have to make sure it's loaded before we do anything with it.
 (require 'package)

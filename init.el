@@ -171,12 +171,9 @@
   (define-key switch-window-extra-map (kbd "n") 'switch-window-mvborder-right)
   (global-set-key (kbd "M-p") 'switch-window))
 
-(use-package smooth-scroll)
-
 (use-package company
   :config
   (add-hook 'after-init-hook 'global-company-mode)
-  (setq company-idle-delay 0.2)
   (setq company-show-numbers t)
   (setq company-dabbrev-downcase nil))
 
@@ -213,20 +210,8 @@
 
 (use-package string-inflection)
 
-(use-package yasnippet
-  :config
-  (setq yas-snippet-dirs (list "~/.emacs.d/snippets" (relative-path "yasnippets")))
-  (yas-reload-all)
-  (add-hook 'prog-mode-hook 'yas-minor-mode))
-
-(use-package ivy-yasnippet)
-
 (use-package restclient
   :mode ("\\.rest\\'" . restclient-mode))
-
-;;;; tramp
-;; eg. ssh:test@host#2222:/tmp
-(setq tramp-default-method "ssh")
 
 (add-hook 'term-mode-hook
   (lambda ()

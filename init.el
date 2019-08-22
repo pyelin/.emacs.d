@@ -240,7 +240,9 @@
        "python"
        "markdown"
        "org"
-     )))
+       )))
+
+(eldoc-mode 0)
 
 
 ;;;; Indentation

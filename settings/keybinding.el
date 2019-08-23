@@ -69,7 +69,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("e" er/expand-region (hydra-invoker-format 'exa "EXPAND"))
   ("o" hydra-rectangle/body (hydra-invoker-format 'ova "RECTANGLE"))
   ("u" counsel-yank-pop (hydra-invoker-format 'umbra "YANK"))
-  ("h" ivy-yasnippet (hydra-invoker-format 'hyper "YASNIPPET"))
+  ("h" yankpad-insert (hydra-invoker-format 'hyper "SNIPPET"))
   ("t" ivy-switch-buffer (hydra-invoker-format 'tera "SWITCH"))
   ("n" list-buffers (hydra-invoker-format 'nora "IBUFFER"))
   ("q" nil nil))

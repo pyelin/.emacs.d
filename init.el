@@ -227,6 +227,12 @@
   (lambda ()
     (setq show-trailing-whitespace nil)))
 
+(use-package yankpad
+  :ensure t
+  :defer t
+  :init
+  (setq yankpad-file "~/Dropbox/Notes/yankpad.org"))
+
 ;;;; settings
 (setq settings-dir (relative-path "settings"))
 (mapc 'load

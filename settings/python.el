@@ -1,17 +1,22 @@
 ;;; Python
 
-(use-package elpy
-  :ensure t
-  :defer t
-  :init
-  (advice-add 'python-mode :before 'elpy-enable)
+(flycheck-define-checker
+    python-mypy ""
+    :command ("mypy"
+              "--ignore-missing-import"
+              "--python-version" "3.6"
+              source-original)
+    :error-patterns
+    ((error line-start (file-name) ":" line ": error:" (message) line-end))
+    :modes python-mode)
+
+(use-package anaconda-mode
   :config
-  (setq elpy-rpc-python-command "python3")
   (setq python-shell-interpreter "python3")
-  (setq python-indent-guess-indent-offset nil)
-  (setq elpy-modules '(elpy-module-sane-defaults
-                        elpy-module-company
-                        elpy-module-highlight-indentation))
-  (setq flycheck-python-pycompile-executable "python3")
-  (setq flycheck-python-pylint-executable "python3")
-  (setq flycheck-python-flake8-executable "python3"))
+  (setq flycheck-python-flake8-executable "python3")
+  (add-to-list 'flycheck-checkers 'python-mypy t)
+  (setq-default flycheck-disabled-checkers
+    (append flycheck-disabled-checkers
+      '(python-pycompile
+        python-pylint)))
+  (add-hook 'python-mode-hook 'anaconda-mode))

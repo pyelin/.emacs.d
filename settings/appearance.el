@@ -15,6 +15,9 @@
     '(ediff-current-diff-B ((t (:foreground "White" :background "green"))))
     '(ediff-current-diff-C ((t (:foreground "White" :background "green"))))))
 
+;; ;; default font
+(setq default-frame-alist '((font . "DejaVu Sans Mono-12")))
+
 (use-package highlight-indent-guides
   :defer t
   :config
@@ -28,6 +31,7 @@
 
 
 (use-package rainbow-delimiters
+  :defer t
   :config
   ;; enable rainbow delimiters in all programming-related modes
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
@@ -38,33 +42,35 @@
 
 ;; full path on title barf
 (setq-default
- frame-title-format
- (list '((buffer-file-name " %f" (dired-directory
-                                  dired-directory
-                                  (revert-buffer-function " %b"
-                                                          ("%b - Dir:  " default-directory)))))))
+  frame-title-format
+  (list '((buffer-file-name " %f" (dired-directory
+                                    dired-directory
+                                    (revert-buffer-function " %b"
+                                      ("%b - Dir:  " default-directory)))))))
 
 (setq-default
- icon-title-format
- (list '((buffer-file-name " %f" (dired-directory
+  icon-title-format
+  (list '((buffer-file-name " %f" (dired-directory
                                   dired-directory
                                   (revert-buffer-function " %b"
                                                           ("%b - Dir:  " default-directory)))))))
 
 ;; flash the screen on error; dont beep
-;; (setq-default visible-bell t)
+(setq-default visible-bell t)
 
 ;; Make show-trailing-whitespace default  ;;;;
 (setq-default show-trailing-whitespace t)
+
+;; make scratch as startup page
+(setq inhibit-startup-message t)
+;; (setq initial-scratch-message "")
+
 ;; hide toolbar
 (tool-bar-mode -1)
+
 ;; hide menu
 (menu-bar-mode -1)
-  ;;; make scratch as startup page
-(setq inhibit-startup-message t)
-(setq initial-scratch-message "")
-;; default font
-(setq default-frame-alist '((font . "DejaVu Sans Mono-12")))
+
 ;; disable scrollbar
 (scroll-bar-mode -1)
 
@@ -157,5 +163,5 @@
                                (lambda (fg) (set-face-foreground 'mode-line fg))
                                orig-fg))))
 
-(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-(add-to-list 'default-frame-alist '(ns-appearance . dark))
+;; (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+;; (add-to-list 'default-frame-alist '(ns-appearance . dark))

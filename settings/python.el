@@ -1,16 +1,7 @@
 ;;; Python
 
-(flycheck-define-checker
-    python-mypy ""
-    :command ("mypy"
-              "--ignore-missing-import"
-              "--python-version" "3.6"
-              source-original)
-    :error-patterns
-    ((error line-start (file-name) ":" line ": error:" (message) line-end))
-    :modes python-mode)
-
 (use-package anaconda-mode
+  :defer t
   :config
   (setq python-shell-interpreter "python3")
   (setq flycheck-python-flake8-executable "python3")
@@ -19,4 +10,13 @@
     (append flycheck-disabled-checkers
       '(python-pycompile
         python-pylint)))
-  (add-hook 'python-mode-hook 'anaconda-mode))
+  (add-hook 'python-mode-hook 'anaconda-mode)
+  (flycheck-define-checker
+    python-mypy ""
+    :command ("mypy"
+              "--ignore-missing-import"
+              "--python-version" "3.6"
+              source-original)
+    :error-patterns
+    ((error line-start (file-name) ":" line ": error:" (message) line-end))
+    :modes python-mode))

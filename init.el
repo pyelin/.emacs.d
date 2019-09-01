@@ -200,6 +200,7 @@
 (use-package expand-region)
 
 (use-package flycheck
+  :defer t
   :config
   (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
   (add-hook 'after-init-hook #'global-flycheck-mode))
@@ -210,13 +211,15 @@
   (setq transient-default-level 5))
 
 (use-package smartparens
+  :defer t
   :config
   (sp-local-tag '(sgml-mode web-mode) "<" "<_>" "</_>" :transform 'sp-match-sgml-tags)
   (setq show-paren-delay 0)
   (show-paren-mode 1)
   (smartparens-global-mode t))
 
-(use-package vlf)
+(use-package vlf
+  :defer t)
 
 (use-package string-inflection)
 

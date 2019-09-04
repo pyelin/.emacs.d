@@ -130,6 +130,23 @@
           (re-search-backward "\\(^[0-9.,]+[A-Za-z]+\\).*total$")
           (match-string 1))))))
 
+(defun pye/copy-buffer-file-name-to-clipboard ()
+  "Copies the buffer file name to the clipboard"
+  (interactive)
+  (let ((buf-name (buffer-file-name)))
+    (if buf-name
+        (with-temp-buffer
+          (insert buf-name)
+          (copy-region-as-kill (point-min) (point-max))
+          (message "Copied %s to clipboard" buf-name))
+      (message "Your buffer is not backed by a file"))))
+
+(defun pye/uuid ()
+  (interactive)
+  (insert
+    (downcase (string-trim-right
+                (shell-command-to-string "uuidgen")))))
+
 (use-package dired-single)
 
 (setq dired-dwim-target t)

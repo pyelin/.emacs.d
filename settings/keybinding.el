@@ -142,7 +142,9 @@ _h_   _n_   _o_k        _y_ank
   ("t" org-table-transpose-table-at-point "Org mode table")
   ("q" nil "cancel" :color blue))
 
-(global-set-key (kbd "<f5>") 'pye/kill-other-buffers)
+(global-set-key (kbd "<f9>") 'pye/kill-other-buffers)
+(global-set-key (kbd "<f7>") 'yankpad-capture-snippet)
+(global-set-key (kbd "<f8>") 'yankpad-reload)
 (global-set-key (kbd "M-u") 'hydra-umbra/body)
 (global-set-key (kbd "M-e") 'hydra-exa/body)
 (global-set-key (kbd "M-o") 'hydra-ova/body)

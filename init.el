@@ -236,6 +236,10 @@
   :init
   (setq yankpad-file "~/Dropbox/Notes/yankpad.org"))
 
+(use-package yasnippet
+  :config
+  (add-hook 'prog-mode-hook #'yas-minor-mode))
+
 ;;;; settings
 (setq settings-dir (relative-path "settings"))
 (mapc 'load

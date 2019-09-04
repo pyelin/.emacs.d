@@ -60,9 +60,10 @@
 
 ;; Make show-trailing-whitespace default  ;;;;
 (setq-default show-trailing-whitespace t)
+(add-hook 'eshell-mode-hook
+  (lambda () (setq show-trailing-whitespace nil)))
 
 ;; make scratch as startup page
-(setq inhibit-startup-message t)
 ;; (setq initial-scratch-message "")
 
 ;; hide toolbar

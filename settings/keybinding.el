@@ -146,6 +146,7 @@ _h_   _n_   _o_k        _y_ank
 (global-set-key (kbd "M-u") 'hydra-umbra/body)
 (global-set-key (kbd "M-e") 'hydra-exa/body)
 (global-set-key (kbd "M-o") 'hydra-ova/body)
+(global-set-key (kbd "C-M-\\") 'indent-relative)
 
 (use-package ryo-modal
   :commands ryo-modal-mode

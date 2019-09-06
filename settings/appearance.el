@@ -58,6 +58,9 @@
 ;; flash the screen on error; dont beep
 (setq-default visible-bell t)
 
+;;; make scratch as startup page
+(setq inhibit-startup-message t)
+
 ;; Make show-trailing-whitespace default  ;;;;
 (setq-default show-trailing-whitespace t)
 (add-hook 'eshell-mode-hook

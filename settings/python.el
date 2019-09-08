@@ -1,22 +1,18 @@
 ;;; Python
 
+(setq python-shell-interpreter "python3")
+(setq flycheck-python-flake8-executable "python3")
+(setq-default flycheck-disabled-checkers
+  (append flycheck-disabled-checkers
+    '(python-pycompile python-pylint python-flake8)))
+
 (use-package anaconda-mode
-  :defer t
   :config
-  (setq python-shell-interpreter "python3")
-  (setq flycheck-python-flake8-executable "python3")
-  (add-to-list 'flycheck-checkers 'python-mypy t)
-  (setq-default flycheck-disabled-checkers
-    (append flycheck-disabled-checkers
-      '(python-pycompile
-        python-pylint)))
   (add-hook 'python-mode-hook 'anaconda-mode)
-  (flycheck-define-checker
-    python-mypy ""
-    :command ("mypy"
-              "--ignore-missing-import"
-              "--python-version" "3.6"
-              source-original)
-    :error-patterns
-    ((error line-start (file-name) ":" line ": error:" (message) line-end))
-    :modes python-mode))
+  (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+
+
+(use-package company-anaconda
+  :config
+  (eval-after-load "company"
+    '(add-to-list 'company-backends 'company-anaconda)))

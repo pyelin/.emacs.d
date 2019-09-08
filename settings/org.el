@@ -4,9 +4,10 @@
   :config
   (setq org-image-actual-width nil)
   (setq org-log-done t)
+  (setq org-directory "~/Dropbox/Notes")
   (setq org-babel-python-command "python3")
-  (define-key global-map "\C-c l" 'org-store-link)
-  (define-key global-map "\C-c a" 'org-agenda)
+  (define-key global-map "\C-cl" 'org-store-link)
+  (define-key global-map "\C-ca" 'org-agenda)
   (add-hook 'org-mode-hook
     (lambda () (setq show-trailing-whitespace nil)))
   (add-hook 'org-mode-hook 'flyspell-mode)

@@ -46,7 +46,7 @@
       "~/Dropbox/Notes/scratch.%s"
       (ivy-read
         "scratch: "
-        '("org.txt" "sql" "rest")))))
+        '("org" "sql" "rest")))))
 
 ;;; Package setup
 ;; Have to make sure it's loaded before we do anything with it.
@@ -279,6 +279,7 @@
 (setq-default tab-width 2)
 (setq css-indent-offset 2)
 (setq python-indent-offset 2)
+(setq py-indent-offset 2)
 (setq js2-indent-offset 2)
 (setq js2-indent-level 2)
 (setq js2-highlight-level 3)

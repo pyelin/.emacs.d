@@ -70,7 +70,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("o" hydra-rectangle/body (hydra-invoker-format 'ova "RECTANGLE"))
   ("u" counsel-yank-pop (hydra-invoker-format 'umbra "YANK"))
   ("h" yankpad-insert (hydra-invoker-format 'hyper "SNIPPET"))
-  ("t" ivy-switch-buffer (hydra-invoker-format 'tera "SWITCH"))
+  ("t" counsel-buffer-or-recentf (hydra-invoker-format 'tera "SWITCH"))
   ("n" list-buffers (hydra-invoker-format 'nora "IBUFFER"))
   ("q" nil nil))
 
@@ -81,7 +81,7 @@ Position the cursor at it's beginning, according to the current mode."
 "
 ?o? ?e?
 "
-  ("o" picnic (hydra-invoker-format 'ova "PICNIC"))
+  ("o" blanket (hydra-invoker-format 'ova "BLANKET"))
   ("e" pye/ivy-scratch (hydra-invoker-format 'exa "SCRATCH"))
   ("q" nil nil))
 

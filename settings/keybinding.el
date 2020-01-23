@@ -49,41 +49,42 @@ Position the cursor at it's beginning, according to the current mode."
                        :pre pye/before-invoke
                        :post pye/after-invoke)
 "
-?o? ?e? ?u?        ?h? ?t? ?n?
+?o? ?e? ?u?                ?h? ?t? ?n?
 "
-  ("u" swiper-isearch (hydra-invoker-format 'umbra "SWIPER") :exit 1)
-  ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY") :exit 1)
   ("o" dumb-jump-go (hydra-invoker-format 'ova "JUMP"))
+  ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY") :exit 1)
+  ("u" swiper-isearch (hydra-invoker-format 'umbra "SWIPER") :exit 1)
   ("h" counsel-rg (hydra-invoker-format 'hyper "RG") :exit 1)
   ("t" projectile-find-file (hydra-invoker-format 'tera "PROJECTILE"))
-  ("n" counsel-find-file (hydra-invoker-format 'nora "FILE" t))
-  ("q" nil nil))
+  ("n" counsel-find-file (hydra-invoker-format 'nora "FILE" t)))
 
 (defhydra hydra-exa (:hint none
                      :pre pye/before-invoke
                      :post pye/after-invoke
                      :exit 1)
 "
-?o? ?e? ?u?        ?h? ?t? ?n?
+?o? ?e? ?u?                ?h? ?t? ?n?
 "
-  ("e" er/expand-region (hydra-invoker-format 'exa "EXPAND"))
   ("o" hydra-rectangle/body (hydra-invoker-format 'ova "RECTANGLE"))
+  ("e" er/expand-region (hydra-invoker-format 'exa "EXPAND"))
   ("u" counsel-yank-pop (hydra-invoker-format 'umbra "YANK"))
   ("h" yankpad-insert (hydra-invoker-format 'hyper "SNIPPET"))
   ("t" counsel-buffer-or-recentf (hydra-invoker-format 'tera "SWITCH"))
-  ("n" list-buffers (hydra-invoker-format 'nora "IBUFFER"))
-  ("q" nil nil))
+  ("n" list-buffers (hydra-invoker-format 'nora "BUFFERS")))
 
 (defhydra hydra-ova (:hint none
                      :pre pye/before-invoke
                      :post pye/after-invoke
                      :exit 1)
 "
-?o? ?e?
+?o? ?e? ?u?
 "
   ("o" blanket (hydra-invoker-format 'ova "BLANKET"))
   ("e" pye/ivy-scratch (hydra-invoker-format 'exa "SCRATCH"))
-  ("q" nil nil))
+  ("u" kill-this-buffer (hydra-invoker-format 'umbra "CLOSE"))
+  ("h" nil)
+  ("t" nil)
+  ("n" nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
                            :color pink

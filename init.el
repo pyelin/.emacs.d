@@ -48,6 +48,18 @@
         "scratch: "
         '("org" "sql" "rest")))))
 
+(defun pye/open-current-directory-in-finder ()
+  (interactive)
+  (shell-command (format "open -R %s" (file-name-directory (buffer-file-name)))))
+
+(defun pye/load-file-from-url (url)
+  (condition-case e
+    (save-window-excursion
+      (eval-buffer
+        (browse-url-emacs url)))
+    (error (message "Could not load remote library: %s" (cadr e)))))
+
+
 ;;; Package setup
 ;; Have to make sure it's loaded before we do anything with it.
 (require 'package)
@@ -119,6 +131,9 @@
 ;; use emacs pinenttry for EasyPG
 (setq epa-pinentry-mode 'loopback)
 
+;;; disable auto revert
+(global-auto-revert-mode nil)
+
 ;;;; dired
 (defun pye/dired-get-size ()
   (interactive)
@@ -158,6 +173,9 @@
     (define-key dired-mode-map (kbd "?") 'pye/dired-get-size)))
 
 (setq uniquify-buffer-name-style 'forward)
+
+;; tramp
+(setq tramp-default-method "ssh")
 
 (use-package ivy
   :config
@@ -254,7 +272,7 @@
 (use-package yasnippet
   :defer t
   :config
-  (add-hook 'prog-mode-hook #'yas-minor-mode))
+  (yas-minor-mode-on))
 
 ;;;; settings
 (setq settings-dir (relative-path "settings"))

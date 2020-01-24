@@ -22,19 +22,36 @@
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (use-package org-super-agenda
-  :ensure t
   :config
   (setq org-super-agenda-groups
-    '((:name "Today"
-				:time-grid t
-				:scheduled today)
-       (:name "Due today"
-         :deadline today)
-       (:name "Important"
-         :priority "A")
-       (:name "Overdue"
-         :deadline past)
-       (:name "Due soon"
-         :deadline future)
-       (:name "Waiting"
-         :todo "WAIT"))))
+       '((:log t)  ; Automatically named "Log"
+         (:name "Schedule"
+                :time-grid t)
+         (:name "Today"
+                :scheduled today)
+         (:habit t)
+         (:name "Due today"
+                :deadline today)
+         (:name "Overdue"
+           :deadline past
+           :todo ("TODO"))
+         (:name "Due soon"
+                :deadline future)
+         (:name "Unimportant"
+                :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH")
+                :order 100)
+         (:name "Waiting..."
+                :todo "WAITING"
+                :order 98)
+         (:name "Scheduled earlier"
+                :scheduled past)))
+  (org-super-agenda-mode))
+
+(use-package org-gcal
+  :config
+  (setq
+    org-gcal-client-id pye-env/picnic-calendar-client-id
+    org-gcal-client-secret pye-env/picnic-calendar-client-secret
+    org-gcal-file-alist '(("pye@picnichealth.com" .  "~/Dropbox/Notes/picnic_calendar.org")))
+  (add-hook 'org-agenda-mode-hook 'org-gcal-fetch)
+  (add-hook 'org-agenda-finalize-hook 'org-gcal-fetch))

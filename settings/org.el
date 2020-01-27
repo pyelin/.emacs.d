@@ -53,5 +53,8 @@
     org-gcal-client-id pye-env/picnic-calendar-client-id
     org-gcal-client-secret pye-env/picnic-calendar-client-secret
     org-gcal-file-alist '(("pye@picnichealth.com" .  "~/Dropbox/Notes/picnic_calendar.org")))
-  (add-hook 'org-agenda-mode-hook 'org-gcal-fetch)
-  (add-hook 'org-agenda-finalize-hook 'org-gcal-fetch))
+  (cond
+    (pye-env/picnic-calendar-autofetch
+      (progn
+        (add-hook 'org-agenda-mode-hook 'org-gcal-fetch)
+        (add-hook 'org-agenda-finalize-hook 'org-gcal-fetch)))))

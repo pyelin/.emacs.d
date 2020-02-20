@@ -4,9 +4,14 @@
   :config
   (setq org-image-actual-width nil)
   (setq org-log-done t)
+  (setq org-todo-keywords '((sequence "TODO" "REVIEW" "ACCEPTED" "DONE")))
+  (setq org-todo-keyword-faces
+    '(("REVIEW" . (:foreground "hot pink"))
+      ("ACCEPTED" . (:foreground "cyan"))))
   (setq org-directory "~/Dropbox/Notes")
   (setq org-agenda-files '("~/Dropbox/Notes/"))
   (setq org-babel-python-command "python3")
+  (add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
   (define-key global-map "\C-cl" 'org-store-link)
   (define-key global-map "\C-ca" 'org-agenda)
   (add-hook 'org-mode-hook

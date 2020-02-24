@@ -290,9 +290,8 @@
   (setq yankpad-file "~/Dropbox/Notes/yankpad.org"))
 
 (use-package yasnippet
-  :defer t
-  :config
-  (yas-minor-mode-on))
+  :defer t)
+(add-hook 'prog-mode-hook #'yas-minor-mode)
 
 ;;;; settings
 (setq settings-dir (relative-path "settings"))

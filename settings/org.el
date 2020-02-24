@@ -10,6 +10,7 @@
       ("ACCEPTED" . (:foreground "cyan"))))
   (setq org-directory "~/Dropbox/Notes")
   (setq org-agenda-files '("~/Dropbox/Notes/"))
+  (setq org-confirm-babel-evaluate nil)
   (setq org-babel-python-command "python3")
   (add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
   (define-key global-map "\C-cl" 'org-store-link)
@@ -18,10 +19,11 @@
   (add-hook 'org-mode-hook
     (lambda () (setq show-trailing-whitespace nil)))
   (add-hook 'org-mode-hook 'flyspell-mode)
+  (add-hook 'org-mode-hook 'yas-minor-mode)
   (org-babel-do-load-languages 'org-babel-load-languages '((js . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((sql . t)))
-  (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t))))
+  (org-babel-do-load-languages 'org-babel-load-languages '((shell . t))))
 
 (use-package org-bullets
   :config

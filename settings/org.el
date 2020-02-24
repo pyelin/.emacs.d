@@ -14,6 +14,7 @@
   (add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
   (define-key global-map "\C-cl" 'org-store-link)
   (define-key global-map "\C-ca" 'org-agenda)
+  (define-key org-mode-map (kbd "M-e") nil) ;; reserved for keybinding
   (add-hook 'org-mode-hook
     (lambda () (setq show-trailing-whitespace nil)))
   (add-hook 'org-mode-hook 'flyspell-mode)
@@ -63,3 +64,9 @@
       (progn
         (add-hook 'org-agenda-mode-hook 'org-gcal-fetch)
         (add-hook 'org-agenda-finalize-hook 'org-gcal-fetch)))))
+
+(use-package ob-restclient
+  :config
+  (org-babel-do-load-languages
+    'org-babel-load-languages
+    '((restclient . t))))

@@ -1,3 +1,5 @@
+(use-package ob-restclient)
+
 (use-package org
   :mode (("\\.org\\'" . org-mode)
          ("\\.org.txt\\'" . org-mode))
@@ -23,7 +25,8 @@
   (org-babel-do-load-languages 'org-babel-load-languages '((js . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((sql . t)))
-  (org-babel-do-load-languages 'org-babel-load-languages '((shell . t))))
+  (org-babel-do-load-languages 'org-babel-load-languages '((shell . t)))
+  (org-babel-do-load-languages 'org-babel-load-languages '((restclient . t))))
 
 (use-package org-bullets
   :config
@@ -55,20 +58,13 @@
                 :scheduled past)))
   (org-super-agenda-mode))
 
-(use-package org-gcal
-  :config
-  (setq
-    org-gcal-client-id pye-env/picnic-calendar-client-id
-    org-gcal-client-secret pye-env/picnic-calendar-client-secret
-    org-gcal-file-alist '(("pye@picnichealth.com" .  "~/Dropbox/Notes/picnic_calendar.org")))
-  (cond
-    (pye-env/picnic-calendar-autofetch
-      (progn
-        (add-hook 'org-agenda-mode-hook 'org-gcal-fetch)
-        (add-hook 'org-agenda-finalize-hook 'org-gcal-fetch)))))
-
-(use-package ob-restclient
-  :config
-  (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((restclient . t))))
+(use-package org-gcal)
+(run-with-timer
+  30
+  3600 ;; 1 hour in seconds
+  (lambda ()
+    (setq
+      org-gcal-client-id pye-env/picnic-calendar-client-id
+      org-gcal-client-secret pye-env/picnic-calendar-client-secret
+      org-gcal-file-alist '(("pye@picnichealth.com" .  "~/Dropbox/Notes/picnic_calendar.org")))
+    (org-gcal-fetch)))

@@ -59,12 +59,3 @@
   (org-super-agenda-mode))
 
 (use-package org-gcal)
-(run-with-timer
-  30
-  3600 ;; 1 hour in seconds
-  (lambda ()
-    (setq
-      org-gcal-client-id pye-env/picnic-calendar-client-id
-      org-gcal-client-secret pye-env/picnic-calendar-client-secret
-      org-gcal-file-alist '(("pye@picnichealth.com" .  "~/Dropbox/Notes/picnic_calendar.org")))
-    (org-gcal-fetch)))

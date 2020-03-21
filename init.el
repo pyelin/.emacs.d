@@ -3,6 +3,9 @@
 
 ;;; Code:
 
+;; Make startup faster by reducing the frequency of garbage
+;; collection.  The default is 800 kilobytes. Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
 
 ;;; Helpers
 (defun osx-p ()
@@ -330,3 +333,6 @@
 (setq web-mode-code-indent-level 2)
 (setq web-mode-markup-indent-offset 2)
 (setq lisp-indent-offset 2)
+
+;; Make gc pauses faster by decreasing the threshold.
+(setq gc-cons-threshold (* 2 1000 1000))

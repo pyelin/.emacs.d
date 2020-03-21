@@ -2,7 +2,8 @@
 
 (use-package org
   :mode (("\\.org\\'" . org-mode)
-         ("\\.org.txt\\'" . org-mode))
+          ("\\.org.txt\\'" . org-mode))
+  :defer t
   :config
   (setq org-image-actual-width nil)
   (setq org-log-done t)
@@ -29,10 +30,12 @@
   (org-babel-do-load-languages 'org-babel-load-languages '((restclient . t))))
 
 (use-package org-bullets
+  :defer t
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (use-package org-super-agenda
+  :defer t
   :config
   (setq org-super-agenda-groups
        '((:log t)  ; Automatically named "Log"
@@ -58,4 +61,5 @@
                 :scheduled past)))
   (org-super-agenda-mode))
 
-(use-package org-gcal)
+(use-package org-gcal
+  :defer t)

@@ -309,6 +309,7 @@
        "python"
        "markdown"
        "org"
+       "lsp"
        )))
 
 (eldoc-mode 0)

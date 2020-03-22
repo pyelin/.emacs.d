@@ -122,27 +122,6 @@ _h_   _n_   _o_k        _y_ank
   ("u" (upcase-region (region-beginning) (region-end)) "UPPER")
   ("l" (downcase-region (region-beginning) (region-end)) "lower"))
 
-(setq counsel-projectile-find-file-action
-  '(1
-     ("o" counsel-projectile-find-file-action
-       "current window")
-     ("e" counsel-projectile-action-other-window
-       "other window")
-     ("u" (lambda (current-file) (interactive) (counsel-find-file nil))
-       "find file manually")))
-
-(defhydra hydra-transpose (:color red)
-  "Transpose"
-  ("c" transpose-chars "characters")
-  ("w" transpose-words "words")
-  ("o" org-transpose-words "Org mode words")
-  ("l" transpose-lines "lines")
-  ("s" transpose-sentences "sentences")
-  ("e" org-transpose-elements "Org mode elements")
-  ("p" transpose-paragraphs "paragraphs")
-  ("t" org-table-transpose-table-at-point "Org mode table")
-  ("q" nil "cancel" :color blue))
-
 (global-set-key (kbd "<f9>") 'pye/kill-other-buffers)
 (global-set-key (kbd "<f7>") 'yankpad-capture-snippet)
 (global-set-key (kbd "<f8>") 'yankpad-reload)
@@ -152,7 +131,6 @@ _h_   _n_   _o_k        _y_ank
 (global-set-key (kbd "C-M-\\") 'indent-relative)
 (global-set-key (kbd "M-<up>") 'move-region-up)
 (global-set-key (kbd "M-<down>") 'move-region-down)
-
 
 (use-package ryo-modal
   :commands ryo-modal-mode

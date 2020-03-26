@@ -51,7 +51,7 @@ Position the cursor at it's beginning, according to the current mode."
 "
 ?o? ?e? ?u?                ?h? ?t? ?n?
 "
-  ("o" dumb-jump-go (hydra-invoker-format 'ova "JUMP"))
+  ("o" hydra-lsp/body (hydra-invoker-format 'ova "JUMP") :exit 1)
   ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY") :exit 1)
   ("u" swiper-isearch (hydra-invoker-format 'umbra "SWIPER") :exit 1)
   ("h" counsel-rg (hydra-invoker-format 'hyper "RG") :exit 1)
@@ -111,6 +111,16 @@ _h_   _n_   _o_k        _y_ank
   ("s" string-rectangle nil)
   ("p" kill-rectangle nil)
   ("o" nil nil))
+
+(defhydra hydra-lsp (:hint none
+                     :exit 1)
+"
+?o? ?e? ?u? [_r_] RENAME
+"
+  ("o" lsp-ui-peek-find-definitions (hydra-invoker-format 'ova "DEF"))
+  ("e" lsp-ui-peek-find-references (hydra-invoker-format 'exa "REF"))
+  ("u" lsp-ui-peek-find-implementation (hydra-invoker-format 'umbra "IMPL"))
+  ("r" lsp-rename "RENAME"))
 
 
 (defhydra hydra-string-inflection (global-map "C-c u")

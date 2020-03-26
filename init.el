@@ -245,8 +245,6 @@
   (setq company-show-numbers t)
   (setq company-dabbrev-downcase nil))
 
-(use-package dumb-jump)
-
 (use-package exec-path-from-shell
   ;; https://github.com/purcell/exe...
   ;; only use exec-path-from-shell on OSX

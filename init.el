@@ -336,4 +336,5 @@
 (setq lisp-indent-offset 2)
 
 ;; Make gc pauses faster by decreasing the threshold.
-(setq gc-cons-threshold (* 2 1000 1000))
+(setq gc-cons-threshold (* 100 1000 1000))
+(setq read-process-output-max (* 1024 1024))

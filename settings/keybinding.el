@@ -131,21 +131,3 @@ _h_   _n_   _o_k        _y_ank
 (global-set-key (kbd "C-M-\\") 'indent-relative)
 (global-set-key (kbd "M-<up>") 'move-region-up)
 (global-set-key (kbd "M-<down>") 'move-region-down)
-
-(use-package ryo-modal
-  :commands ryo-modal-mode
-  :bind ("M-SPC" . ryo-modal-mode)
-  :config
-  (ryo-modal-keys
-    ("r" delete-char)
-    ("g" backward-delete-char-untabify)
-    ;; cursor movement
-    ("h" backward-char)
-    ("t" next-line)
-    ("c" previous-line)
-    ("n" forward-char)
-    ;; line
-    ("d" beginning-of-line)
-    ("s" end-of-line)
-    ;; marking
-    ("m" set-mark-command)))

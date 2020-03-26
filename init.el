@@ -69,7 +69,7 @@
       "~/Dropbox/Notes/scratch.%s"
       (ivy-read
         "scratch: "
-        '("org" "sql" "rest")))))
+        '("org" "sql.org" "rest")))))
 
 (defun pye/open-current-directory-in-finder ()
   (interactive)

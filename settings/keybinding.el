@@ -51,7 +51,7 @@ Position the cursor at it's beginning, according to the current mode."
 "
 ?o? ?e? ?u?                ?h? ?t? ?n?
 "
-  ("o" hydra-lsp/body (hydra-invoker-format 'ova "LSP") :exit 1)
+  ("o" hydra-refactor/body (hydra-invoker-format 'ova "LSP") :exit 1)
   ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY") :exit 1)
   ("u" swiper-isearch (hydra-invoker-format 'umbra "SWIPER") :exit 1)
   ("h" counsel-rg (hydra-invoker-format 'hyper "RG") :exit 1)
@@ -112,12 +112,12 @@ _h_   _n_   _o_k        _y_ank
   ("p" kill-rectangle nil)
   ("o" nil nil))
 
-(defhydra hydra-lsp (:hint none
+(defhydra hydra-refactor (:hint none
                      :exit 1)
 "
 ?o? ?e? ?u? [_i_] IMENU [_r_] RENAME
 "
-  ("o" lsp-ui-peek-find-definitions (hydra-invoker-format 'ova "DEF"))
+  ("o" dumb-jump-go (hydra-invoker-format 'ova "DEF"))
   ("e" lsp-ui-flycheck-list (hydra-invoker-format 'exa "ERROR"))
   ("u" lsp-ui-peek-find-references (hydra-invoker-format 'umbra "REF"))
   ("i" lsp-ui-imenu "IMENU")

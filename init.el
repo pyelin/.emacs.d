@@ -294,6 +294,11 @@
   :defer t)
 (add-hook 'prog-mode-hook #'yas-minor-mode)
 
+(use-package dumb-jump
+  :init
+  (setq dumb-jump-selector 'ivy)
+  (setq dumb-jump-force-searcher 'git-grep))
+
 ;;;; settings
 (setq settings-dir (relative-path "settings"))
 (mapc 'load

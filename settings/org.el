@@ -1,8 +1,17 @@
 (use-package ob-restclient)
 
+(defun pye/org-babel-to-buffer ()
+  "A function to efficiently feed babel code block result to a separate buffer"
+  (interactive)
+  (org-open-at-point)
+  (org-babel-remove-result)
+)
+
 (use-package org
   :mode (("\\.org\\'" . org-mode)
           ("\\.org.txt\\'" . org-mode))
+  :bind (:map org-mode-map
+          ("C-`" . pye/org-babel-to-buffer))
   :defer t
   :config
   (setq org-image-actual-width nil)
@@ -76,7 +85,6 @@ prepended to the element after the #+HEADER: tag."
       (self-insert-command 1))))
 
 (use-package org-bullets
-  :defer t
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 

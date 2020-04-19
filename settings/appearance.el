@@ -16,7 +16,9 @@
     '(ediff-current-diff-C ((t (:foreground "White" :background "green"))))))
 
 ;; ;; default font
-(setq default-frame-alist '((font . "DejaVu Sans Mono-12")))
+(set-frame-font "DejaVu Sans Mono-12")
+(setq prettify-symbols-unprettify-at-point t)
+(global-prettify-symbols-mode t)
 
 (use-package highlight-indent-guides
   :defer t

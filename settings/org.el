@@ -4,8 +4,9 @@
   "A function to efficiently feed babel code block result to a separate buffer"
   (interactive)
   (org-open-at-point)
-  (org-babel-remove-result)
-)
+  (org-babel-remove-result))
+
+(use-package org-bullets)
 
 (use-package org
   :mode (("\\.org\\'" . org-mode)
@@ -21,17 +22,22 @@
     '(("REVIEW" . (:foreground "hot pink"))
       ("ACCEPTED" . (:foreground "cyan"))))
   (setq org-directory "~/Dropbox/Notes")
-  (setq org-agenda-files '("~/Dropbox/Notes/"))
+  (setq org-agenda-files (list org-directory))
   (setq org-confirm-babel-evaluate nil)
   (setq org-babel-python-command "python3")
+  (setq org-startup-truncated nil)
   ;; (add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
   (define-key global-map "\C-cl" 'org-store-link)
   (define-key global-map "\C-ca" 'org-agenda)
   (define-key org-mode-map (kbd "M-e") nil) ;; reserved for keybinding
+  (define-key org-mode-map (kbd "<f8>") 'org-tree-slide-mode)
   (add-hook 'org-mode-hook
     (lambda () (setq show-trailing-whitespace nil)))
   (add-hook 'org-mode-hook 'flyspell-mode)
   (add-hook 'org-mode-hook 'yas-minor-mode)
+  (add-hook 'org-mode-hook 'adaptive-wrap-prefix-mode)
+  (add-hook 'org-mode-hook 'org-indent-mode)
+  (add-hook 'org-mode-hook 'org-bullets-mode)
   (org-babel-do-load-languages 'org-babel-load-languages '((js . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((sql . t)))
@@ -84,10 +90,6 @@ prepended to the element after the #+HEADER: tag."
       (hydra-org-template/body)
       (self-insert-command 1))))
 
-(use-package org-bullets
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
 (use-package org-super-agenda
   :defer t
   :config
@@ -117,3 +119,16 @@ prepended to the element after the #+HEADER: tag."
 
 (use-package org-gcal
   :defer t)
+
+(use-package org-tree-slide
+  :defer t
+  :config
+  (setq org-tree-slide-skip-outline-level 3)
+  (setq org-tree-slide-slide-in-effect nil)
+  (setq org-tree-slide-activate-message "Presentation started.")
+  (add-hook 'org-tree-slide-mode-hook 'moom-toggle-frame-maximized)
+  (add-hook 'org-tree-slide-mode-quit-hook 'moom-toggle-frame-maximized)
+  :bind (:map org-tree-slide-mode-map
+          (("<left>" . org-tree-slide-move-previous-tree)
+            ("<right>" . org-tree-slide-move-next-tree)
+            ("C-c f" . moom-toggle-frame-maximized))))

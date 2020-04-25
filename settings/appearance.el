@@ -16,7 +16,10 @@
     '(ediff-current-diff-C ((t (:foreground "White" :background "green"))))))
 
 ;; ;; default font
-(set-frame-font "DejaVu Sans Mono-12")
+(cond
+  ((window-p) (set-frame-font "Iosevka SS12 Extended-10"))
+  (t (set-frame-font "Iosevka SS12 Extended-12")))
+
 (setq prettify-symbols-unprettify-at-point t)
 (global-prettify-symbols-mode t)
 

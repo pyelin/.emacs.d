@@ -16,6 +16,10 @@
   "Check if a system is running Linux."
   (eq system-type 'gnu/linux))
 
+(defun window-p ()
+  "Check if a system is running Windows."
+  (eq system-type 'windows-nt))
+
 (defun relative-path (path)
   "Return the full path of a file (PATH) in the user's Emacs directory."
   (concat (file-name-directory (or load-file-name buffer-file-name)) path))
@@ -226,8 +230,9 @@
   :config
   (global-set-key (kbd "M-x") 'counsel-M-x))
 
+(use-package projectile)
+
 (use-package counsel-projectile
-  :ensure projectile
   :init
   (setq projectile-completion-system 'ivy))
 

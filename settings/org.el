@@ -1,4 +1,10 @@
-(use-package ob-restclient)
+(use-package ob-restclient
+  :mode (("\\.org\\'" . org-mode)
+          ("\\.org.txt\\'" . org-mode)))
+
+(use-package org-bullets
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (defun pye/org-babel-to-buffer ()
   "A function to efficiently feed babel code block result to a separate buffer"
@@ -41,6 +47,7 @@
   (org-babel-do-load-languages 'org-babel-load-languages '((js . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((sql . t)))
+  (org-babel-do-load-languages 'org-babel-load-languages '((sqlite . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((shell . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((restclient . t))))
 

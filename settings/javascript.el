@@ -21,26 +21,6 @@
 (use-package json-mode
   :mode ("\\.json\\'" . json-mode))
 
-
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1)
-  ;; company is an optional dependency. You have to
-  ;; install it separately via package-install
-  ;; `M-x package-install [ret] company`
-  (company-mode +1))
-
-(use-package company-quickhelp
-  :ensure t
-  :init
-  (company-quickhelp-mode 1)
-  (use-package pos-tip
-    :ensure t))
-
 (use-package web-mode
   :ensure t
   :mode (("\\.html?\\'" . web-mode)
@@ -68,18 +48,36 @@
 
 (use-package typescript-mode
   :ensure t
+  :mode (("\\.ts\\'" . typescript-mode)
+          ("\\.tsx\\'" . typescript-mode))
   :config
   (setq typescript-indent-level 2)
   (add-hook 'typescript-mode-hook 'flycheck-mode)
   (add-hook 'typescript-mode #'subword-mode))
 
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1))
+
 (use-package tide
-  :init
   :ensure t
+  :mode (("\\.ts\\'" . typescript-mode)
+          ("\\.tsx\\'" . typescript-mode)
+          ("\\.js\\'" . typescript-mode)
+          ("\\.jsx\\'" . typescript-mode))
   :after (typescript-mode company flycheck)
   :hook ((typescript-mode . tide-setup)
          (typescript-mode . tide-hl-identifier-mode)))
 
 (use-package css-mode
+  :mode (("\\.css\\'" . css-mode))
   :config
-(setq css-indent-offset 2))
+  (setq css-indent-offset 2))

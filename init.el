@@ -289,15 +289,13 @@
   (lambda ()
     (setq show-trailing-whitespace nil)))
 
-(use-package yankpad
-  :ensure t
-  :defer t
-  :init
-  (setq yankpad-file "~/Dropbox/Notes/yankpad.org"))
-
 (use-package yasnippet
-  :defer t)
-(add-hook 'prog-mode-hook #'yas-minor-mode)
+  :config
+  (yas-global-mode 1)
+  (add-hook 'yas-minor-mode-hook
+    (lambda () (yas-activate-extra-mode 'fundamental-mode))))
+
+(use-package ivy-yasnippet)
 
 (use-package dumb-jump
   :init

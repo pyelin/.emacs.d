@@ -26,7 +26,9 @@
   (setq org-todo-keywords '((sequence "TODO" "REVIEW" "ACCEPTED" "DONE")))
   (setq org-todo-keyword-faces
     '(("REVIEW" . (:foreground "hot pink"))
-      ("ACCEPTED" . (:foreground "cyan"))))
+       ("ACCEPTED" . (:foreground "cyan"))))
+  (setq org-tag-faces
+   '(("paused"  . (:background "#C00000"))))
   (setq org-directory "~/Dropbox/Notes")
   (setq org-agenda-files (list org-directory))
   (setq org-confirm-babel-evaluate nil)
@@ -41,8 +43,6 @@
     (lambda () (setq show-trailing-whitespace nil)))
   (add-hook 'org-mode-hook 'flyspell-mode)
   (add-hook 'org-mode-hook 'yas-minor-mode)
-  (add-hook 'org-mode-hook 'adaptive-wrap-prefix-mode)
-  (add-hook 'org-mode-hook 'org-indent-mode)
   (add-hook 'org-mode-hook 'org-bullets-mode)
   (org-babel-do-load-languages 'org-babel-load-languages '((js . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
@@ -134,6 +134,7 @@ prepended to the element after the #+HEADER: tag."
   (setq org-tree-slide-slide-in-effect nil)
   (setq org-tree-slide-activate-message "Presentation started.")
   (add-hook 'org-tree-slide-mode-hook 'moom-toggle-frame-maximized)
+  (add-hook 'org-tree-slide-mode-hook 'adaptive-wrap-prefix-mode)
   (add-hook 'org-tree-slide-mode-quit-hook 'moom-toggle-frame-maximized)
   :bind (:map org-tree-slide-mode-map
           (("<left>" . org-tree-slide-move-previous-tree)

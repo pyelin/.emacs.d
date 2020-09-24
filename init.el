@@ -70,7 +70,7 @@
   (interactive)
   (find-file
     (format
-      "~/Dropbox/Notes/scratch.%s"
+      (concat pye-env/org-directory "/scratch.%s")
       (ivy-read
         "scratch: "
         '("org" "sql.org" "rest")))))

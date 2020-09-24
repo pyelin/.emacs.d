@@ -8,8 +8,6 @@
   ;; ;; international orange cursor and selection background color
   (setq-default cursor-type '(bar . 2))
   (global-hl-line-mode t)
-  (set-face-background hl-line-face "gray25")
-  (set-cursor-color "white")
   (custom-set-faces
     '(ediff-current-diff-B ((t (:foreground "White" :background "green"))))
     '(ediff-current-diff-C ((t (:foreground "White" :background "green"))))))

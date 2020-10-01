@@ -83,47 +83,6 @@
 ;; disable scrollbar
 (scroll-bar-mode -1)
 
-;; mode line
-(setq-default
- mode-line-format
- '(; Position, including warning for 80 columns
-   (:propertize "%4l:" face mode-line-position-face)
-   (:eval (propertize "%3c" 'face
-                      (if (>= (current-column) 80)
-                          'mode-line-80col-face
-                        'mode-line-position-face)))
-   " "
-   ; emacsclient [default -- keep?]
-   mode-line-client
-   " "
-   ; read-only or modified status
-   (:eval
-    (cond (buffer-read-only
-           (propertize " RO " 'face 'mode-line-read-only-face))
-          ((buffer-modified-p)
-           (propertize " * " 'face 'mode-line-modified-face))
-          ))
-   " "
-   ; directory and buffer/file name
-   (:propertize "%b" face mode-line-filename-face)
-   ; narrow [default -- keep?]
-   " %n"
-   ; mode indicators: vc, recursive edit, major mode, minor modes, process, global
-   (vc-mode vc-mode)
-   " %["
-   (:propertize mode-name
-                face mode-line-mode-face)
-   "%] "
-   (:eval (propertize (format-mode-line minor-mode-alist)
-                      'face 'mode-line-minor-mode-face))
-   (:propertize mode-line-process
-                face mode-line-process-face)
-   (global-mode-string global-mode-string)
-   " %p "
-   (:eval 'mode-line-misc-info)
-   )
-)
-
 ;; Extra mode line faces
 (make-face 'mode-line-position-face)
 (make-face 'mode-line-read-only-face)
@@ -135,33 +94,62 @@
 (make-face 'mode-line-filename-face)
 
 (set-face-attribute 'mode-line nil
-                    :foreground "white" :background "black"
-                    :height 90
-                    :box nil)
+  :foreground "white" :background "black"
+  :height 100
+  :box nil)
 (set-face-attribute 'mode-line-inactive nil
-                    :inherit 'mode-line
-                    :foreground "gray40" :background "gray20"
-                    :box nil)
+  :inherit 'mode-line
+  :foreground "gray40" :background "gray20"
+  :box nil)
 (set-face-attribute 'mode-line-position-face nil
-                    :inherit 'mode-line-face)
+  :inherit 'mode-line-face)
 (set-face-attribute 'mode-line-read-only-face nil
-                    :inherit 'mode-line-face
-                    :foreground "#4271ae")
+  :inherit 'mode-line-face
+  :foreground "#4271ae")
 (set-face-attribute 'mode-line-modified-face nil
-                    :inherit 'mode-line-face
-                    :foreground "#c82829")
+  :inherit 'mode-line-face
+  :foreground "#c82829")
 (set-face-attribute 'mode-line-mode-face nil
-                    :inherit 'mode-line-face
-                    :foreground "gray80")
+  :inherit 'mode-line-face
+  :foreground "gray80")
 (set-face-attribute 'mode-line-minor-mode-face nil
-                    :inherit 'mode-line-mode-face
-                    :foreground "gray40")
+  :inherit 'mode-line-mode-face
+  :foreground "gray40")
 (set-face-attribute 'mode-line-process-face nil
-                    :inherit 'mode-line-face
-                    :foreground "#718c00")
+  :inherit 'mode-line-face
+  :foreground "#718c00")
 (set-face-attribute 'mode-line-80col-face nil
-                    :inherit 'mode-line-position-face
+  :inherit 'mode-line-position-face
   :foreground "black" :background "#eab700")
+
+;; mode line
+(setq-default
+  mode-line-format
+  '(
+     ; Position, including warning for 80 columns
+     (:eval (format-mode-line "%4l:" 'mode-line-position-face))
+     (:eval (format-mode-line "%2c"
+              (if (>= (current-column) 80) 'mode-line-80col-face 'mode-line-position-face)))
+     " "
+     ; read-only or modified status
+     (:eval
+       (cond
+         (buffer-read-only (format-mode-line "RO" 'mode-line-read-only-face))
+         ((buffer-modified-p) (format-mode-line "*" 'mode-line-modified-face))
+       )
+     )
+     " "
+     (:eval (format-mode-line "%b" 'mode-line-filename-face))
+     " "
+     ; mode indicators: vc, recursive edit, major mode, minor modes, process, global
+     (:eval (format-mode-line vc-mode))
+     (:eval (format-mode-line (format " [%s]" mode-name) 'mode-line-mode-face))
+     (:eval (format-mode-line minor-mode-alist 'mode-line-minor-mode-face))
+     (:eval (format-mode-line mode-line-process 'mode-line-process-face))
+     (:eval (format-mode-line global-mode-string))
+     " "
+     (:eval (format-mode-line "%p" 'mode-line-filename-face))
+)
 
 ;; subtly flash the modeline for alert
 (setq ring-bell-function

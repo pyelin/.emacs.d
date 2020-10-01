@@ -9,6 +9,7 @@
   (setq-default cursor-type '(bar . 2))
   (global-hl-line-mode t)
   (custom-set-faces
+    '(trailing-whitespace ((t (:background "slategray3"))))
     '(ediff-current-diff-B ((t (:foreground "White" :background "green"))))
     '(ediff-current-diff-C ((t (:foreground "White" :background "green"))))))
 
@@ -64,7 +65,9 @@
 (setq inhibit-startup-message t)
 
 ;; Make show-trailing-whitespace default  ;;;;
+
 (setq-default show-trailing-whitespace t)
+
 (add-hook 'eshell-mode-hook
   (lambda () (setq show-trailing-whitespace nil)))
 

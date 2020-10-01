@@ -40,7 +40,12 @@
   (define-key org-mode-map (kbd "M-e") nil) ;; reserved for keybinding
   (define-key org-mode-map (kbd "<f8>") 'org-tree-slide-mode)
   (add-hook 'org-mode-hook
-    (lambda () (setq show-trailing-whitespace nil)))
+    (lambda ()
+      (setq show-trailing-whitespace nil)
+      ;; make the lines in the buffer wrap around the edges of the screen.
+      ;; to press C-c q  or fill-paragraph ever again!
+      (visual-line-mode)
+      (adaptive-wrap-prefix-mode)))
   (add-hook 'org-mode-hook 'flyspell-mode)
   (add-hook 'org-mode-hook 'yas-minor-mode)
   (add-hook 'org-mode-hook 'org-bullets-mode)

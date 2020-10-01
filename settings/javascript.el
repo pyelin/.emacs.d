@@ -21,39 +21,6 @@
 (use-package json-mode
   :mode ("\\.json\\'" . json-mode))
 
-(use-package web-mode
-  :ensure t
-  :mode (("\\.html?\\'" . web-mode)
-         ("\\.tsx\\'" . web-mode)
-         ("\\.jsx\\'" . web-mode))
-  :config
-  (setq web-mode-markup-indent-offset 2
-        web-mode-css-indent-offset 2
-        web-mode-code-indent-offset 2
-        web-mode-block-padding 2
-        web-mode-comment-style 2
-
-        web-mode-enable-css-colorization t
-        web-mode-enable-auto-pairing t
-        web-mode-enable-comment-keywords t
-        web-mode-enable-current-element-highlight t
-	web-mode-enable-auto-indentation nil
-        )
-  (add-hook 'web-mode-hook
-            (lambda ()
-              (when (string-equal "tsx" (file-name-extension buffer-file-name))
-		(setup-tide-mode))))
-  ;; enable typescript-tslint checker
-  (flycheck-add-mode 'typescript-tslint 'web-mode))
-
-(use-package typescript-mode
-  :ensure t
-  :mode (("\\.ts\\'" . typescript-mode))
-  :config
-  (setq typescript-indent-level 2)
-  (add-hook 'typescript-mode-hook 'flycheck-mode)
-  (add-hook 'typescript-mode #'subword-mode))
-
 (defun setup-tide-mode ()
   (interactive)
   (tide-setup)
@@ -66,12 +33,41 @@
   ;; `M-x package-install [ret] company`
   (company-mode +1))
 
-(use-package tide
+(use-package web-mode
   :ensure t
-  :mode (("\\.ts\\'" . typescript-mode)
-          ("\\.tsx\\'" . typescript-mode)
-          ("\\.js\\'" . typescript-mode)
-          ("\\.jsx\\'" . typescript-mode))
+  :mode (("\\.html?\\'" . web-mode)
+         ("\\.tsx\\'" . web-mode)
+         ("\\.jsx\\'" . web-mode))
+  :config
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-block-padding 2)
+  (setq web-mode-comment-style 2)
+
+  (setq web-mode-enable-css-colorization t)
+  (setq web-mode-enable-auto-pairing t)
+  (setq web-mode-enable-comment-keywords t)
+  (setq web-mode-enable-current-element-highlight t)
+	(setq web-mode-enable-auto-indentation nil)
+
+  (add-hook 'web-mode-hook
+    (lambda ()
+      (when (string-equal "tsx" (file-name-extension buffer-file-name))
+		    (setup-tide-mode))))
+  ;; enable typescript-tslint checker
+  (flycheck-add-mode 'typescript-tslint 'web-mode))
+
+(use-package typescript-mode
+  :ensure t
+  :config
+  (setq typescript-indent-level 2)
+  (add-hook 'typescript-mode-hook 'flycheck-mode)
+  (add-hook 'typescript-mode #'subword-mode))
+
+(use-package tide
+  :init
+  :ensure t
   :after (typescript-mode company flycheck)
   :hook ((typescript-mode . tide-setup)
          (typescript-mode . tide-hl-identifier-mode)))

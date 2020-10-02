@@ -149,6 +149,7 @@
      (:eval (format-mode-line global-mode-string))
      " "
      (:eval (format-mode-line "%p" 'mode-line-filename-face))
+   )
 )
 
 ;; subtly flash the modeline for alert

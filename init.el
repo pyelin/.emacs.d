@@ -70,7 +70,7 @@
   (interactive)
   (find-file
     (format
-      (concat pye-env/org-directory "/scratch.%s")
+      (concat blanket/org-directory "/%s")
       (ivy-read
         "scratch: "
         '("org" "sql.org" "rest")))))
@@ -286,8 +286,10 @@
   :mode ("\\.rest\\'" . restclient-mode))
 
 (add-hook 'term-mode-hook
-  (lambda ()
-    (setq show-trailing-whitespace nil)))
+  (lambda () (setq show-trailing-whitespace nil)))
+
+(add-hook 'vterm-mode-hook
+  (lambda () (setq show-trailing-whitespace nil)))
 
 (use-package yasnippet
   :config

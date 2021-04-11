@@ -29,7 +29,7 @@
        ("ACCEPTED" . (:foreground "cyan"))))
   (setq org-tag-faces
    '(("paused"  . (:background "#C00000"))))
-  (setq org-directory pye-env/org-directory)
+  (setq org-directory blanket/org-directory)
   (setq org-agenda-files (list org-directory))
   (setq org-confirm-babel-evaluate nil)
   (setq org-babel-python-command "python3")
@@ -54,7 +54,8 @@
   (org-babel-do-load-languages 'org-babel-load-languages '((sql . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((sqlite . t)))
   (org-babel-do-load-languages 'org-babel-load-languages '((shell . t)))
-  (org-babel-do-load-languages 'org-babel-load-languages '((restclient . t))))
+  (org-babel-do-load-languages 'org-babel-load-languages '((restclient . t)))
+  (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t))))
 
 ;; Set up hydra for org template
 ;; https://github.com/abo-abo/hydra/wiki/Org-mode-block-templates
@@ -129,9 +130,6 @@ prepended to the element after the #+HEADER: tag."
                 :scheduled past)))
   (org-super-agenda-mode))
 
-(use-package org-gcal
-  :defer t)
-
 (use-package org-tree-slide
   :defer t
   :config
@@ -145,3 +143,17 @@ prepended to the element after the #+HEADER: tag."
           (("<left>" . org-tree-slide-move-previous-tree)
             ("<right>" . org-tree-slide-move-next-tree)
             ("C-c f" . moom-toggle-frame-maximized))))
+
+(use-package org-roam
+  :ensure t
+  :hook
+  (after-init . org-roam-mode)
+  :custom
+  (org-roam-directory "~/Google Drive/pyedrive/roam")
+  :bind (:map org-roam-mode-map
+          (("C-c n l" . org-roam)
+            ("C-c n f" . org-roam-find-file)
+            ("C-c n g" . org-roam-graph))
+          :map org-mode-map
+          (("C-c n i" . org-roam-insert))
+          (("C-c n I" . org-roam-insert-immediate))))

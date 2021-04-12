@@ -90,7 +90,7 @@
   (setq doom-modeline-height 10)
   (setq doom-modeline-lsp t)
   (setq doom-modeline-buffer-encoding nil)
-  (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
+  (setq doom-modeline-buffer-file-name-style 'truncate-except-project)
   (setq doom-modeline-vcs-max-length 20)
   (set-face-attribute 'mode-line nil :family "Iosevka SS12 Extended" :height 120)
   (set-face-attribute 'mode-line-inactive nil :family "Iosevka SS12 Extended" :height 100)

@@ -248,7 +248,9 @@
   :config
   (add-hook 'after-init-hook 'global-company-mode)
   (setq company-show-numbers t)
-  (setq company-dabbrev-downcase nil))
+  (setq company-dabbrev-downcase nil)
+  (setq company-minimum-prefix-length 3)
+  (setq company-idle-delay 0.1))
 
 (use-package exec-path-from-shell
   ;; https://github.com/purcell/exe...

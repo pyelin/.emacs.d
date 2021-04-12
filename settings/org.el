@@ -130,20 +130,6 @@ prepended to the element after the #+HEADER: tag."
                 :scheduled past)))
   (org-super-agenda-mode))
 
-(use-package org-tree-slide
-  :defer t
-  :config
-  (setq org-tree-slide-skip-outline-level 3)
-  (setq org-tree-slide-slide-in-effect nil)
-  (setq org-tree-slide-activate-message "Presentation started.")
-  (add-hook 'org-tree-slide-mode-hook 'moom-toggle-frame-maximized)
-  (add-hook 'org-tree-slide-mode-hook 'adaptive-wrap-prefix-mode)
-  (add-hook 'org-tree-slide-mode-quit-hook 'moom-toggle-frame-maximized)
-  :bind (:map org-tree-slide-mode-map
-          (("<left>" . org-tree-slide-move-previous-tree)
-            ("<right>" . org-tree-slide-move-next-tree)
-            ("C-c f" . moom-toggle-frame-maximized))))
-
 (use-package org-roam
   :ensure t
   :hook

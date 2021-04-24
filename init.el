@@ -65,16 +65,6 @@
   (interactive)
   (insert (format-time-string "%Y-%m-%dT%H:%M:%S")))
 
-(defun pye/ivy-scratch ()
-  "Open scratch file"
-  (interactive)
-  (find-file
-    (format
-      (concat blanket/org-directory "/%s")
-      (ivy-read
-        "scratch: "
-        '("org" "sql.org" "rest")))))
-
 (defun pye/open-current-directory-in-finder ()
   (interactive)
   (shell-command (format "open -R %s" (file-name-directory (buffer-file-name)))))

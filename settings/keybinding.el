@@ -80,7 +80,7 @@ Position the cursor at it's beginning, according to the current mode."
 ?o? ?e? ?u?
 "
   ("o" blanket (hydra-invoker-format 'ova "BLANKET"))
-  ("e" pye/ivy-scratch (hydra-invoker-format 'exa "SCRATCH"))
+  ("e" hydra-org-roam/body (hydra-invoker-format 'exa "ROAM"))
   ("u" kill-this-buffer (hydra-invoker-format 'umbra "CLOSE"))
   ("h" nil)
   ("t" nil)
@@ -112,16 +112,15 @@ _h_   _n_   _o_k        _y_ank
   ("p" kill-rectangle nil)
   ("o" nil nil))
 
-;; (defhydra hydra-refactor (:hint none
-;;                      :exit 1)
-;; "
-;; ?o? ?e? ?u? [_i_] IMENU [_r_] RENAME
-;; "
-;;   ("o" dumb-jump-go (hydra-invoker-format 'ova "DEF"))
-;;   ("e" lsp-ui-flycheck-list (hydra-invoker-format 'exa "ERROR"))
-;;   ("u" lsp-ui-peek-find-references (hydra-invoker-format 'umbra "REF"))
-;;   ("i" lsp-ui-imenu "IMENU")
-;;   ("r" lsp-rename "RENAME"))
+(defhydra hydra-org-roam (:hint none :exit 1)
+"
+?o? ?e? ?u?                ?h? ?t?
+"
+  ("o" org-roam (hydra-invoker-format 'ova "ROAM"))
+  ("e" org-roam-graph (hydra-invoker-format 'exa "GRAPH"))
+  ("u" org-roam-find-file (hydra-invoker-format 'umbra "FILE"))
+  ("h" org-roam-insert (hydra-invoker-format 'hyper "INSERT"))
+  ("t" org-roam-tag-add (hydra-invoker-format 'tera "TAG" t)))
 
 (defhydra hydra-lsp (:exit t :hint nil)
   "
@@ -156,6 +155,8 @@ _h_   _n_   _o_k        _y_ank
   ("C" (apply-function-to-region 'string-inflection-camelcase-function) "Camel")
   ("u" (upcase-region (region-beginning) (region-end)) "UPPER")
   ("l" (downcase-region (region-beginning) (region-end)) "lower"))
+
+
 
 (global-set-key (kbd "<f9>") 'pye/kill-other-buffers)
 (global-set-key (kbd "<f7>") 'yankpad-capture-snippet)

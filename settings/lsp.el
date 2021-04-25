@@ -6,6 +6,7 @@
 
   :hook
   ((js2-mode . lsp-deferred)
+    (web-mode . lsp-deferred)
     (python-mode . lsp-deferred)
     (haskell-mode . lsp-deferred)
     (sql-mode . lsp-deferred))

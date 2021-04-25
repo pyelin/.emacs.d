@@ -21,23 +21,23 @@
 (use-package json-mode
   :mode ("\\.json\\'" . json-mode))
 
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1)
-  ;; company is an optional dependency. You have to
-  ;; install it separately via package-install
-  ;; `M-x package-install [ret] company`
-  (company-mode +1))
+;; (defun setup-tide-mode ()
+;;   (interactive)
+;;   (tide-setup)
+;;   (flycheck-mode +1)
+;;   (setq flycheck-check-syntax-automatically '(save mode-enabled))
+;;   (eldoc-mode +1)
+;;   (tide-hl-identifier-mode +1)
+;;   ;; company is an optional dependency. You have to
+;;   ;; install it separately via package-install
+;;   ;; `M-x package-install [ret] company`
+;;   (company-mode +1))
 
 (use-package web-mode
   :ensure t
   :mode (("\\.html?\\'" . web-mode)
-         ("\\.tsx\\'" . web-mode)
-         ("\\.jsx\\'" . web-mode))
+          ("\\.jsx?\\'" . web-mode)
+          ("\\.tsx?\\'" . web-mode))
   :config
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
@@ -51,10 +51,10 @@
   (setq web-mode-enable-current-element-highlight t)
 	(setq web-mode-enable-auto-indentation nil)
 
-  (add-hook 'web-mode-hook
-    (lambda ()
-      (when (string-equal "tsx" (file-name-extension buffer-file-name))
-		    (setup-tide-mode))))
+  ;; (add-hook 'web-mode-hook
+  ;;   (lambda ()
+  ;;     (when (string-equal "tsx" (file-name-extension buffer-file-name))
+	;; 	    (setup-tide-mode))))
   ;; enable typescript-tslint checker
   (flycheck-add-mode 'typescript-tslint 'web-mode))
 
@@ -65,12 +65,12 @@
   (add-hook 'typescript-mode-hook 'flycheck-mode)
   (add-hook 'typescript-mode #'subword-mode))
 
-(use-package tide
-  :init
-  :ensure t
-  :after (typescript-mode company flycheck)
-  :hook ((typescript-mode . tide-setup)
-         (typescript-mode . tide-hl-identifier-mode)))
+;; (use-package tide
+;;   :init
+;;   :ensure t
+;;   :after (typescript-mode company flycheck)
+;;   :hook ((typescript-mode . tide-setup)
+;;          (typescript-mode . tide-hl-identifier-mode)))
 
 (use-package css-mode
   :mode (("\\.css\\'" . css-mode))

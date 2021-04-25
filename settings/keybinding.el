@@ -112,13 +112,19 @@ _h_   _n_   _o_k        _y_ank
   ("p" kill-rectangle nil)
   ("o" nil nil))
 
+;; TODO: mimic filtering by tags
+(defvar pye/org-roam-find-file-prefix "")
+(defun pye/org-roam-find-file-with-prefix ()
+  (interactive)
+  (org-roam-find-file pye/org-roam-find-file-prefix))
+
 (defhydra hydra-org-roam (:hint none :exit 1)
 "
 ?o? ?e? ?u?                ?h? ?t?
 "
   ("o" org-roam (hydra-invoker-format 'ova "ROAM"))
   ("e" org-roam-graph (hydra-invoker-format 'exa "GRAPH"))
-  ("u" org-roam-find-file (hydra-invoker-format 'umbra "FILE"))
+  ("u" pye/org-roam-find-file-with-prefix (hydra-invoker-format 'umbra "FILE"))
   ("h" org-roam-insert (hydra-invoker-format 'hyper "INSERT"))
   ("t" org-roam-tag-add (hydra-invoker-format 'tera "TAG" t)))
 

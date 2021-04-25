@@ -2,6 +2,8 @@
   :mode (("\\.org\\'" . org-mode)
           ("\\.org.txt\\'" . org-mode)))
 
+(use-package adaptive-wrap)
+
 (use-package org-bullets
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))

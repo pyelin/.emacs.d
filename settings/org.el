@@ -136,5 +136,7 @@ prepended to the element after the #+HEADER: tag."
   :ensure t
   :hook
   (after-init . org-roam-mode)
-  :custom
-  (org-roam-directory "~/Roam"))
+  :config
+  (cond
+    ((boundp 'pye/org-roam-directory)
+      (setq org-roam-directory pye/org-roam-directory))))

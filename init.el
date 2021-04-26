@@ -85,7 +85,7 @@
 (setq package-enable-at-startup nil)
 (package-initialize)
 
-(defun full-comment-box (b e)
+(defun pye/full-comment-box (b e)
   "Draw a box comment around the region but arrange for the region
   to extend to at least the fill column. Place the point after the
   comment box."
@@ -116,16 +116,16 @@
 ;; wrap package-install to make sure that the first install
 ;; of each session will refresh the package list
 (advice-add 'package-install
-            :before
-            (lambda (&rest args)
-              (ensure-refreshed)))
+  :before
+  (lambda (&rest args)
+    (ensure-refreshed)))
 
 ;; Increasing the minimum prime bits size to something larger
 ;; than the default settings stops all the GnuTLS warnings from
 ;; showing up. This might not be the right place, but it needs
 ;; to happen before we install packages.
 (setq byte-compile-warnings nil
-      gnutls-min-prime-bits 4096)
+  gnutls-min-prime-bits 4096)
 
 (package-ensure-installed 'use-package)
 (eval-when-compile
@@ -286,11 +286,6 @@
     (lambda () (yas-activate-extra-mode 'fundamental-mode))))
 
 (use-package ivy-yasnippet)
-
-(use-package dumb-jump
-  :init
-  (setq dumb-jump-selector 'ivy)
-  (setq dumb-jump-force-searcher 'git-grep))
 
 ;;;; settings
 (setq settings-dir (relative-path "settings"))

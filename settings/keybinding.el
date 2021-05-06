@@ -134,7 +134,7 @@ _h_   _n_   _o_k        _y_ank
 -------------------------------------------------------------------------------------
  [_f_] format           [_M-r_] restart            [_d_] declaration  [_i_] implementation  [_o_] documentation
  [_m_] imenu            [_S_]   shutdown           [_D_] definition   [_t_] type            [_r_] rename
- [_x_] execute action   [_M-s_] describe session   [_R_] references   [_s_] signature"
+ [_x_] execute action   [_M-s_] describe session   [_R_] references   [_s_] signature       [_e_] errors"
   ("d" lsp-find-declaration)
   ("D" lsp-find-definition)
   ("R" lsp-find-references)
@@ -143,6 +143,7 @@ _h_   _n_   _o_k        _y_ank
   ("s" lsp-signature-help)
   ("o" lsp-describe-thing-at-point)
   ("r" lsp-rename)
+  ("e" lsp-treemacs-error-list)
 
   ("f" lsp-format-buffer)
   ("m" lsp-ui-imenu)

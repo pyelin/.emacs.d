@@ -214,7 +214,9 @@
 
 (use-package counsel
   :config
-  (global-set-key (kbd "M-x") 'counsel-M-x))
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  (setq counsel-rg-base-command
+    '("rg" "--max-columns" "240" "--with-filename" "--no-heading" "--line-number" "--color" "never" "%s")))
 
 (use-package projectile)
 
@@ -236,7 +238,9 @@
   (setq company-show-numbers t)
   (setq company-dabbrev-downcase nil)
   (setq company-minimum-prefix-length 3)
-  (setq company-idle-delay 0.1))
+  (setq company-idle-delay 0.1)
+  ;; aligns annotation to the right hand side
+  (setq company-tooltip-align-annotations t))
 
 (use-package exec-path-from-shell
   ;; https://github.com/purcell/exe...

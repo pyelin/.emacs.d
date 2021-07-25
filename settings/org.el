@@ -30,8 +30,10 @@
     '(("REVIEW" . (:foreground "hot pink"))
        ("ACCEPTED" . (:foreground "cyan"))))
   (setq org-tag-faces
-   '(("paused"  . (:background "#C00000"))))
-  (setq org-directory blanket/org-directory)
+    '(("paused"  . (:background "#C00000"))))
+  (cond
+    ((boundp 'blanket/org-directory)
+      (setq org-directory blanket/org-directory)))
   (setq org-agenda-files (list org-directory))
   (setq org-confirm-babel-evaluate nil)
   (setq org-babel-python-command "python3")

@@ -16,6 +16,7 @@
 ;; ;; default font
 (cond
   ((window-p) (set-frame-font "Iosevka SS12 Extended-10"))
+  ((linux-p) (set-frame-font "Iosevka SS12 Extended-12"))
   (t (set-frame-font "Iosevka SS12 Extended-14")))
 
 (setq prettify-symbols-unprettify-at-point t)

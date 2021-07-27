@@ -136,8 +136,8 @@ prepended to the element after the #+HEADER: tag."
 
 (use-package org-roam
   :ensure t
-  :hook
-  (after-init . org-roam-mode)
+  :init
+  (setq org-roam-v2-ack t)
   :config
   (cond
     ((boundp 'pye/org-roam-directory)

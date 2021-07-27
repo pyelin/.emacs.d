@@ -116,16 +116,16 @@ _h_   _n_   _o_k        _y_ank
 (defvar pye/org-roam-find-file-prefix "")
 (defun pye/org-roam-find-file-with-prefix ()
   (interactive)
-  (org-roam-find-file pye/org-roam-find-file-prefix))
+  (org-roam-node-find t pye/org-roam-find-file-prefix))
 
 (defhydra hydra-org-roam (:hint none :exit 1)
 "
 ?o? ?e? ?u?                ?h? ?t?
 "
-  ("o" org-roam (hydra-invoker-format 'ova "ROAM"))
+  ("o" org-roam-buffer-toggle (hydra-invoker-format 'ova "ROAM"))
   ("e" org-roam-graph (hydra-invoker-format 'exa "GRAPH"))
   ("u" pye/org-roam-find-file-with-prefix (hydra-invoker-format 'umbra "FILE"))
-  ("h" org-roam-insert (hydra-invoker-format 'hyper "INSERT"))
+  ("h" org-roam-node-insert (hydra-invoker-format 'hyper "INSERT"))
   ("t" org-roam-tag-add (hydra-invoker-format 'tera "TAG" t)))
 
 (defhydra hydra-lsp (:exit t :hint nil)

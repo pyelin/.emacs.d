@@ -141,4 +141,13 @@ prepended to the element after the #+HEADER: tag."
   :config
   (cond
     ((boundp 'pye/org-roam-directory)
-      (setq org-roam-directory pye/org-roam-directory))))
+      (setq org-roam-directory pye/org-roam-directory)))
+
+  ;; for org-roam-buffer-toggle
+  ;; Recommendation in the official manual
+  (add-to-list 'display-buffer-alist
+    '("\\*org-roam\\*"
+       (display-buffer-in-direction)
+       (direction . right)
+       (window-width . 0.33)
+       (window-height . fit-window-to-buffer))))

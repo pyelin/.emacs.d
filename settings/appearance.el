@@ -68,6 +68,8 @@
 ;; Make show-trailing-whitespace default  ;;;;
 
 (setq-default show-trailing-whitespace t)
+(add-hook 'minibuffer-setup-hook
+  (lambda () (setq-local show-trailing-whitespace nil)))
 
 (add-hook 'eshell-mode-hook
   (lambda () (setq show-trailing-whitespace nil)))

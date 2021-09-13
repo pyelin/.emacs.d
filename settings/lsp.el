@@ -3,9 +3,9 @@
   :config
   (add-hook 'web-mode-hook 'eglot-ensure)
   (add-to-list 'eglot-server-programs '(web-mode . ("typescript-language-server" "--stdio")))
-  (add-to-list 'eglot-server-programs
-             `(python-mode . ("~/.pyenv/shims/pyls" "-v" "--tcp" "--host"
-                              "localhost" "--port" :autoport))))
+  ;; pip3 install 'python-lsp-server[all]' pylsp-mypy
+  (add-hook 'python-mode-hook 'eglot-ensure)
+  (add-to-list 'eglot-server-programs `(python-mode . ("pylsp"))))
 
 
 ;; (use-package lsp-mode

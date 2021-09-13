@@ -130,8 +130,9 @@ _h_   _n_   _o_k        _y_ank
 
 (defhydra hydra-eglot (:exit t :hint none)
 "
-?e? ?u?
+?o? ?e? ?u?
 "
+  ("o" xref-find-references (hydra-invoker-format 'ova "REF"))
   ("e" xref-find-definitions (hydra-invoker-format 'exa "DEF"))
   ("u" eglot-rename (hydra-invoker-format 'umbra "RENAME")))
 

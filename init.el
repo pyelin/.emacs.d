@@ -215,8 +215,9 @@
 (use-package counsel
   :config
   (global-set-key (kbd "M-x") 'counsel-M-x)
-  (setq counsel-rg-base-command
-    '("rg" "--max-columns" "240" "--with-filename" "--no-heading" "--line-number" "--color" "never" "%s")))
+  ;; (setq counsel-rg-base-command
+  ;;   '("rg" "--max-columns" "240" "--max-columns-preview" "--glob=!infra/hasura" "--with-filename" "--no-heading" "--line-number" "--color" "never" "%s"))
+  )
 
 (use-package projectile)
 
@@ -308,6 +309,25 @@
        )))
 
 (eldoc-mode 0)
+
+;; code folding
+(defun toggle-selective-display (column)
+  (interactive "P")
+  (set-selective-display
+    (or column
+      (unless selective-display
+        (1+ (current-column))))))
+
+(defun toggle-hiding (column)
+  (interactive "P")
+  (if hs-minor-mode
+    (if (condition-case nil
+          (hs-toggle-hiding)
+          (error t))
+      (hs-show-all))
+    (toggle-selective-display column)))
+(global-set-key (kbd "C-'") 'toggle-hiding)
+(global-set-key (kbd "C-,") 'toggle-selective-display)
 
 
 ;;;; Indentation

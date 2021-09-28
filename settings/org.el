@@ -31,8 +31,9 @@
        ("ACCEPTED" . (:foreground "cyan"))))
   (setq org-tag-faces
    '(("paused"  . (:background "#C00000"))))
-  ((boundp 'blanket/org-directory)
-      (setq org-directory pye/org-directory))
+  (cond
+    ((boundp 'blanket/org-directory)
+      (setq org-directory pye/org-directory)))
   (setq org-agenda-files (list org-directory))
   (setq org-confirm-babel-evaluate nil)
   (setq org-babel-python-command "python3")

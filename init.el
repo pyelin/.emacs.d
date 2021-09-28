@@ -248,7 +248,7 @@
   ;; only use exec-path-from-shell on OSX
   ;; this hopefully sets up path and other vars better
   :config
-  (when (memq window-system '(mac ns))
+  (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
 
 (use-package expand-region)

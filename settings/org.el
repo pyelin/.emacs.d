@@ -2,8 +2,6 @@
   :mode (("\\.org\\'" . org-mode)
           ("\\.org.txt\\'" . org-mode)))
 
-(use-package adaptive-wrap)
-
 (use-package org-bullets
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
@@ -48,8 +46,7 @@
       (setq show-trailing-whitespace nil)
       ;; make the lines in the buffer wrap around the edges of the screen.
       ;; to press C-c q  or fill-paragraph ever again!
-      (visual-line-mode)
-      (adaptive-wrap-prefix-mode)))
+      (visual-line-mode)))
   (add-hook 'org-mode-hook 'flyspell-mode)
   (add-hook 'org-mode-hook 'yas-minor-mode)
   (add-hook 'org-mode-hook 'org-bullets-mode)

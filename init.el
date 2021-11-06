@@ -72,82 +72,6 @@
         (browse-url-emacs url)))
     (error (message "Could not load remote library: %s" (cadr e)))))
 
-
-;;; Package setup
-;; Have to make sure it's loaded before we do anything with it.
-(require 'package)
-
-;; Set up the package repos
-(setq package-archives '(("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("melpa"        . "https://melpa.org/packages/")
-                         ("gnu"          . "https://elpa.gnu.org/packages/")))
-;; Make sure we load what we need.
-(setq package-enable-at-startup nil)
-(package-initialize)
-
-(defun pye/full-comment-box (b e)
-  "Draw a box comment around the region but arrange for the region
-  to extend to at least the fill column. Place the point after the
-  comment box."
-  (interactive "r")
-  (let ((e (copy-marker e t)))
-    (goto-char b)
-    (end-of-line)
-    (insert-char ?  (- fill-column (current-column)))
-    (comment-box b e 1)
-    (goto-char e)
-    (set-marker e nil)))
-
-;; Set the initial state to non-refreshed. This can also be set back
-;; to nil if we want to run a refresh on the next install.
-(defvar refreshed-package-list nil)
-
-(defun ensure-refreshed ()
-  "Ensure the package list has been refreshed this startup."
-  (unless refreshed-package-list
-    (package-refresh-contents)
-    (setq refreshed-package-list t)))
-
-(defun package-ensure-installed (package)
-  "Install a missing PACKAGE if it isn't already."
-  (unless (package-installed-p package)
-    (package-install package)))
-
-;; wrap package-install to make sure that the first install
-;; of each session will refresh the package list
-(advice-add 'package-install
-  :before
-  (lambda (&rest args)
-    (ensure-refreshed)))
-
-;; Increasing the minimum prime bits size to something larger
-;; than the default settings stops all the GnuTLS warnings from
-;; showing up. This might not be the right place, but it needs
-;; to happen before we install packages.
-(setq byte-compile-warnings nil
-  gnutls-min-prime-bits 4096)
-
-(package-ensure-installed 'use-package)
-(eval-when-compile
-  (defvar use-package-verbose t)
-  (require 'use-package))
-
-(setq use-package-always-ensure t)
-
-;;;; Common packages
-;; stop creating backup~ file ;;;;
-(setq make-backup-files nil)
-
-(when (linux-p)
-  (setq browse-url-browser-function 'browse-url-xdg-open))
-
-;; use emacs pinenttry for EasyPG
-(setq epa-pinentry-mode 'loopback)
-
-;;; disable auto revert
-(global-auto-revert-mode nil)
-
-;;;; dired
 (defun pye/dired-get-size ()
   (interactive)
   (let ((files (dired-get-marked-files)))
@@ -175,8 +99,45 @@
     (downcase (string-trim-right
                 (shell-command-to-string "uuidgen")))))
 
-(use-package dired-single)
+;;; Package setup
+;;; straight
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+
+;; Increasing the minimum prime bits size to something larger
+;; than the default settings stops all the GnuTLS warnings from
+;; showing up. This might not be the right place, but it needs
+;; to happen before we install packages.
+(setq byte-compile-warnings nil)
+(setq gnutls-min-prime-bits 4096)
+
+;;;; Common packages
+;; stop creating backup~ file ;;;;
+(setq make-backup-files nil)
+
+(when (linux-p)
+  (setq browse-url-browser-function 'browse-url-xdg-open))
+
+;; use emacs pinenttry for EasyPG
+(setq epa-pinentry-mode 'loopback)
+
+;;; disable auto revert
+(global-auto-revert-mode nil)
+
+(use-package dired-single)
 (setq dired-dwim-target t)
 (add-hook 'dired-mode-hook
   (lambda ()
@@ -190,6 +151,7 @@
 ;; tramp
 (setq tramp-default-method "ssh")
 
+;; mini buffer completion
 (use-package ivy
   :config
   (setq ivy-use-virtual-buffers t)

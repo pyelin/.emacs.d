@@ -171,15 +171,12 @@
   :config
   (setq avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)))
 
-(use-package rg
+(use-package ag
   :defer t)
 
 (use-package counsel
   :config
-  (global-set-key (kbd "M-x") 'counsel-M-x)
-  ;; (setq counsel-rg-base-command
-  ;;   '("rg" "--max-columns" "240" "--max-columns-preview" "--glob=!infra/hasura" "--with-filename" "--no-heading" "--line-number" "--color" "never" "%s"))
-  )
+  (global-set-key (kbd "M-x") 'counsel-M-x))
 
 (use-package projectile)
 

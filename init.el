@@ -222,6 +222,8 @@
   :config
   (setq transient-default-level 5))
 
+(use-package git-link)
+
 (use-package smartparens
   :config
   (sp-local-tag '(sgml-mode web-mode) "<" "<_>" "</_>" :transform 'sp-match-sgml-tags)

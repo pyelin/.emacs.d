@@ -1,5 +1,12 @@
 (use-package sqlformat
-  :config
-  (setq sqlformat-command 'pgformatter)
-  ;; -s2 for 2-space indent
-  (setq sqlformat-args '("-s2")))
+  :commands (sqlformat sqlformat-buffer sqlformat-region)
+  :hook (sql-mode . sqlformat-on-save-mode)
+  :init
+  (setq sqlformat-command 'pgformatter
+    sqlformat-args
+    '("-s2"
+       "-w80"
+       "-g"
+       "--comma-start"
+       "--format-type"
+       "--keep-newline")))

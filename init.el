@@ -290,6 +290,13 @@
 (global-set-key (kbd "C-'") 'toggle-hiding)
 (global-set-key (kbd "C-,") 'toggle-selective-display)
 
+;; default regex engine
+(use-package re-builder
+  :config
+  (setq reb-re-syntax 'string))
+
+;; search and edit
+(use-package wgrep)
 
 ;;;; Indentation
 (setq-default indent-tabs-mode nil)

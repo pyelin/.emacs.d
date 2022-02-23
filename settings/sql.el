@@ -5,7 +5,7 @@
   (setq sqlformat-command 'pgformatter
     sqlformat-args
     '("-s2"
-       "-w80"
+       "-w90"
        "-g"
        "--comma-start"
        "--format-type"

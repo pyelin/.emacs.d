@@ -1,12 +1,11 @@
 (use-package sqlformat
   :commands (sqlformat sqlformat-buffer sqlformat-region)
-  :hook (sql-mode . sqlformat-on-save-mode)
   :init
   (setq sqlformat-command 'pgformatter
     sqlformat-args
     '("-s2"
        "-w90"
-       "-g"
-       "--comma-start"
+       "--nogrouping"
+       "--comma-break"
        "--format-type"
        "--keep-newline")))

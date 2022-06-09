@@ -3,15 +3,6 @@
   :custom
   (flymake-fringe-indicator-position 'left-fringe))
 
-(use-package xref
-  :straight nil
-  :config
-  (with-eval-after-load 'evil
-    (evil-define-key* 'motion xref--xref-buffer-mode-map
-      (kbd "<backtab") #'xref-prev-group
-      (kbd "<return") #'xref-goto-xref
-      (kbd "<tab>") #'xref-next-group)))
-
 (use-package eglot
   :custom
   (eglot-autoshutdown t)
@@ -30,21 +21,10 @@
   (put 'eglot-error 'flymake-overlay-control nil)
   (put 'eglot-warning 'flymake-overlay-control nil)
   (advice-add 'project-kill-buffers :before #'pye/eglot-shutdown-project)
+  :custom
+  (eglot-ignored-server-capabilites '(:documentHighlightProvider))
   :preface
   (defun pye/eglot-shutdown-project ()
     "Kill the LSP server for the current project if it exists."
     (when-let ((server (eglot-current-server)))
       (eglot-shutdown server))))
-
-(use-package tree-sitter
-  :hook
-  (typescript-mode . tree-sitter-hl-mode)
-  (typescript-tsx-mode . tree-sitter-hl-mode))
-
-(use-package tree-sitter-langs
-  :after tree-sitter
-  :defer nil
-  :config
-  (tree-sitter-require 'tsx)
-  (add-to-list 'tree-sitter-major-mode-language-alist
-               '(typescript-tsx-mode . tsx)))

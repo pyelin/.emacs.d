@@ -21,10 +21,23 @@
   (put 'eglot-error 'flymake-overlay-control nil)
   (put 'eglot-warning 'flymake-overlay-control nil)
   (advice-add 'project-kill-buffers :before #'pye/eglot-shutdown-project)
-  :custom
+  ;; :custom
   (eglot-ignored-server-capabilites '(:documentHighlightProvider))
   :preface
   (defun pye/eglot-shutdown-project ()
     "Kill the LSP server for the current project if it exists."
     (when-let ((server (eglot-current-server)))
       (eglot-shutdown server))))
+
+(use-package tree-sitter
+  :hook
+  (typescript-mode . tree-sitter-hl-mode)
+  (web-mode . tree-sitter-hl-mode))
+
+(use-package tree-sitter-langs
+  :after tree-sitter
+  :defer nil
+  :config
+  (tree-sitter-require 'tsx)
+  (add-to-list 'tree-sitter-major-mode-language-alist
+    '(web-mode . tsx)))

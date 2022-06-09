@@ -151,22 +151,6 @@
 ;; tramp
 (setq tramp-default-method "ssh")
 
-;; mini buffer completion
-(use-package ivy
-  :config
-  (setq ivy-use-virtual-buffers t)
-  (setq ivy-count-format "(%d/%d) ")
-  (global-set-key (kbd "<f6>") 'ivy-resume)
-  (define-key ivy-minibuffer-map (kbd "C-j") #'ivy-immediate-done)
-  (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
-  (ivy-mode 1))
-
-(use-package swiper
-  :config
-  (setq ivy-display-style 'fancy)
-  (setq avy-background t)
-  (setq avy-all-windows t))
-
 (use-package avy
   :config
   (setq avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)))
@@ -174,15 +158,7 @@
 (use-package ag
   :defer t)
 
-(use-package counsel
-  :config
-  (global-set-key (kbd "M-x") 'counsel-M-x))
-
 (use-package projectile)
-
-(use-package counsel-projectile
-  :init
-  (setq projectile-completion-system 'ivy))
 
 (use-package switch-window
   :config
@@ -191,16 +167,6 @@
   (define-key switch-window-extra-map (kbd "h") 'switch-window-mvborder-left)
   (define-key switch-window-extra-map (kbd "n") 'switch-window-mvborder-right)
   (global-set-key (kbd "M-p") 'switch-window))
-
-(use-package company
-  :config
-  (add-hook 'after-init-hook 'global-company-mode)
-  (setq company-show-numbers t)
-  (setq company-dabbrev-downcase nil)
-  (setq company-minimum-prefix-length 3)
-  (setq company-idle-delay 0.1)
-  ;; aligns annotation to the right hand side
-  (setq company-tooltip-align-annotations t))
 
 (use-package exec-path-from-shell
   ;; https://github.com/purcell/exe...
@@ -211,11 +177,6 @@
     (exec-path-from-shell-initialize)))
 
 (use-package expand-region)
-
-(use-package flycheck
-  :config
-  (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
-  (add-hook 'after-init-hook #'global-flycheck-mode))
 
 (use-package magit
   :bind ("C-c C-g" . magit-status)
@@ -263,6 +224,7 @@
     (lambda (name) (concat settings-dir "/" name ".el"))
     '(
        "appearance"
+       "completion"
        "keybinding"
        "dockerfile"
        "javascript"
@@ -271,7 +233,7 @@
        "graphql"
        "sql"
        "org"
-       "lsp"
+       "intellisense"
        )))
 
 (eldoc-mode 0)
@@ -303,19 +265,16 @@
 ;; search and edit
 (use-package wgrep)
 
+(use-package wgrep-ag
+  :config
+  (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+
 ;;;; Indentation
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (setq css-indent-offset 2)
 (setq python-indent-offset 4)
 (setq py-indent-offset 4)
-(setq js2-indent-offset 2)
-(setq js2-indent-level 2)
-(setq js2-highlight-level 3)
-(setq js2-basic-offset 2)
-(setq js-indent-offset 2)
-(setq js-indent-level 2)
-(setq jsx-indent-level 2)
 (setq web-mode-markup-indent-offset 2)
 (setq web-mode-css-indent-offset 2)
 (setq web-mode-code-indent-offset 2)

@@ -133,12 +133,15 @@ prepended to the element after the #+HEADER: tag."
 
 (use-package org-roam
   :ensure t
+  :custom
+  (org-roam-v2-ack t)
+  (org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   :init
-  (setq org-roam-v2-ack t)
-  :config
   (cond
     ((boundp 'pye/org-roam-directory)
       (setq org-roam-directory pye/org-roam-directory)))
+  :config
+  (org-roam-db-autosync-mode)
 
   ;; for org-roam-buffer-toggle
   ;; Recommendation in the official manual

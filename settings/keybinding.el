@@ -53,10 +53,10 @@ Position the cursor at it's beginning, according to the current mode."
 "
   ("o" hydra-eglot/body (hydra-invoker-format 'ova "LSP") :exit 1)
   ("e" avy-goto-word-1 (hydra-invoker-format 'exa "AVY") :exit 1)
-  ("u" swiper-isearch-thing-at-point (hydra-invoker-format 'umbra "SWIPER") :exit 1)
-  ("h" counsel-ag (hydra-invoker-format 'hyper "AG") :exit 1)
+  ("u" consult-line (hydra-invoker-format 'umbra "SWIPER") :exit 1)
+  ("h" consult-ripgrep (hydra-invoker-format 'hyper "AG") :exit 1)
   ("t" projectile-find-file (hydra-invoker-format 'tera "PROJECTILE"))
-  ("n" counsel-find-file (hydra-invoker-format 'nora "FILE" t)))
+  ("n" find-file (hydra-invoker-format 'nora "FILE" t)))
 
 (defhydra hydra-exa (:hint none
                      :pre pye/before-invoke
@@ -67,7 +67,7 @@ Position the cursor at it's beginning, according to the current mode."
 "
   ("o" hydra-rectangle/body (hydra-invoker-format 'ova "RECTANGLE"))
   ("e" er/expand-region (hydra-invoker-format 'exa "EXPAND"))
-  ("u" counsel-yank-pop (hydra-invoker-format 'umbra "YANK"))
+  ("u" consult-yank-pop (hydra-invoker-format 'umbra "YANK"))
   ("h" ivy-yasnippet (hydra-invoker-format 'hyper "SNIPPET"))
   ("t" switch-to-buffer (hydra-invoker-format 'tera "SWITCH"))
   ("n" list-buffers (hydra-invoker-format 'nora "BUFFERS")))

@@ -2,10 +2,9 @@
 ;;; Code:
 ;;; Commentary:
 
-(use-package nord-theme
+(use-package doom-themes
   :config
-  (load-theme 'nord t)
-  ;; ;; international orange cursor and selection background color
+  (load-theme 'doom-vibrant t)
   (setq-default cursor-type '(bar . 2))
   (global-hl-line-mode t)
   (custom-set-faces

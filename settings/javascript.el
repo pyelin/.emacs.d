@@ -4,6 +4,8 @@
 
 (use-package js2-mode
   :mode (rx ".js" eos)
+  :custom
+  (js-indent-level 2)
   :config
   (add-hook 'js2-mode-hook
     (lambda ()

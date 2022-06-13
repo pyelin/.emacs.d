@@ -30,15 +30,15 @@
   (setq org-tag-faces
    '(("paused"  . (:background "#C00000"))))
   (cond
-    ((boundp 'blanket/org-directory)
+    ((boundp 'pye/org-directory)
       (setq org-directory pye/org-directory)))
   (setq org-agenda-files (list org-directory))
   (setq org-confirm-babel-evaluate nil)
   (setq org-babel-python-command "python3")
   (setq org-startup-truncated nil)
   ;; (add-to-list 'org-structure-template-alist '("n" "#+NAME: ?"))
-  (define-key global-map "\C-cl" 'org-store-link)
-  (define-key global-map "\C-ca" 'org-agenda)
+  (define-key global-map "\C-c l" 'org-store-link)
+  (define-key global-map "\C-c a" 'org-agenda)
   (define-key org-mode-map (kbd "M-e") nil) ;; reserved for keybinding
   (define-key org-mode-map (kbd "<f8>") 'org-tree-slide-mode)
   (add-hook 'org-mode-hook

@@ -10,6 +10,7 @@
   (typescript-mode . eglot-ensure)
   (web-mode . eglot-ensure)
   (python-mode . eglot-ensure)
+  (js2-mode . eglot-ensure)
   :init
   (put 'eglot-server-programs 'safe-local-variable 'listp)
   ;; for python, run pip3 install 'python-lsp-server[all]' pylsp-mypy
@@ -21,7 +22,7 @@
   (put 'eglot-error 'flymake-overlay-control nil)
   (put 'eglot-warning 'flymake-overlay-control nil)
   (advice-add 'project-kill-buffers :before #'pye/eglot-shutdown-project)
-  ;; :custom
+  :custom
   (eglot-ignored-server-capabilites '(:documentHighlightProvider))
   :preface
   (defun pye/eglot-shutdown-project ()

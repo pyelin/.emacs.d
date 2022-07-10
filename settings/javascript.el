@@ -45,3 +45,7 @@
   :mode (rx ".css" eos)
   :custom
   (css-indent-offset 2))
+
+(use-package js-comint
+  :config
+  (cond ((window-p) (setq js-comint-program-command "C:/Program Files/nodejs/node.exe"))))

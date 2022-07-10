@@ -146,9 +146,17 @@ _h_   _n_   _o_k        _y_ank
   ("l" (downcase-region (region-beginning) (region-end)) "lower"))
 
 
+
 (global-set-key (kbd "<f9>") 'pye/kill-other-buffers)
 (global-set-key (kbd "M-u") 'hydra-umbra/body)
 (global-set-key (kbd "M-e") 'hydra-exa/body)
 (global-set-key (kbd "M-o") 'hydra-ova/body)
 (global-set-key (kbd "M-<up>") 'move-region-up)
 (global-set-key (kbd "M-<down>") 'move-region-down)
+
+;;resizing windows
+(global-set-key (kbd "S-C-<left>")  'shrink-window-horizontally)
+(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "S-C-<down>")  'shrink-window)
+(global-set-key (kbd "S-C-<up>")    'enlarge-window)
+

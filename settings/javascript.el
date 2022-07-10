@@ -48,4 +48,5 @@
 
 (use-package js-comint
   :config
-  (cond ((window-p) (setq js-comint-program-command "C:/Program Files/nodejs/node.exe"))))
+  (cond ((window-p) (setq js-comint-program-command "C:/Program Files/nodejs/node.exe")))
+  (define-key js-mode-map (kbd "C-x C-e") (lambda () (interactive) (js-clear)(js-send-region))))

@@ -29,10 +29,6 @@
        ("ACCEPTED" . (:foreground "cyan"))))
   (setq org-tag-faces
    '(("paused"  . (:background "#C00000"))))
-  (cond
-    ((boundp 'pye/org-directory)
-      (setq org-directory pye/org-directory)))
-  (setq org-agenda-files (list org-directory))
   (setq org-confirm-babel-evaluate nil)
   (setq org-babel-python-command "python3")
   (setq org-startup-truncated nil)
@@ -135,7 +131,11 @@ prepended to the element after the #+HEADER: tag."
   :ensure t
   :custom
   (org-roam-v2-ack t)
-  (org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-node-display-template
+    (concat
+      "${title:*} "
+      (propertize "${tags:30}" 'face 'org-tag)
+      "${file:48}"))
   :init
   (cond
     ((boundp 'pye/org-roam-directory)

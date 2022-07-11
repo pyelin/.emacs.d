@@ -6,16 +6,10 @@
   ("C-h M" . consult-minor-mode-menu)
   :custom
   (consult-line-start-from-top t)
-  (consult-project-root-function #'me/project-root)
   (xref-show-definitions-function #'consult-xref)
   (xref-show-xrefs-function #'consult-xref)
   :hook
-  (org-mode . (lambda () (setq-local consult-fontify-preserve nil)))
-  :init
-  (with-eval-after-load 'evil
-    (evil-global-set-key 'motion "gm" #'consult-mark)
-    (evil-global-set-key 'motion "gM" #'consult-imenu)
-    (evil-global-set-key 'motion "go" #'consult-outline)))
+  (org-mode . (lambda () (setq-local consult-fontify-preserve nil))))
 
 
 (use-package corfu

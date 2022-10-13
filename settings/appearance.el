@@ -83,7 +83,9 @@
 (menu-bar-mode -1)
 
 ;; disable scrollbar
-(scroll-bar-mode -1)
+(cond
+  ((boundp 'scroll-bar-mode)
+    (scroll-bar-mode -1)))
 
 ;; modeline
 (use-package doom-modeline

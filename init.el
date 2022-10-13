@@ -150,6 +150,10 @@
 
 ;; tramp
 (setq tramp-default-method "ssh")
+;;;; configure TRAMP to respect the PATH variable on the remote machine
+(cond
+  ((boundp 'tramp-remote-path)
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path)))
 
 (use-package avy
   :config

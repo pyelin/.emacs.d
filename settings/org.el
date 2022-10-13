@@ -46,13 +46,15 @@
   (add-hook 'org-mode-hook 'flyspell-mode)
   (add-hook 'org-mode-hook 'yas-minor-mode)
   (add-hook 'org-mode-hook 'org-bullets-mode)
-  (org-babel-do-load-languages 'org-babel-load-languages '((js . t)))
-  (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
-  (org-babel-do-load-languages 'org-babel-load-languages '((sql . t)))
-  (org-babel-do-load-languages 'org-babel-load-languages '((sqlite . t)))
-  (org-babel-do-load-languages 'org-babel-load-languages '((shell . t)))
-  (org-babel-do-load-languages 'org-babel-load-languages '((restclient . t)))
-  (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t))))
+  ;; commented because of version mismatch error
+  ;; (org-babel-do-load-languages 'org-babel-load-languages '((js . t)))
+  ;; (org-babel-do-load-languages 'org-babel-load-languages '((python . t)))
+  ;; (org-babel-do-load-languages 'org-babel-load-languages '((sql . t)))
+  ;; (org-babel-do-load-languages 'org-babel-load-languages '((sqlite . t)))
+  ;; (org-babel-do-load-languages 'org-babel-load-languages '((shell . t)))
+  ;; (org-babel-do-load-languages 'org-babel-load-languages '((restclient . t)))
+  ;; (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)))
+  )
 
 ;; Set up hydra for org template
 ;; https://github.com/abo-abo/hydra/wiki/Org-mode-block-templates
@@ -69,9 +71,6 @@
   ("j" (hot-expand "<s" "javascript"))
   ("<" self-insert-command "ins")
   ("o" nil "quit"))
-
-; Required from org 9 onwards for old template expansion
-(require 'org-tempo)
 
 ;; Reset the org-template expension system, this is need after upgrading to org 9 for some reason
 (setq org-structure-template-alist (eval (car (get 'org-structure-template-alist 'standard-value))))

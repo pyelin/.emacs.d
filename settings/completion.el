@@ -19,6 +19,11 @@
   (corfu-auto t)
   (corfu-auto-delay .5))
 
+(use-package corfu-terminal
+  :config
+  (unless (display-graphic-p)
+    (corfu-terminal-mode +1)))
+
 (use-package marginalia
   :hook
   (after-init . marginalia-mode))

@@ -9,3 +9,5 @@
        "--comma-break"
        "--format-type"
        "--keep-newline")))
+
+(use-package csv-mode)

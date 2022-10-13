@@ -131,11 +131,7 @@ prepended to the element after the #+HEADER: tag."
   :ensure t
   :custom
   (org-roam-v2-ack t)
-  (org-roam-node-display-template
-    (concat
-      "${title:*} "
-      (propertize "${tags:30}" 'face 'org-tag)
-      "${file:48}"))
+  (org-roam-node-display-template "${title:*} ${file:48}")
   :init
   (cond
     ((boundp 'pye/org-roam-directory)

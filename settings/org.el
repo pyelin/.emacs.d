@@ -126,23 +126,22 @@ prepended to the element after the #+HEADER: tag."
                 :scheduled past)))
   (org-super-agenda-mode))
 
-(use-package org-roam
-  :ensure t
-  :custom
-  (org-roam-v2-ack t)
-  (org-roam-node-display-template "${title:*} ${file:48}")
-  :init
-  (cond
+(cond
     ((boundp 'pye/org-roam-directory)
-      (setq org-roam-directory pye/org-roam-directory)))
-  :config
-  (org-roam-db-autosync-mode)
+      (use-package org-roam
+        :ensure t
+        :custom
+        (org-roam-v2-ack t)
+        (org-roam-node-display-template "${title:*} ${file:48}")
+        :config
+        (setq org-roam-directory pye/org-roam-directory)
+        (org-roam-db-autosync-mode)
 
-  ;; for org-roam-buffer-toggle
-  ;; Recommendation in the official manual
-  (add-to-list 'display-buffer-alist
-    '("\\*org-roam\\*"
-       (display-buffer-in-direction)
-       (direction . right)
-       (window-width . 0.33)
-       (window-height . fit-window-to-buffer))))
+        ;; for org-roam-buffer-toggle
+        ;; Recommendation in the official manual
+        (add-to-list 'display-buffer-alist
+          '("\\*org-roam\\*"
+             (display-buffer-in-direction)
+             (direction . right)
+             (window-width . 0.33)
+             (window-height . fit-window-to-buffer))))))

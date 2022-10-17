@@ -19,7 +19,10 @@
   (corfu-auto t)
   (corfu-auto-delay .5))
 
-(use-package corfu-terminal
+(straight-use-package
+  '(corfu-terminal
+     :type git
+     :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
   :config
   (unless (display-graphic-p)
     (corfu-terminal-mode +1)))

@@ -19,8 +19,8 @@
   (corfu-auto t)
   (corfu-auto-delay .5))
 
-(straight-use-package
-  '(corfu-terminal
+(use-package corfu-terminal
+  :straight '(corfu-terminal
      :type git
      :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
   :config

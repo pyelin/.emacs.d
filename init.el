@@ -116,7 +116,6 @@
 
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
-(straight-pull-recipe-repositories)
 
 ;; Increasing the minimum prime bits size to something larger
 ;; than the default settings stops all the GnuTLS warnings from

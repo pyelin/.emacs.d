@@ -1,20 +1,5 @@
-(use-package ob-restclient
-  :mode (("\\.org\\'" . org-mode)
-          ("\\.org.txt\\'" . org-mode)))
-
-(use-package org-bullets
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-(defun pye/org-babel-to-buffer ()
-  "A function to efficiently feed babel code block result to a separate buffer"
-  (interactive)
-  (org-open-at-point)
-  (org-babel-remove-result))
-
-(use-package org-bullets)
-
 (use-package org
+  :straight (:type built-in)
   :mode (("\\.org\\'" . org-mode)
           ("\\.org.txt\\'" . org-mode))
   :bind (:map org-mode-map
@@ -54,6 +39,22 @@
   ;; (org-babel-do-load-languages 'org-babel-load-languages '((restclient . t)))
   ;; (org-babel-do-load-languages 'org-babel-load-languages '((ditaa . t)))
   )
+
+(use-package ob-restclient
+  :mode (("\\.org\\'" . org-mode)
+          ("\\.org.txt\\'" . org-mode)))
+
+(use-package org-bullets
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+(defun pye/org-babel-to-buffer ()
+  "A function to efficiently feed babel code block result to a separate buffer"
+  (interactive)
+  (org-open-at-point)
+  (org-babel-remove-result))
+
+(use-package org-bullets)
 
 (use-package org-super-agenda
   :defer t

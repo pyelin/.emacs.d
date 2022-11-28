@@ -187,9 +187,6 @@
   :config
   (setq transient-default-level 5))
 
-(use-package forge
-  :after magit)
-
 (use-package git-link)
 
 (use-package smartparens

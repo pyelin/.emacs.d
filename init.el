@@ -235,6 +235,7 @@
        "sql"
        "org"
        "intellisense"
+       "yaml"
        )))
 
 (eldoc-mode 0)

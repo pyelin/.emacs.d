@@ -185,7 +185,10 @@
 (use-package magit
   :bind ("C-c C-g" . magit-status)
   :config
-  (setq transient-default-level 5))
+  (setq transient-default-level 5)
+  (custom-set-faces
+    '(magit-diff-added-highlight ((t (:background nil))))
+    '(magit-diff-base-highlight ((t (:background nil))))))
 
 (use-package git-link)
 

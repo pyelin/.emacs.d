@@ -210,8 +210,15 @@
 (add-hook 'term-mode-hook
   (lambda () (setq show-trailing-whitespace nil)))
 
-(add-hook 'vterm-mode-hook
-  (lambda () (setq show-trailing-whitespace nil)))
+(use-package vterm
+  :config
+  (define-key vterm-mode-map (kbd "M-p") #'switch-window)
+  (add-hook 'vterm-mode-hook
+    (lambda () (setq show-trailing-whitespace nil))))
+
+(use-package multi-vterm
+  :config
+  (setq multi-vterm-dedicated-window-height-percent 30))
 
 (use-package yasnippet
   :config

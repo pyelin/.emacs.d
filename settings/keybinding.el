@@ -77,12 +77,12 @@ Position the cursor at it's beginning, according to the current mode."
                      :post pye/after-invoke
                      :exit 1)
 "
-?o? ?e? ?u?                ?h?
+?o? ?e? ?u?
 "
   ("o" blanket (hydra-invoker-format 'ova "BLANKET"))
   ("e" hydra-org-roam/body (hydra-invoker-format 'exa "ROAM"))
   ("u" kill-this-buffer (hydra-invoker-format 'umbra "CLOSE"))
-  ("h" hydra-vterm/body (hydra-invoker-format 'hyper "VTERM"))
+  ("h" nil)
   ("t" nil)
   ("n" nil))
 
@@ -144,15 +144,6 @@ _h_   _n_   _o_k        _y_ank
   ("C" (apply-function-to-region 'string-inflection-camelcase-function) "Camel")
   ("u" (upcase-region (region-beginning) (region-end)) "UPPER")
   ("l" (downcase-region (region-beginning) (region-end)) "lower"))
-
-(defhydra hydra-vterm (:exit t :hint none)
-"
-?o? ?e? ?u?                ?h?
-"
-  ("o" multi-vterm-prev (hydra-invoker-format 'ova "PREV"))
-  ("e" multi-vterm-project (hydra-invoker-format 'exa "VTERM"))
-  ("u" multi-vterm-next (hydra-invoker-format 'umbra "NEXT"))
-  ("h" multi-vterm-dedicated-toggle (hydra-invoker-format 'hyper "TOGGLE")))
 
 (global-set-key (kbd "<f9>") 'pye/kill-other-buffers)
 (global-set-key (kbd "M-u") 'hydra-umbra/body)

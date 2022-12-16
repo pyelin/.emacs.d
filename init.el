@@ -210,24 +210,6 @@
 (add-hook 'term-mode-hook
   (lambda () (setq show-trailing-whitespace nil)))
 
-(use-package vterm
-  :config
-  (define-key vterm-mode-map (kbd "M-p") #'switch-window)
-  (add-hook 'vterm-mode-hook
-    (lambda () (setq show-trailing-whitespace nil))))
-
-(use-package multi-vterm
-  :config
-  (setq multi-vterm-dedicated-window-height-percent 30))
-
-(use-package perspective
-  :bind
-  ("C-x C-b" . persp-list-buffers)         ; or use a nicer switcher, see below
-  :custom
-  (persp-mode-prefix-key (kbd "C-c C-p"))  ; pick your own prefix key here
-  :init
-  (persp-mode))
-
 (use-package yasnippet
   :config
   (yas-global-mode 1)

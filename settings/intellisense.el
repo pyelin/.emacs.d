@@ -17,11 +17,24 @@
   :config
   (add-to-list
     'eglot-server-programs
-    '(web-mode . ("typescript-language-server" "--stdio")))
+    '(web-mode . ("typescript-language-server" "--stdio"))
+    '(move-mode . ("move-analyzer")))
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy)
   (put 'eglot-error 'flymake-overlay-control nil)
   (put 'eglot-warning 'flymake-overlay-control nil)
   (advice-add 'project-kill-buffers :before #'pye/eglot-shutdown-project)
+
+  ;; Move packages are nested in sub-directories so look for the relevant Move.toml
+  ;; https://github.com/amnn/move-mode#eglot
+  (defun pye/move-lsp-project-root (dir)
+    (and-let* (((boundp 'eglot-lsp-context))
+                (eglot-lsp-context)
+                (override (locate-dominating-file dir "Move.toml")))
+      (cons 'Move.toml override)))
+
+  (add-hook 'project-find-functions #'pye/move-lsp-project-root)
+  (cl-defmethod project-root ((project (head Move.toml)))
+    (cdr project))
   :custom
   (eglot-ignored-server-capabilites '(:documentHighlightProvider))
   :preface

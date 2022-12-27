@@ -130,11 +130,13 @@ _h_   _n_   _o_k        _y_ank
 
 (defhydra hydra-eglot (:exit t :hint none)
 "
-?o? ?e? ?u?
+?o? ?e? ?u?                ?h? ?t?
 "
   ("o" xref-find-references (hydra-invoker-format 'ova "REF"))
   ("e" xref-find-definitions (hydra-invoker-format 'exa "DEF"))
-  ("u" eglot-rename (hydra-invoker-format 'umbra "RENAME")))
+  ("u" eglot-rename (hydra-invoker-format 'umbra "RENAME"))
+  ("h" flymake-show-diagnostics (hydra-invoker-format 'hyper "ERROR"))
+  ("t" flymake-show-buffer-diagnostics (hydra-invoker-format 'tera "ERRORS")))
 
 (defhydra hydra-string-inflection (global-map "C-c u")
   "String inflection"

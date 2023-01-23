@@ -8,10 +8,9 @@
   :config
   (setq org-image-actual-width nil)
   (setq org-log-done t)
-  (setq org-todo-keywords '((sequence "TODO" "REVIEW" "ACCEPTED" "DONE")))
+  (setq org-todo-keywords '((sequence "TODO" "WIP" "DONE")))
   (setq org-todo-keyword-faces
-    '(("REVIEW" . (:foreground "hot pink"))
-       ("ACCEPTED" . (:foreground "cyan"))))
+    '(("WIP" . (:foreground "hot pink"))))
   (setq org-tag-faces
    '(("paused"  . (:background "#C00000"))))
   (setq org-confirm-babel-evaluate nil)

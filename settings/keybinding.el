@@ -77,12 +77,12 @@ Position the cursor at it's beginning, according to the current mode."
                      :post pye/after-invoke
                      :exit 1)
 "
-?o? ?e? ?u?
+?o? ?e? ?u?                ?h?
 "
   ("o" blanket (hydra-invoker-format 'ova "BLANKET"))
   ("e" hydra-org-roam/body (hydra-invoker-format 'exa "ROAM"))
   ("u" kill-this-buffer (hydra-invoker-format 'umbra "CLOSE"))
-  ("h" nil)
+  ("h" hydra-copilot/body (hydra-invoker-format 'hyper "COPILOT"))
   ("t" nil)
   ("n" nil))
 
@@ -128,6 +128,15 @@ _h_   _n_   _o_k        _y_ank
   ("h" org-roam-node-insert (hydra-invoker-format 'hyper "INSERT"))
   ("t" org-roam-tag-add (hydra-invoker-format 'tera "TAG" t)))
 
+(defhydra hydra-string-inflection (global-map "C-c u")
+  "String inflection"
+  ("_" (apply-function-to-region 'string-inflection-underscore-function) "underscore")
+  ("-" (apply-function-to-region 'string-inflection-kebab-case-function) "kebab")
+  ("c" (apply-function-to-region 'string-inflection-lower-camelcase-function) "camel")
+  ("C" (apply-function-to-region 'string-inflection-camelcase-function) "Camel")
+  ("u" (upcase-region (region-beginning) (region-end)) "UPPER")
+  ("l" (downcase-region (region-beginning) (region-end)) "lower"))
+
 (defhydra hydra-eglot (:exit t :hint none)
 "
 ?o? ?e? ?u?                ?h? ?t?
@@ -138,14 +147,12 @@ _h_   _n_   _o_k        _y_ank
   ("h" flymake-show-diagnostics (hydra-invoker-format 'hyper "ERROR"))
   ("t" flymake-show-buffer-diagnostics (hydra-invoker-format 'tera "ERRORS")))
 
-(defhydra hydra-string-inflection (global-map "C-c u")
-  "String inflection"
-  ("_" (apply-function-to-region 'string-inflection-underscore-function) "underscore")
-  ("-" (apply-function-to-region 'string-inflection-kebab-case-function) "kebab")
-  ("c" (apply-function-to-region 'string-inflection-lower-camelcase-function) "camel")
-  ("C" (apply-function-to-region 'string-inflection-camelcase-function) "Camel")
-  ("u" (upcase-region (region-beginning) (region-end)) "UPPER")
-  ("l" (downcase-region (region-beginning) (region-end)) "lower"))
+(defhydra hydra-copilot (:exit t :hint none)
+"
+?e? ?u?
+"
+  ("e" copilot-next-completion (hydra-invoker-format 'exa "NEXT"))
+  ("u" copilot-complete (hydra-invoker-format 'umbra "COMPLETE")))
 
 (global-set-key (kbd "<f9>") 'pye/kill-other-buffers)
 (global-set-key (kbd "M-u") 'hydra-umbra/body)

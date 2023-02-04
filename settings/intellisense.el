@@ -59,4 +59,11 @@
   :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
   :ensure t
   :hook
-  (copilot-complete . copilot-clear-overlay))
+  (copilot-complete . copilot-clear-overlay)
+  :config
+  (defun pye/copilot-tab ()
+    (interactive)
+    (or (copilot-accept-completion)
+      (indent-for-tab-command)))
+
+  (define-key copilot-mode-map (kbd "<tab>") #'pye/copilot-tab))

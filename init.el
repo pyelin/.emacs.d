@@ -228,6 +228,7 @@
        "completion"
        "keybinding"
        "dockerfile"
+       "csv"
        "graphql"
        "javascript"
        "python"

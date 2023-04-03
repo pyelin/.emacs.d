@@ -67,3 +67,7 @@
       (indent-for-tab-command)))
 
   (define-key copilot-mode-map (kbd "<tab>") #'pye/copilot-tab))
+
+(use-package gptel
+  :config
+  (setq gptel-api-key (getenv "OPENAI_API_KEY")))

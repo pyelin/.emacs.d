@@ -117,6 +117,10 @@
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 
+;; temporary fix until the issue with project-name resolved
+;; https://github.com/joaotavora/eglot/issues/1193
+(use-package eglot)
+
 ;; Increasing the minimum prime bits size to something larger
 ;; than the default settings stops all the GnuTLS warnings from
 ;; showing up. This might not be the right place, but it needs
@@ -177,8 +181,9 @@
   ;; only use exec-path-from-shell on OSX
   ;; this hopefully sets up path and other vars better
   :config
-  (when (memq window-system '(mac ns x))
-    (exec-path-from-shell-initialize)))
+  ;; (when (memq window-system '(mac ns x))
+  ;;   (exec-path-from-shell-initialize)))
+  (exec-path-from-shell-initialize))
 
 (use-package expand-region)
 

@@ -69,5 +69,7 @@
   (define-key copilot-mode-map (kbd "<tab>") #'pye/copilot-tab))
 
 (use-package gptel
+  :straight (:host github :repo "karthink/gptel")
   :config
-  (setq gptel-api-key (getenv "OPENAI_API_KEY")))
+  (setq gptel-api-key (getenv "OPENAI_API_KEY"))
+  (setq gptel-default-mode 'org-mode))

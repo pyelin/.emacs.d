@@ -42,19 +42,6 @@
     (when-let ((server (eglot-current-server)))
       (eglot-shutdown server))))
 
-(use-package tree-sitter
-  :hook
-  (typescript-mode . tree-sitter-hl-mode)
-  (web-mode . tree-sitter-hl-mode))
-
-(use-package tree-sitter-langs
-  :after tree-sitter
-  :defer nil
-  :config
-  (tree-sitter-require 'tsx)
-  (add-to-list 'tree-sitter-major-mode-language-alist
-    '(web-mode . tsx)))
-
 (use-package copilot
   :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
   :ensure t

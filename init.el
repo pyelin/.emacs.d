@@ -154,10 +154,6 @@
 
 ;; tramp
 (setq tramp-default-method "ssh")
-;;;; configure TRAMP to respect the PATH variable on the remote machine
-(cond
-  ((boundp 'tramp-remote-path)
-    (add-to-list 'tramp-remote-path 'tramp-own-remote-path)))
 
 (use-package avy
   :config
@@ -277,6 +273,15 @@
 (use-package wgrep-ag
   :config
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
+
+(use-package tree-sitter
+  :ensure t
+  :config
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(use-package tree-sitter-langs
+  :after tree-treesitter)
 
 ;;;; Indentation
 (setq-default indent-tabs-mode nil)

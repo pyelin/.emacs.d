@@ -302,6 +302,9 @@
 
 (when (memq window-system '(mac x))
   (use-package vterm
+    :ensure t)
+
+  (use-package multi-vterm
     :ensure t))
 
 

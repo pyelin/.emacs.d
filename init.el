@@ -166,11 +166,21 @@
 
 (use-package switch-window
   :config
+  (global-set-key (kbd "C-x o") 'switch-window)
+  (global-set-key (kbd "C-x 1") 'switch-window-then-maximize)
+  (global-set-key (kbd "C-x 2") 'switch-window-then-split-below)
+  (global-set-key (kbd "C-x 3") 'switch-window-then-split-right)
+  (global-set-key (kbd "C-x 0") 'switch-window-then-delete)
+
+  (global-set-key (kbd "C-x 4 d") 'switch-window-then-dired)
+  (global-set-key (kbd "C-x 4 f") 'switch-window-then-find-file)
+  (global-set-key (kbd "C-x 4 b") 'switch-window-then-display-buffer)
+  (global-set-key (kbd "C-x 4 0") 'switch-window-then-kill-buffer)
+
   (define-key switch-window-extra-map (kbd "c") 'switch-window-mvborder-up)
   (define-key switch-window-extra-map (kbd "t") 'switch-window-mvborder-down)
   (define-key switch-window-extra-map (kbd "h") 'switch-window-mvborder-left)
-  (define-key switch-window-extra-map (kbd "n") 'switch-window-mvborder-right)
-  (global-set-key (kbd "M-p") 'switch-window))
+  (define-key switch-window-extra-map (kbd "n") 'switch-window-mvborder-right))
 
 (use-package exec-path-from-shell
   ;; https://github.com/purcell/exe...
@@ -180,6 +190,12 @@
   ;; (when (memq window-system '(mac ns x))
   ;;   (exec-path-from-shell-initialize)))
   (exec-path-from-shell-initialize))
+
+;; shell script
+;; automatically make the script executable by looking for the shebang in the file
+(add-hook 'after-save-hook
+  'executable-make-buffer-file-executable-if-script-p)
+(setq sh-indent-after-continuation 'always)
 
 (use-package expand-region)
 
@@ -282,6 +298,12 @@
 
 (use-package tree-sitter-langs
   :after tree-treesitter)
+
+
+(when (memq window-system '(mac x))
+  (use-package vterm
+    :ensure t))
+
 
 ;;;; Indentation
 (setq-default indent-tabs-mode nil)

@@ -111,3 +111,18 @@
 
 ;; (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 ;; (add-to-list 'default-frame-alist '(ns-appearance . dark))
+
+(use-package zone
+  :config
+  (zone-when-idle 120)
+  (setq zone-programs [zone-pgm-rotate])
+
+  (defun zone-choose (pgm)
+    "Choose a PGM to run for `zone'."
+    (interactive
+      (list
+        (completing-read
+          "Program: "
+          (mapcar 'symbol-name zone-programs))))
+    (let ((zone-programs (list (intern pgm))))
+      (zone))))

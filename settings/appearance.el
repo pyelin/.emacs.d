@@ -115,7 +115,7 @@
 (use-package zone
   :config
   (zone-when-idle 120)
-  (setq zone-programs [zone-pgm-rotate])
+  (setq zone-programs [zone-pgm-drip-fretfully])
 
   (defun zone-choose (pgm)
     "Choose a PGM to run for `zone'."

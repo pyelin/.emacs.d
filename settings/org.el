@@ -82,49 +82,30 @@
                 :scheduled past)))
   (org-super-agenda-mode))
 
-(cond
+(use-package org-roam
+  :ensure t
+  :custom
+  (org-roam-v2-ack t)
+  :init
+  (cond
     ((boundp 'pye/org-roam-directory)
-      (use-package org-roam
-        :ensure t
-        :custom
-        (org-roam-v2-ack t)
-        (org-roam-node-display-template "${title:*} ${file:48}")
-        :config
-        (setq org-roam-directory pye/org-roam-directory)
-        (org-roam-db-autosync-mode)
+      (setq org-roam-directory pye/org-roam-directory)))
+  (setq org-roam-dailies-directory "journals/")
+  (setq org-roam-capture-templates
+   '(("d" "default" plain
+      "%?" :target
+      (file+head "pages/${slug}.org" "#+title: ${title}\n")
+       :unnarrowed t)))
+  (setq org-roam-file-exclude-regexp
+      (concat "^" (expand-file-name org-roam-directory) "/logseq/"))
+  :config
+  (org-roam-db-autosync-mode)
 
-        ;; for org-roam-buffer-toggle
-        ;; Recommendation in the official manual
-        (add-to-list 'display-buffer-alist
-          '("\\*org-roam\\*"
-             (display-buffer-in-direction)
-             (direction . right)
-             (window-width . 0.33)
-             (window-height . fit-window-to-buffer))))))
-
-
-(cond
-    ((boundp 'pye/org-roam-directory)
-      (use-package org-roam
-        :ensure t
-        :custom
-        (org-roam-v2-ack t)
-        (org-roam-node-display-template "${title:*} ${file:48}")
-        (org-roam-directory pye/org-roam-directory)
-        (org-roam-dailies-directory "journals/")
-        (org-roam-capture-templates
-          '(("d" "default" plain
-              "%?" :target
-              (file+head "pages/${slug}.org" "#+title: ${title}\n")
-              :unnarrowed t)))
-        :config
-        (org-roam-db-autosync-mode)
-
-        ;; for org-roam-buffer-toggle
-        ;; Recommendation in the official manual
-        (add-to-list 'display-buffer-alist
-          '("\\*org-roam\\*"
-             (display-buffer-in-direction)
-             (direction . right)
-             (window-width . 0.33)
-             (window-height . fit-window-to-buffer))))))
+  ;; for org-roam-buffer-toggle
+  ;; Recommendation in the official manual
+  (add-to-list 'display-buffer-alist
+    '("\\*org-roam\\*"
+       (display-buffer-in-direction)
+       (direction . right)
+       (window-width . 0.33)
+       (window-height . fit-window-to-buffer))))

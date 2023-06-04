@@ -13,10 +13,15 @@
     '(ediff-current-diff-C ((t (:foreground "White" :background "green"))))))
 
 ;; ;; default font
-(cond
-  ((window-p) (set-frame-font "Iosevka SS12 Extended-10"))
-  ((linux-p) (set-frame-font "Iosevka SS12 Extended-12"))
-  (t (set-frame-font "Iosevka SS12 Extended-14")))
+(defun pye/load-font ()
+  (interactive)
+  (cond
+    ((window-p) (set-frame-font "Iosevka SS12 Extended-10"))
+    ((linux-p) (set-frame-font "Iosevka SS12 Extended-12"))
+    (t (set-frame-font "Iosevka SS12 Extended-14"))))
+
+(pye/load-font)
+
 
 (setq prettify-symbols-unprettify-at-point t)
 (global-prettify-symbols-mode t)

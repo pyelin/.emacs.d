@@ -96,8 +96,6 @@
       "%?" :target
       (file+head "pages/${slug}.org" "#+title: ${title}\n")
        :unnarrowed t)))
-  (setq org-roam-file-exclude-regexp
-    (concat "^" (expand-file-name org-roam-directory) "/(logseq|encrypted)/"))
   (setq org-roam-completion-everywhere t)
   :config
   (org-roam-db-autosync-mode)

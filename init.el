@@ -331,6 +331,11 @@
 (setq typescript-indent-level 2)
 (setq lisp-indent-offset 2)
 
+(use-package clipetty
+  :ensure t
+  :hook (after-init . global-clipetty-mode)
+  :bind ("M-w" . clipetty-kill-ring-save))
+
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 100 1000 1000))
 (setq read-process-output-max (* 1024 1024))

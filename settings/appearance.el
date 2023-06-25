@@ -16,7 +16,7 @@
 (defun pye/load-font ()
   (interactive)
   (cond
-    ((window-p) (set-frame-font "Iosevka SS12 Extended-10"))
+    ((window-p) (set-frame-font "Iosevka SS12 Extended-12"))
     ((linux-p) (set-frame-font "Iosevka SS12 Extended-12"))
     (t (set-frame-font "Iosevka SS12 Extended-14"))))
 
@@ -104,6 +104,9 @@
   (set-face-attribute 'mode-line nil :family "Iosevka SS12 Extended" :height 120)
   (set-face-attribute 'mode-line-inactive nil :family "Iosevka SS12 Extended" :height 100)
   (doom-modeline-mode t))
+
+(use-package all-the-icons
+  :if (display-graphic-p))
 
 ;; subtly flash the modeline for alert
 (setq ring-bell-function

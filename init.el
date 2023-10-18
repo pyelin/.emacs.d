@@ -119,7 +119,10 @@
 
 ;; temporary fix until the issue with project-name resolved
 ;; https://github.com/joaotavora/eglot/issues/1193
-(use-package eglot)
+(use-package eglot
+  :config
+  ;; disable flymake-mode on eglot-managed-mode-hook
+  (add-hook 'eglot-managed-mode-hook (lambda () (remove-hook 'flymake-diagnostic-functions 'eglot-flymake-backend))))
 
 ;; Increasing the minimum prime bits size to something larger
 ;; than the default settings stops all the GnuTLS warnings from

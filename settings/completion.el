@@ -49,7 +49,8 @@
 
   :bind
   (("C-c ." . embark-act)         ;; pick some comfortable binding
-   ("C-c ;" . embark-dwim))        ;; good alternative: M-.
+    ("C-c ;" . embark-dwim)
+    ("C-c e" . embark-export))        ;; good alternative: M-.
 
 
   :init

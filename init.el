@@ -157,12 +157,15 @@
 
 ;; tramp
 (setq tramp-default-method "ssh")
+(with-eval-after-load "tramp"
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+
 
 (use-package avy
   :config
   (setq avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s)))
 
-(use-package ag
+(use-package rg
   :defer t)
 
 (use-package projectile)

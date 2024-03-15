@@ -75,8 +75,10 @@
 (add-hook 'minibuffer-setup-hook
   (lambda () (setq-local show-trailing-whitespace nil)))
 
-(add-hook 'eshell-mode-hook
-  (lambda () (setq show-trailing-whitespace nil)))
+(add-hook 'eshell-mode-hook (lambda ()
+    (setq show-trailing-whitespace nil)
+    (setq buffer-face-mode-face `(:background "#56656b"))
+    (buffer-face-mode 1)))
 
 ;; make scratch as startup page
 ;; (setq initial-scratch-message "")

@@ -16,6 +16,7 @@
   (setq org-confirm-babel-evaluate nil)
   (setq org-babel-python-command "python3")
   (setq org-startup-truncated nil)
+  (setq org-blank-before-new-entry '((heading) (plain-list-item)))
   (define-key global-map "\C-c l" 'org-store-link)
   (define-key global-map "\C-c a" 'org-agenda)
   (define-key org-mode-map (kbd "M-e") nil) ;; reserved for keybinding
@@ -91,11 +92,15 @@
     ((boundp 'pye/org-roam-directory)
       (setq org-roam-directory pye/org-roam-directory)))
   (setq org-roam-dailies-directory "journals/")
+  (setq org-roam-file-exclude-regexp "logseq/.*$")  ;; exclude Logseq files
   (setq org-roam-capture-templates
-   '(("d" "default" plain
-      "%?" :target
-      (file+head "pages/${slug}.org" "#+title: ${title}\n")
-       :unnarrowed t)))
+    '(("d" "default" plain "%?"
+        ;; Accomodates for the fact that Logseq uses the "pages" directory
+        :target (file+head "pages/${slug}.org" "#+title: ${title}\n")
+        :unnarrowed t))
+    org-roam-dailies-capture-templates
+    '(("d" "default" entry "* %?"
+        :target (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
   (setq org-roam-completion-everywhere t)
   :config
   (org-roam-db-autosync-mode)
@@ -106,5 +111,18 @@
     '("\\*org-roam\\*"
        (display-buffer-in-direction)
        (direction . right)
-       (window-width . 0.33)
+       (window-width . 0.6)
        (window-height . fit-window-to-buffer))))
+
+(use-package logseq-org-roam
+  :straight (:host github
+              :repo "sbougerel/logseq-org-roam"
+              :files ("*.el"))
+  :config
+  (setq logseq-org-roam-link-types 'fuzzy) ;; or 'files, depending on the
+                                           ;; setting ":org-mode/insert-file-link?"
+                                           ;; See `logseq-org-roam-link-types`
+  (setq logseq-org-roam-pages-directory "pages")
+  (setq logseq-org-roam-journals-directory "journals")
+  (setq logseq-org-roam-journals-file-name-format "%Y-%m-%d")
+  (setq logseq-org-roam-journals-title-format "%Y-%m-%d"))

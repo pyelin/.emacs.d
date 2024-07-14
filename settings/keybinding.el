@@ -4,12 +4,12 @@
 ;;; Code:
 
 (defvar pye/invoke-color "#40e0d0")
-(defun umbra () "Umbra." (propertize "u" 'face '(:foreground "#178ccb" :bold t)))
-(defun exa () "Exa." (propertize "e" 'face '(:foreground "#f48024" :bold t)))
-(defun ova () "Ova." (propertize "o" 'face '(:foreground "#90bd31" :bold t)))
-(defun hyper () "Umbra." (propertize "h" 'face '(:foreground "#178ccb" :bold t)))
-(defun tera () "Exa." (propertize "t" 'face '(:foreground "#f48024" :bold t)))
-(defun nora () "Ova." (propertize "n" 'face '(:foreground "#90bd31" :bold t)))
+(defun umbra () "Umbra." (propertize "u" 'face '(:foreground "#178ccb")))
+(defun exa () "Exa." (propertize "e" 'face '(:foreground "#f48024")))
+(defun ova () "Ova." (propertize "o" 'face '(:foreground "#90bd31")))
+(defun hyper () "Umbra." (propertize "h" 'face '(:foreground "#178ccb")))
+(defun tera () "Exa." (propertize "t" 'face '(:foreground "#f48024")))
+(defun nora () "Ova." (propertize "n" 'face '(:foreground "#90bd31")))
 (defun hydra-invoker-format (first name &optional is-last)
   "Format NAME spell using FIRST, SECOND."
   (format (if is-last "[%s] %s" "[%s] %-5s") (funcall first) name))
@@ -37,13 +37,11 @@ Position the cursor at it's beginning, according to the current mode."
 
 (defun pye/before-invoke ()
   (set-cursor-color pye/invoke-color)
-  (setq-default cursor-type 'box)
-  (set-face-background hl-line-face "#1c6861"))
+  (setq-default cursor-type 'box))
 
 (defun pye/after-invoke ()
   (set-cursor-color "white")
-  (setq-default cursor-type '(bar . 3))
-  (set-face-background hl-line-face "gray25"))
+  (setq-default cursor-type '(bar . 3)))
 
 (defhydra hydra-umbra (:hint none
                        :pre pye/before-invoke
@@ -112,21 +110,17 @@ _h_   _n_   _o_k        _y_ank
   ("p" kill-rectangle nil)
   ("o" nil nil))
 
-;; TODO: mimic filtering by tags
-(defvar pye/org-roam-find-file-prefix "")
-(defun pye/org-roam-find-file-with-prefix ()
-  (interactive)
-  (org-roam-node-find t pye/org-roam-find-file-prefix))
 
 (defhydra hydra-org-roam (:hint none :exit 1)
 "
-?o? ?e? ?u?                ?h? ?t?
+?o? ?e? ?u?                ?h? ?t? ?n?
 "
   ("o" org-roam-buffer-toggle (hydra-invoker-format 'ova "ROAM"))
   ("e" org-roam-graph (hydra-invoker-format 'exa "GRAPH"))
-  ("u" pye/org-roam-find-file-with-prefix (hydra-invoker-format 'umbra "FILE"))
+  ("u" org-roam-node-find (hydra-invoker-format 'umbra "FIND"))
   ("h" org-roam-node-insert (hydra-invoker-format 'hyper "INSERT"))
-  ("t" org-roam-tag-add (hydra-invoker-format 'tera "TAG" t)))
+  ("t" org-roam-tag-add (hydra-invoker-format 'tera "TAG" t))
+  ("n" org-roam-dailies-goto-today (hydra-invoker-format 'nora "TODAY" t)))
 
 (defhydra hydra-string-inflection (global-map "C-c u")
   "String inflection"

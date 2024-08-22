@@ -80,7 +80,7 @@ Position the cursor at it's beginning, according to the current mode."
   ("o" blanket (hydra-invoker-format 'ova "BLANKET"))
   ("e" hydra-org-roam/body (hydra-invoker-format 'exa "ROAM"))
   ("u" kill-this-buffer (hydra-invoker-format 'umbra "CLOSE"))
-  ("h" hydra-copilot/body (hydra-invoker-format 'hyper "COPILOT"))
+  ("h" gptel-menu (hydra-invoker-format 'hyper "GPT"))
   ("t" nil)
   ("n" nil))
 
@@ -140,13 +140,6 @@ _h_   _n_   _o_k        _y_ank
   ("u" eglot-rename (hydra-invoker-format 'umbra "RENAME"))
   ("h" flymake-show-diagnostics (hydra-invoker-format 'hyper "ERROR"))
   ("t" flymake-show-buffer-diagnostics (hydra-invoker-format 'tera "ERRORS")))
-
-(defhydra hydra-copilot (:exit t :hint none)
-"
-?e? ?u?
-"
-  ("e" copilot-next-completion (hydra-invoker-format 'exa "NEXT"))
-  ("u" copilot-complete (hydra-invoker-format 'umbra "COMPLETE")))
 
 (global-set-key (kbd "<f9>") 'pye/kill-other-buffers)
 (global-set-key (kbd "M-u") 'hydra-umbra/body)

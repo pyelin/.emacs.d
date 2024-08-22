@@ -42,21 +42,9 @@
     (when-let ((server (eglot-current-server)))
       (eglot-shutdown server))))
 
-(use-package copilot
-  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
-  :ensure t
-  :hook
-  (copilot-complete . copilot-clear-overlay)
-  :config
-  (defun pye/copilot-tab ()
-    (interactive)
-    (or (copilot-accept-completion)
-      (indent-for-tab-command)))
-
-  (define-key copilot-mode-map (kbd "<tab>") #'pye/copilot-tab))
-
 (use-package gptel
   :straight (:host github :repo "karthink/gptel")
   :config
   (setq gptel-api-key (getenv "OPENAI_API_KEY"))
-  (setq gptel-default-mode 'org-mode))
+  (setq gptel-default-mode 'org-mode)
+  (setq gptel-model "ChatGPT:gpt-4o-mini"))

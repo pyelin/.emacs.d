@@ -48,3 +48,10 @@
   (setq gptel-api-key (getenv "OPENAI_API_KEY"))
   (setq gptel-default-mode 'org-mode)
   (setq gptel-model "ChatGPT:gpt-4o-mini"))
+
+(use-package elysium
+  :straight (:host github :repo "lanceberge/elysium" :branch "main" :files ("*.el"))
+  :custom
+  ;; Below are the default values
+  (elysium-window-size 0.33) ; The elysium buffer will be 1/3 your screen
+  (elysium-window-style 'vertical))

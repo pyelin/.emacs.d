@@ -8,6 +8,8 @@
   (eglot-autoshutdown t)
   :hook
   (typescript-mode . eglot-ensure)
+  (typescript-ts-mode . eglot-ensure)
+  (tsx-ts-mode . eglot-ensure)
   (web-mode . eglot-ensure)
   (python-mode . eglot-ensure)
   (js2-mode . eglot-ensure)
@@ -47,7 +49,7 @@
   :config
   (setq gptel-api-key (getenv "OPENAI_API_KEY"))
   (setq gptel-default-mode 'org-mode)
-  (setq gptel-model "ChatGPT:gpt-4o-mini"))
+  (setq gptel-model "gpt-4o-mini"))
 
 (use-package elysium
   :straight (:host github :repo "lanceberge/elysium" :branch "main" :files ("*.el"))

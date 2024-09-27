@@ -34,18 +34,16 @@
 	(web-mode-enable-auto-indentation nil))
 
 (use-package typescript-mode
-  :after tree-sitter
-  :config
-  ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
-  ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
-  (define-derived-mode typescriptreact-mode typescript-mode
-    "TypeScript TSX")
+  :mode (("\\.ts\\'" . typescript-ts-mode)))
 
-  ;; use our derived mode for tsx files
-  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
-  ;; by default, typescript-mode is mapped to the treesitter typescript parser
-  ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
-  (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx)))
+(use-package css-in-js-mode
+  :straight (:host github :repo "orzechowskid/tree-sitter-css-in-js"))
+
+(use-package tsx-mode
+  :straight (:host github :repo "orzechowskid/tsx-mode.el")
+  :mode (("\\.tsx\\'" . tsx-ts-mode))
+  :config
+  (setq tsx-indent-level 2))
 
 (use-package css-mode
   :mode (rx ".css" eos)

@@ -261,6 +261,7 @@
        "org"
        "intellisense"
        "yaml"
+       "just"
        )))
 
 (eldoc-mode 0)

@@ -168,7 +168,9 @@
 (use-package rg
   :defer t)
 
-(use-package projectile)
+(use-package projectile
+  :config
+  (setq projectile-git-submodule-command "true"))
 
 (use-package switch-window
   :config

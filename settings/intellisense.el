@@ -48,7 +48,6 @@
   :straight (:host github :repo "karthink/gptel")
   :config
   (setq gptel-api-key (getenv "OPENAI_API_KEY"))
-  (setq gptel-default-mode 'org-mode)
   (setq gptel-model "gpt-4o-mini"))
 
 (use-package elysium

@@ -17,6 +17,7 @@
   (setq org-babel-python-command "python3")
   (setq org-startup-truncated nil)
   (setq org-blank-before-new-entry '((heading) (plain-list-item)))
+  (setq org-startup-indented 'indent)
   (define-key global-map "\C-c l" 'org-store-link)
   (define-key global-map "\C-c a" 'org-agenda)
   (define-key org-mode-map (kbd "M-e") nil) ;; reserved for keybinding

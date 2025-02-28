@@ -99,7 +99,7 @@
     (downcase (string-trim-right
                 (shell-command-to-string "uuidgen")))))
 
-(defun pye/find-file-at-point ()
+(defun pye/consult-find-at-point ()
   "Use built-in `read-file-name` to select a file and jump to line:column if present."
   (interactive)
   (let* ((input (thing-at-point 'filename t))  ; Get filename at point

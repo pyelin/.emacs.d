@@ -154,3 +154,4 @@ _h_   _n_   _o_k        _y_ank
 (global-set-key (kbd "S-C-<down>")  'shrink-window)
 (global-set-key (kbd "S-C-<up>")    'enlarge-window)
 
+(global-set-key (kbd "C-c f") 'pye/consult-find-at-point)

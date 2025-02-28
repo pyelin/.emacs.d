@@ -99,6 +99,28 @@
     (downcase (string-trim-right
                 (shell-command-to-string "uuidgen")))))
 
+(defun pye/find-file-at-point ()
+  "Use built-in `read-file-name` to select a file and jump to line:column if present."
+  (interactive)
+  (let* ((input (thing-at-point 'filename t))  ; Get filename at point
+          (file-and-pos (read-file-name "Find file: " nil nil t (when input (car (split-string input ":")))))  ; Truncate line:column
+          ; Remove leading './' or '../' sequences from PATH."
+          (file-and-pos (replace-regexp-in-string "^\\(?:\\.\\./\\|\\./\\)+" "" file-and-pos))
+         (parsed (when (string-match "^\(.*?\):\([0-9]+\)?:?\([0-9]+\)?$" file-and-pos)
+                   (list (match-string 1 file-and-pos)
+                         (match-string 2 file-and-pos)
+                         (match-string 3 file-and-pos))))
+         (file (or (car parsed) file-and-pos))
+         (line (when (nth 1 parsed) (string-to-number (nth 1 parsed))))
+          (column (when (nth 2 parsed) (string-to-number (nth 2 parsed)))))
+    (when file
+      (find-file file)
+      (when (and line (> line 0))
+        (goto-char (point-min))
+        (forward-line (1- line))
+        (when (and column (> column 0))
+          (move-to-column column))))))
+
 ;;; Package setup
 ;;; straight
 (defvar bootstrap-version)
@@ -311,13 +333,6 @@
   :config
   (global-treesit-auto-mode))
 
-(when (memq window-system '(mac x))
-  (use-package vterm
-    :ensure t)
-
-  (use-package multi-vterm
-    :ensure t))
-
 
 ;;;; Indentation
 (setq-default indent-tabs-mode nil)
@@ -346,3 +361,25 @@
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 100 1000 1000))
 (setq read-process-output-max (* 1024 1024))
+
+;; terminal
+(use-package eat
+  :config
+  ;; Enable directory tracking
+  (setq eat-enable-directory-tracking t)
+
+  ;; Enable mouse support for clicking
+  (add-hook 'eat-mode-hook #'eat-enable-mouse-support)
+
+  ;; Enable terminal yanking support
+  (add-hook 'eat-mode-hook #'eat-enable-yank-to-terminal)
+
+  ;; Enable shell command history
+  (setq eat-enable-shell-command-history t)
+
+  ;; Add file-name highlighting and make paths clickable
+  (add-hook 'eat-mode-hook
+    (lambda ()
+      (make-local-variable 'goto-address-highlight-p)
+      (setq goto-address-highlight-p t)
+      (goto-address-mode 1))))

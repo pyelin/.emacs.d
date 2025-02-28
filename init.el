@@ -363,6 +363,7 @@
 (setq read-process-output-max (* 1024 1024))
 
 ;; terminal
+(setq shell-file-name "/bin/bash")
 (use-package eat
   :config
   ;; Enable directory tracking
@@ -370,9 +371,6 @@
 
   ;; Enable mouse support for clicking
   (add-hook 'eat-mode-hook #'eat-enable-mouse-support)
-
-  ;; Enable terminal yanking support
-  (add-hook 'eat-mode-hook #'eat-enable-yank-to-terminal)
 
   ;; Enable shell command history
   (setq eat-enable-shell-command-history t)

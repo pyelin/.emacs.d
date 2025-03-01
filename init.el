@@ -369,9 +369,6 @@
   ;; Enable directory tracking
   (setq eat-enable-directory-tracking t)
 
-  ;; Enable mouse support for clicking
-  (add-hook 'eat-mode-hook #'eat-enable-mouse-support)
-
   ;; Enable shell command history
   (setq eat-enable-shell-command-history t)
 

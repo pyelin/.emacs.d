@@ -100,25 +100,23 @@
                 (shell-command-to-string "uuidgen")))))
 
 (defun pye/consult-find-at-point ()
-  "Use built-in `read-file-name` to select a file and jump to line:column if present."
+  "Use `consult-find` to select a file and jump to line:column if present."
   (interactive)
   (let* ((input (thing-at-point 'filename t))  ; Get filename at point
-          (file-and-pos (read-file-name "Find file: " nil nil t (when input (car (split-string input ":")))))  ; Truncate line:column
-          ; Remove leading './' or '../' sequences from PATH."
-          (file-and-pos (replace-regexp-in-string "^\\(?:\\.\\./\\|\\./\\)+" "" file-and-pos))
-         (parsed (when (string-match "^\(.*?\):\([0-9]+\)?:?\([0-9]+\)?$" file-and-pos)
+         (file-and-pos (consult-find nil input))  ; Run consult-find
+         (parsed (when (and file-and-pos (string-match "^\\(.*?\\):\\([0-9]+\\)?:?\\([0-9]+\\)?$" file-and-pos))
                    (list (match-string 1 file-and-pos)
                          (match-string 2 file-and-pos)
                          (match-string 3 file-and-pos))))
-         (file (or (car parsed) file-and-pos))
+         (file (car parsed))
          (line (when (nth 1 parsed) (string-to-number (nth 1 parsed))))
-          (column (when (nth 2 parsed) (string-to-number (nth 2 parsed)))))
+         (column (when (nth 2 parsed) (string-to-number (nth 2 parsed)))))
     (when file
       (find-file file)
-      (when (and line (> line 0))
+      (when line
         (goto-char (point-min))
         (forward-line (1- line))
-        (when (and column (> column 0))
+        (when column
           (move-to-column column))))))
 
 ;;; Package setup

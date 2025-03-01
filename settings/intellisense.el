@@ -11,7 +11,7 @@
   (typescript-ts-mode . eglot-ensure)
   (tsx-ts-mode . eglot-ensure)
   (web-mode . eglot-ensure)
-  (python-mode . eglot-ensure)
+  (python-ts-mode . eglot-ensure)
   (js2-mode . eglot-ensure)
   (move-mode . eglot-ensure)
   :init

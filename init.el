@@ -353,8 +353,13 @@
 
 (use-package smerge-mode
   :ensure nil
-  :hook
-  (prog-mode . smerge-mode))
+  :config
+  (defun sm-try-smerge ()
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward "^<<<<<<<" nil t)
+        (smerge-mode 1))))
+  (add-hook 'find-file-hook 'sm-try-smerge t))
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 100 1000 1000))

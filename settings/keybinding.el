@@ -142,16 +142,16 @@ _h_   _n_   _o_k        _y_ank
   ("t" flymake-show-buffer-diagnostics (hydra-invoker-format 'tera "ERRORS")))
 
 (defhydra hydra-smerge
-  (:color red :hint nil
+  (:color blue :hint nil
     :pre (smerge-mode 1))
   "
-^Move^ ^Keep^ ^Diff^ ^Pair^
+^Move^        ^Keep^           ^Diff^        ^Pair^
 ------------------------------------------------------
-_n_ext _b_ase _R_efine _<_: base-mine
-_p_rev _m_ine _E_diff _=_: mine-other
-^ ^ _o_ther _C_ombine _>_: base-other
-^ ^ _a_ll _r_esolve
-_q_uit _RET_: current
+_n_ext    _b_ase    _u_p      _R_efine    _<_: base-mine
+_p_rev    _m_ine    _d_own    _E_diff     _=_: mine-other
+^ ^       _o_ther   ^ ^       _C_ombine   _>_: base-other
+^ ^       _a_ll _r_esolve
+_q_uit    _RET_: current
 "
   ("RET" smerge-keep-current)
   ("C" smerge-combine-with-next)
@@ -160,6 +160,8 @@ _q_uit _RET_: current
   ("a" smerge-keep-all)
   ("b" smerge-keep-base)
   ("m" smerge-keep-mine)
+  ("u" smerge-keep-up)
+  ("d" smerge-keep-down)
   ("n" smerge-next)
   ("o" smerge-keep-other)
   ("p" smerge-prev)
@@ -167,7 +169,7 @@ _q_uit _RET_: current
   ("<" smerge-diff-base-mine)
   ("=" smerge-diff-mine-other)
   (">" smerge-diff-base-other)
-  ("q" nil :color blue))
+  ("q" nil :color red))
 
 (global-set-key (kbd "<f9>") 'pye/kill-other-buffers)
 (global-set-key (kbd "M-u") 'hydra-umbra/body)

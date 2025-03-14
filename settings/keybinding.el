@@ -75,13 +75,13 @@ Position the cursor at it's beginning, according to the current mode."
                      :post pye/after-invoke
                      :exit 1)
 "
-?o? ?e? ?u?                ?h?
+?o? ?e? ?u?                ?h? ?t?
 "
   ("o" blanket (hydra-invoker-format 'ova "BLANKET"))
   ("e" hydra-org-roam/body (hydra-invoker-format 'exa "ROAM"))
   ("u" kill-this-buffer (hydra-invoker-format 'umbra "CLOSE"))
   ("h" gptel-menu (hydra-invoker-format 'hyper "GPT"))
-  ("t" nil)
+  ("t" hydra-smerge/body (hydra-invoker-format 'tera "SMERGE"))
   ("n" nil))
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
@@ -140,6 +140,34 @@ _h_   _n_   _o_k        _y_ank
   ("u" eglot-rename (hydra-invoker-format 'umbra "RENAME"))
   ("h" flymake-show-diagnostics (hydra-invoker-format 'hyper "ERROR"))
   ("t" flymake-show-buffer-diagnostics (hydra-invoker-format 'tera "ERRORS")))
+
+(defhydra hydra-smerge
+  (:color red :hint nil
+    :pre (smerge-mode 1))
+  "
+^Move^ ^Keep^ ^Diff^ ^Pair^
+------------------------------------------------------
+_n_ext _b_ase _R_efine _<_: base-mine
+_p_rev _m_ine _E_diff _=_: mine-other
+^ ^ _o_ther _C_ombine _>_: base-other
+^ ^ _a_ll _r_esolve
+_q_uit _RET_: current
+"
+  ("RET" smerge-keep-current)
+  ("C" smerge-combine-with-next)
+  ("E" smerge-ediff)
+  ("R" smerge-refine)
+  ("a" smerge-keep-all)
+  ("b" smerge-keep-base)
+  ("m" smerge-keep-mine)
+  ("n" smerge-next)
+  ("o" smerge-keep-other)
+  ("p" smerge-prev)
+  ("r" smerge-resolve)
+  ("<" smerge-diff-base-mine)
+  ("=" smerge-diff-mine-other)
+  (">" smerge-diff-base-other)
+  ("q" nil :color blue))
 
 (global-set-key (kbd "<f9>") 'pye/kill-other-buffers)
 (global-set-key (kbd "M-u") 'hydra-umbra/body)

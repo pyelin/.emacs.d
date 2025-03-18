@@ -51,9 +51,10 @@
   (gptel-api-key (getenv "OPENAI_API_KEY"))
   (gptel-model 'gpt-4o-mini))
 
-(use-package elysium
-  :straight (:host github :repo "lanceberge/elysium" :branch "main" :files ("*.el"))
+(use-package aidermacs
+  :bind (("C-c h" . aidermacs-transient-menu))
   :custom
-  ;; Below are the default values
-  (elysium-window-size 0.33) ; The elysium buffer will be 1/3 your screen
-  (elysium-window-style 'vertical))
+  ; See the Configuration section below
+  (aidermacs-use-architect-mode t)
+  (aidermacs-default-model "openai")
+  (aidermacs-architect-model "o1-mini"))

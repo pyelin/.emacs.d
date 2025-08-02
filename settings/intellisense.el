@@ -19,7 +19,7 @@
   :config
   (add-to-list 'eglot-server-programs '(web-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs '(move-mode . ("move-analyzer")))
-  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver")))
+  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy)
   (put 'eglot-error 'flymake-overlay-control nil)
   (put 'eglot-warning 'flymake-overlay-control nil)
@@ -54,7 +54,7 @@
 (use-package aidermacs
   :bind (("C-c h" . aidermacs-transient-menu))
   :custom
-  ; See the Configuration section below
+  (aidermacs-extra-args '("--no-gitignore --no-show-model-warnings"))
   (aidermacs-use-architect-mode t)
-  (aidermacs-default-model "openai")
-  (aidermacs-architect-model "o1-mini"))
+  (aidermacs-default-model "sonnet")
+  (aidermacs-weak-model "ollama_chat/qwen2.5-coder"))

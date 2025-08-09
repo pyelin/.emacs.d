@@ -51,10 +51,12 @@
   (gptel-api-key (getenv "OPENAI_API_KEY"))
   (gptel-model 'gpt-4o-mini))
 
-(use-package aidermacs
-  :bind (("C-c h" . aidermacs-transient-menu))
+(use-package claude-code-ide
+  :straight (:type git :host github :repo "manzaltu/claude-code-ide.el")
+  :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
   :custom
-  (aidermacs-extra-args '("--no-gitignore --no-show-model-warnings"))
-  (aidermacs-use-architect-mode t)
-  (aidermacs-default-model "sonnet")
-  (aidermacs-weak-model "ollama_chat/qwen2.5-coder"))
+  (claude-code-ide-terminal-backend 'eat)
+  :config
+  ;; Optionally enable Emacs MCP tools
+  ;; (claude-code-ide-emacs-tools-setup)
+  )

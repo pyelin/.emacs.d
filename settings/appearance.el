@@ -5,7 +5,7 @@
 (use-package doom-themes
   :config
   (load-theme 'doom-vibrant t)
-  (setq-default cursor-type '(bar . 2))
+  (setq-default cursor-type 'box)
   (global-hl-line-mode t)
   (custom-set-faces
     '(trailing-whitespace ((t (:background "slategray3"))))

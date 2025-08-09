@@ -9,8 +9,8 @@
   (global-hl-line-mode t)
   (custom-set-faces
     '(trailing-whitespace ((t (:background "slategray3"))))
-    '(ediff-current-diff-B ((t (:foreground "White" :background "green"))))
-    '(ediff-current-diff-C ((t (:foreground "White" :background "green"))))))
+    '(ediff-current-diff-B ((t (:foreground "White" :background "#7bc275"))))
+    '(ediff-current-diff-C ((t (:foreground "White" :background "#7bc275"))))))
 
 ;; ;; default font
 (defun pye/load-font ()

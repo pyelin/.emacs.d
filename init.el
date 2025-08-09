@@ -366,7 +366,14 @@
 (setq read-process-output-max (* 1024 1024))
 
 ;; terminal
-(setq shell-file-name "/bin/bash")
+;; for zsh, make sure to add this line in .zshrc file
+;; if [[ -v INSIDE_EMACS ]]; then
+;;   export TERM=xterm-256color  # or a different terminfo entry suitable for eat
+;; else
+;;   # Regular shell environment
+;; fi
+(setq shell-file-name "/bin/zsh")
+
 (use-package eat
   :config
   ;; Enable directory tracking

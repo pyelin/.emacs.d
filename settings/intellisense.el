@@ -46,10 +46,15 @@
 
 (use-package gptel
   :straight (:host github :repo "karthink/gptel")
-  :custom
-  (gptel-default-mode 'org-mode)
-  (gptel-api-key (getenv "OPENAI_API_KEY"))
-  (gptel-model 'gpt-4o-mini))
+  :config
+  (setq gptel-model 'google/gemma-3n-e4b)
+  (setq gptel-backend
+    (gptel-make-openai "LMStudio"
+      :protocol "http"
+      :host "localhost:1234"
+      :endpoint "/v1/chat/completions"
+      :stream t
+      :models '(google/gemma-3n-e4b))))
 
 (use-package claude-code-ide
   :straight (:type git :host github :repo "manzaltu/claude-code-ide.el")

@@ -47,20 +47,22 @@
 (use-package gptel
   :straight (:host github :repo "karthink/gptel")
   :config
-  (setq gptel-model 'google/gemma-3n-e4b)
-  (setq gptel-backend
-    (gptel-make-openai "LMStudio"
-      :protocol "http"
-      :host "localhost:1234"
-      :endpoint "/v1/chat/completions"
-      :stream t
-      :models '(google/gemma-3n-e4b))))
+  (setq gptel-model 'gemini-2.5-flash-lite)
+  (setq gptel-backend (gptel-make-gemini "Gemini"
+    :key (getenv "GEMINI_API_KEY")
+    :stream t)))
+
+(use-package gptel-magit
+  :hook (magit-mode . gptel-magit-install)
+  :custom
+  (gptel-magit-commit-prompt gptel-magit-prompt-zed))
 
 (use-package claude-code-ide
   :straight (:type git :host github :repo "manzaltu/claude-code-ide.el")
   :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
   :custom
   (claude-code-ide-terminal-backend 'eat)
+  (claude-code-ide-window-width 64)
   :config
   ;; Optionally enable Emacs MCP tools
   ;; (claude-code-ide-emacs-tools-setup)

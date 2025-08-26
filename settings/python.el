@@ -8,6 +8,10 @@
   (add-hook 'python-mode-hook 'anaconda-mode)
   (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
 
+(use-package pet
+  :config
+  (add-hook 'python-base-mode-hook 'pet-mode -10))
+
 
 ;; (use-package company-anaconda
 ;;   :mode ("\\.py\\'" . python-mode)

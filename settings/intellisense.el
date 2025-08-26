@@ -62,7 +62,7 @@
   :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
   :custom
   (claude-code-ide-terminal-backend 'eat)
-  (claude-code-ide-window-width 64)
+  (claude-code-ide-window-width 70)
   :config
   ;; Optionally enable Emacs MCP tools
   ;; (claude-code-ide-emacs-tools-setup)

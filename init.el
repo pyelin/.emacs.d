@@ -284,6 +284,7 @@
        "intellisense"
        "yaml"
        "just"
+       "rust"
        )))
 
 (eldoc-mode 0)

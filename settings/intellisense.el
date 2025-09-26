@@ -14,12 +14,14 @@
   (python-ts-mode . eglot-ensure)
   (js2-mode . eglot-ensure)
   (move-mode . eglot-ensure)
+  (rust-ts-mode . eglot-ensure)
   :init
   (put 'eglot-server-programs 'safe-local-variable 'listp)
   :config
   (add-to-list 'eglot-server-programs '(web-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs '(move-mode . ("move-analyzer")))
   (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
+
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy)
   (put 'eglot-error 'flymake-overlay-control nil)
   (put 'eglot-warning 'flymake-overlay-control nil)

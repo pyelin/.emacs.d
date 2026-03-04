@@ -59,13 +59,16 @@
   :custom
   (gptel-magit-commit-prompt gptel-magit-prompt-zed))
 
-(use-package claude-code-ide
-  :straight (:type git :host github :repo "manzaltu/claude-code-ide.el")
-  :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
+(use-package agent-shell
+  :straight (:host github :repo "xenodium/agent-shell")
+  :ensure t
+  :ensure-system-package
+  ;; Add agent installation configs here
+  ((claude . "brew install claude-code")
+    (claude-agent-acp . "npm install -g @zed-industries/claude-agent-acp"))
   :custom
-  (claude-code-ide-terminal-backend 'eat)
-  (claude-code-ide-window-width 70)
-  :config
-  ;; Optionally enable Emacs MCP tools
-  ;; (claude-code-ide-emacs-tools-setup)
-  )
+  (agent-shell-anthropic-authentication
+    (agent-shell-anthropic-make-authentication :login t))
+  (agent-shell-google-authentication
+      (agent-shell-google-make-authentication :login t)))
+

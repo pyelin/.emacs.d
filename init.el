@@ -255,6 +255,9 @@
 (add-hook 'term-mode-hook
   (lambda () (setq show-trailing-whitespace nil)))
 
+(add-hook 'agent-shell-mode-hook
+  (lambda () (setq show-trailing-whitespace nil)))
+
 (use-package yasnippet
   :config
   (yas-global-mode 1)
@@ -323,6 +326,12 @@
 (use-package tree-sitter
   :ensure t
   :config
+  ;; Define where Emacs can find the source for the grammars
+  ;; (setq treesit-language-source-alist
+  ;;   '((python . ("https://github.com/tree-sitter/tree-sitter-python" "v0.21.0"))
+  ;;     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+  ;;     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+  ;;     (rust "https://github.com/tree-sitter/tree-sitter-rust" "master")))
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 

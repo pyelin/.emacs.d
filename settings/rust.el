@@ -1,1 +1,3 @@
-(use-package rust-ts-mode)
+(use-package rust-mode
+  :init
+  (setq rust-mode-treesitter-derive t))

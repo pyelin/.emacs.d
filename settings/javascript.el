@@ -33,17 +33,8 @@
   (web-mode-enable-current-element-highlight t)
 	(web-mode-enable-auto-indentation nil))
 
-(use-package typescript-mode
-  :mode (("\\.ts\\'" . typescript-ts-mode)))
-
-(use-package css-in-js-mode
-  :straight (:host github :repo "orzechowskid/tree-sitter-css-in-js"))
-
-(use-package tsx-mode
-  :straight (:host github :repo "orzechowskid/tsx-mode.el")
-  :mode (("\\.tsx\\'" . tsx-ts-mode))
-  :config
-  (setq tsx-indent-level 2))
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 
 (use-package css-mode
   :mode (rx ".css" eos)

@@ -326,14 +326,20 @@
   :config
   (add-hook 'ag-mode-hook 'wgrep-ag-setup))
 
-(use-package tree-sitter
-  :ensure t
-  :config
-  ;; Define where Emacs can find the source for the grammars
-  (setq treesit-language-source-alist
-    '((rust "https://github.com/tree-sitter/tree-sitter-rust")))
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+;; Built-in treesit grammar sources
+(setq treesit-language-source-alist
+  '((rust "https://github.com/tree-sitter/tree-sitter-rust")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript")
+     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+     (json "https://github.com/tree-sitter/tree-sitter-json")
+     (yaml "https://github.com/tree-sitter/tree-sitter-yaml")
+     (toml "https://github.com/tree-sitter/tree-sitter-toml")
+     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (html "https://github.com/tree-sitter/tree-sitter-html")
+     (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
+     (bash "https://github.com/tree-sitter/tree-sitter-bash")))
 
 (use-package treesit-auto
   :config

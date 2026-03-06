@@ -20,7 +20,13 @@
   :config
   (add-to-list 'eglot-server-programs '(web-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs '(move-mode . ("move-analyzer")))
-  (add-to-list 'eglot-server-programs '(python-mode . ("pyright-langserver" "--stdio")))
+
+  ;; python
+  (add-to-list 'eglot-server-programs '(python-base-mode . ("ruff" "server")))
+  (add-hook 'python-base-mode-hook
+    (lambda ()
+      (eglot-ensure)
+      (add-hook 'after-save-hook 'eglot-format nil t)))
 
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy)
   (put 'eglot-error 'flymake-overlay-control nil)
@@ -38,6 +44,7 @@
   (add-hook 'project-find-functions #'pye/move-lsp-project-root)
   (cl-defmethod project-root ((project (head Move.toml)))
     (cdr project))
+
   :custom
   (eglot-ignored-server-capabilites '(:documentHighlightProvider))
   :preface

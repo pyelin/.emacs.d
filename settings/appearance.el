@@ -112,7 +112,7 @@
   (set-face-attribute 'mode-line-inactive nil :family "Iosevka SS12 Extended" :height 100)
   (doom-modeline-mode t))
 
-(use-package all-the-icons
+(use-package nerd-icons
   :if (display-graphic-p))
 
 ;; subtly flash the modeline for alert

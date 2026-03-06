@@ -3,6 +3,9 @@
 
 ;;; Code:
 
+;; Prevent package.el from loading before straight.el takes over
+(setq package-enable-at-startup nil)
+
 ;;; Helpers
 (defun osx-p ()
   "Check if a system is running OSX."
@@ -327,17 +330,12 @@
   :ensure t
   :config
   ;; Define where Emacs can find the source for the grammars
-  ;; (setq treesit-language-source-alist
-  ;;   '((python . ("https://github.com/tree-sitter/tree-sitter-python" "v0.21.0"))
-  ;;     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-  ;;     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-  ;;     (rust "https://github.com/tree-sitter/tree-sitter-rust" "master")))
+  (setq treesit-language-source-alist
+    '((rust "https://github.com/tree-sitter/tree-sitter-rust")))
   (global-tree-sitter-mode)
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
 (use-package treesit-auto
-  :custom
-  (treesit-auto-install 'prompt)
   :config
   (global-treesit-auto-mode))
 

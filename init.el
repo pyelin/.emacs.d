@@ -372,27 +372,3 @@
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 100 1000 1000))
 (setq read-process-output-max (* 1024 1024))
-
-;; terminal
-;; for zsh, make sure to add this line in .zshrc file
-;; if [[ -v INSIDE_EMACS ]]; then
-;;   export TERM=xterm-256color  # or a different terminfo entry suitable for eat
-;; else
-;;   # Regular shell environment
-;; fi
-(setq shell-file-name "/bin/zsh")
-
-(use-package eat
-  :config
-  ;; Enable directory tracking
-  (setq eat-enable-directory-tracking t)
-
-  ;; Enable shell command history
-  (setq eat-enable-shell-command-history t)
-
-  ;; Add file-name highlighting and make paths clickable
-  (add-hook 'eat-mode-hook
-    (lambda ()
-      (make-local-variable 'goto-address-highlight-p)
-      (setq goto-address-highlight-p t)
-      (goto-address-mode 1))))

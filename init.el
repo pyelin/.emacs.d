@@ -378,3 +378,7 @@
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 100 1000 1000))
 (setq read-process-output-max (* 1024 1024))
+
+(use-package eww
+  :config
+  (add-hook 'eww-mode-hook (lambda () (setq show-trailing-whitespace nil))))

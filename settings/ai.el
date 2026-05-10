@@ -53,19 +53,6 @@
     (when-let ((server (eglot-current-server)))
       (eglot-shutdown server))))
 
-(use-package gptel
-  :straight (:host github :repo "karthink/gptel")
-  :config
-  (setq gptel-model 'gemini-2.5-flash-lite)
-  (setq gptel-backend (gptel-make-gemini "Gemini"
-    :key (getenv "GEMINI_API_KEY")
-    :stream t)))
-
-(use-package gptel-magit
-  :hook (magit-mode . gptel-magit-install)
-  :custom
-  (gptel-magit-commit-prompt gptel-magit-prompt-zed))
-
 (use-package agent-shell
   :straight (:host github :repo "xenodium/agent-shell")
   :ensure t
@@ -79,3 +66,33 @@
   (agent-shell-google-authentication
       (agent-shell-google-make-authentication :login t)))
 
+(use-package agent-shell-sidebar
+  :after agent-shell
+  :straight (:host github :repo "cmacrae/agent-shell-sidebar")
+  :custom
+  (agent-shell-sidebar-width "25%")
+  (agent-shell-sidebar-minimum-width 70)
+  (agent-shell-sidebar-maximum-width "40%")
+  (agent-shell-sidebar-position 'left)
+  (agent-shell-sidebar-locked t)
+  (agent-shell-sidebar-default-config
+    (agent-shell-anthropic-make-claude-code-config)))
+
+(use-package magit-gptcommit
+  :straight t
+  :demand t
+  :after magit
+  :bind (:map git-commit-mode-map
+          ("C-c C-g" . magit-gptcommit-commit-accept))
+  :config
+  (require 'llm-claude)
+  (setq magit-gptcommit-llm-provider
+        (make-llm-claude :key (getenv "ANTHROPIC_API_KEY")))
+  ;; Enable magit-gptcommit-mode to watch staged changes and generate commit message automatically in magit status buffer
+  ;; This mode is optional, you can also use `magit-gptcommit-generate' to generate commit message manually
+  ;; `magit-gptcommit-generate' should only execute on magit status buffer currently
+  (magit-gptcommit-mode 1)
+
+  ;; Add gptcommit transient commands to `magit-commit'
+  ;; Eval (transient-remove-suffix 'magit-commit '(1 -1)) to remove gptcommit transient commands
+  (magit-gptcommit-status-buffer-setup))

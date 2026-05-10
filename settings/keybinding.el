@@ -75,12 +75,12 @@ Position the cursor at it's beginning, according to the current mode."
                      :post pye/after-invoke
                      :exit 1)
 "
-?o? ?e? ?u?                ?h? ?t?
+?o? ?e? ?u?                ?t?
 "
-  ("o" blanket (hydra-invoker-format 'ova "BLANKET"))
+  ("o" hydra-ai-agent/body (hydra-invoker-format 'ova "AI"))
   ("e" hydra-org-roam/body (hydra-invoker-format 'exa "ROAM"))
   ("u" kill-this-buffer (hydra-invoker-format 'umbra "CLOSE"))
-  ("h" gptel-menu (hydra-invoker-format 'hyper "GPT"))
+  ("h" nil)
   ("t" hydra-smerge/body (hydra-invoker-format 'tera "SMERGE"))
   ("n" nil))
 
@@ -121,6 +121,16 @@ _h_   _n_   _o_k        _y_ank
   ("h" org-roam-node-insert (hydra-invoker-format 'hyper "INSERT"))
   ("t" org-roam-tag-add (hydra-invoker-format 'tera "TAG" t))
   ("n" org-roam-dailies-goto-today (hydra-invoker-format 'nora "TODAY" t)))
+
+(defhydra hydra-ai-agent (:hint none :exit 1)
+"
+?o? ?e? ?u?                ?h? ?t?
+"
+  ("o" agent-shell-sidebar-toggle (hydra-invoker-format 'ova "SIDEBAR TOGGLE"))
+  ("e" agent-shell-sidebar-toggle-focus (hydra-invoker-format 'exa "SIDEBAR FOCUS"))
+  ("u" agent-shell-send-dwim (hydra-invoker-format 'umbra "SEND"))
+  ("h" agent-shell-new-shell (hydra-invoker-format 'hyper "NEW"))
+  ("t" agent-shell (hydra-invoker-format 'tera "SHELL" t)))
 
 (defhydra hydra-string-inflection (global-map "C-c u")
   "String inflection"

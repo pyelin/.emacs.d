@@ -287,7 +287,7 @@
        "move"
        "sql"
        "org"
-       "intellisense"
+       "ai"
        "yaml"
        "just"
        "rust"

@@ -380,6 +380,17 @@
 (setq read-process-output-max (* 1024 1024))
 
 (use-package eww
+  :ensure nil
+  :bind (:map eww-mode-map
+              ("I" . pye/eww-toggle-images))
+  :init
+  (defun pye/eww-toggle-images ()
+    "Toggle image rendering in the current EWW buffer."
+    (interactive)
+    (setq-local shr-inhibit-images (not shr-inhibit-images))
+    (eww-reload :local)
+    (message "Images are now %s" (if shr-inhibit-images "disabled" "enabled")))
+
   :config
   (add-hook 'eww-mode-hook (lambda () (setq show-trailing-whitespace nil))))
 

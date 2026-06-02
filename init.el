@@ -382,3 +382,12 @@
 (use-package eww
   :config
   (add-hook 'eww-mode-hook (lambda () (setq show-trailing-whitespace nil))))
+
+(use-package vterm
+  :straight t
+  :commands vterm
+  :bind (:map vterm-mode-map
+              ("C-c C-t" . vterm-copy-mode))  ; toggle to select/scroll
+  :config
+  (setq vterm-max-scrollback 10000
+        vterm-timer-delay 0.01))             ; snappier redraw for TUIs

@@ -401,4 +401,9 @@
               ("C-c C-t" . vterm-copy-mode))  ; toggle to select/scroll
   :config
   (setq vterm-max-scrollback 10000
-        vterm-timer-delay 0.01))             ; snappier redraw for TUIs
+    vterm-timer-delay 0.01)
+
+  :hook (vterm-mode . (lambda ()
+                        (setq-local show-trailing-whitespace nil)
+                        (setq-local global-hl-line-mode nil)
+                        (whitespace-mode -1))))             ; snappier redraw for TUIs

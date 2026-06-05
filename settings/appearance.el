@@ -16,9 +16,9 @@
 (defun pye/load-font ()
   (interactive)
   (cond
-    ((window-p) (set-frame-font "Iosevka SS12 Extended-12"))
-    ((linux-p) (set-frame-font "Iosevka SS12 Extended-12"))
-    (t (set-frame-font "Iosevka SS12 Extended-14"))))
+    ((window-p) (set-frame-font "JetBrains Mono-12"))
+    ((linux-p) (set-frame-font "JetBrains Mono-12"))
+    (t (set-frame-font "JetBrains Mono-14"))))
 
 (pye/load-font)
 
@@ -108,8 +108,8 @@
   (setq doom-modeline-buffer-encoding nil)
   (setq doom-modeline-buffer-file-name-style 'truncate-except-project)
   (setq doom-modeline-vcs-max-length 20)
-  (set-face-attribute 'mode-line nil :family "Iosevka SS12 Extended" :height 120)
-  (set-face-attribute 'mode-line-inactive nil :family "Iosevka SS12 Extended" :height 100)
+  (set-face-attribute 'mode-line nil :family "JetBrains Mono" :height 120)
+  (set-face-attribute 'mode-line-inactive nil :family "JetBrains Mono" :height 100)
   (doom-modeline-mode t))
 
 (use-package nerd-icons

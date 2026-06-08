@@ -53,33 +53,24 @@
     (when-let ((server (eglot-current-server)))
       (eglot-shutdown server))))
 
-(use-package agent-shell
-  :straight (:host github :repo "xenodium/agent-shell")
-  :ensure t
-  :ensure-system-package
-  ;; Add agent installation configs here
-  ((claude . "brew install claude-code")
-    (claude-agent-acp . "npm install -g @zed-industries/claude-agent-acp"))
-  :custom
-  (agent-shell-anthropic-authentication
-    (agent-shell-anthropic-make-authentication :login t))
-  (agent-shell-google-authentication
-      (agent-shell-google-make-authentication :login t)))
 
-(use-package agent-shell-sidebar
-  :after agent-shell
-  :straight (:host github :repo "cmacrae/agent-shell-sidebar")
-  :custom
-  (agent-shell-sidebar-width "25%")
-  (agent-shell-sidebar-minimum-width 70)
-  (agent-shell-sidebar-maximum-width "40%")
-  (agent-shell-sidebar-position 'left)
-  (agent-shell-sidebar-locked t)
-  (agent-shell-sidebar-default-config
-    (agent-shell-anthropic-make-claude-code-config)))
+(use-package monet
+ :straight (:type git :host github :repo "stevemolitor/monet"))
 
-(use-package claude-code-ide
-  :straight (:host github :repo "manzaltu/claude-code-ide.el")
-  :bind ("C-c C-'" . claude-code-ide-menu)
+;; install claude-code.el, using :depth 1 to reduce download size:
+(use-package claude-code
+  :straight (:type git :host github :repo "stevemolitor/claude-code.el" :branch "main" :depth 1
+                   :files ("*.el" (:exclude "images/*")))
+  :bind-keymap
+  ("C-c c" . claude-code-command-map) ;; or your preferred key
+  ;; Optionally define a repeat map so that "M" will cycle thru Claude auto-accept/plan/confirm modes after invoking claude-code-cycle-mode / C-c M.
+  :bind
+  (:repeat-map pye-claude-code-map ("M" . claude-code-cycle-mode))
+  :custom
+  (claude-code-terminal-backend 'ghostel)
   :config
-  (claude-code-ide-emacs-tools-setup))
+  ;; optional IDE integration with Monet
+  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
+  (monet-mode 1)
+
+  (claude-code-mode))

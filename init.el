@@ -394,16 +394,8 @@
   :config
   (add-hook 'eww-mode-hook (lambda () (setq show-trailing-whitespace nil))))
 
-(use-package vterm
-  :straight t
-  :commands vterm
-  :bind (:map vterm-mode-map
-              ("C-c C-t" . vterm-copy-mode))  ; toggle to select/scroll
+;; for ghostel terminal backend (libghostty):
+(use-package ghostel
+  :straight (:type git :host github :repo "dakra/ghostel")
   :config
-  (setq vterm-max-scrollback 10000
-    vterm-timer-delay 0.01)
-
-  :hook (vterm-mode . (lambda ()
-                        (setq-local show-trailing-whitespace nil)
-                        (setq-local global-hl-line-mode nil)
-                        (whitespace-mode -1))))             ; snappier redraw for TUIs
+  (add-hook 'ghostel-mode-hook (lambda () (setq show-trailing-whitespace nil))))

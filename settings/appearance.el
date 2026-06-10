@@ -99,6 +99,10 @@
   ((boundp 'scroll-bar-mode)
     (scroll-bar-mode -1)))
 
+;; make scroll less jumpy
+(setq scroll-conservatively 101
+      scroll-preserve-screen-position t)
+
 ;; modeline
 (use-package doom-modeline
   :ensure t

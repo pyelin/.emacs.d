@@ -57,20 +57,10 @@
 (use-package monet
  :straight (:type git :host github :repo "stevemolitor/monet"))
 
-;; install claude-code.el, using :depth 1 to reduce download size:
-(use-package claude-code
-  :straight (:type git :host github :repo "stevemolitor/claude-code.el" :branch "main" :depth 1
-                   :files ("*.el" (:exclude "images/*")))
-  :bind-keymap
-  ("C-c c" . claude-code-command-map) ;; or your preferred key
-  ;; Optionally define a repeat map so that "M" will cycle thru Claude auto-accept/plan/confirm modes after invoking claude-code-cycle-mode / C-c M.
-  :bind
-  (:repeat-map pye-claude-code-map ("M" . claude-code-cycle-mode))
-  :custom
-  (claude-code-terminal-backend 'ghostel)
-  :config
-  ;; optional IDE integration with Monet
-  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
-  (monet-mode 1)
+(use-package pi-coding-agent
+  :straight (:host github :repo "dnouri/pi-coding-agent")
+  :commands (pi-coding-agent)
+  :bind ("C-c C-p" . pi-coding-agent))
 
-  (claude-code-mode))
+(defalias 'pi 'pi-coding-agent)
+

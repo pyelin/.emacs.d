@@ -399,3 +399,14 @@
   :straight (:type git :host github :repo "dakra/ghostel")
   :config
   (add-hook 'ghostel-mode-hook (lambda () (setq show-trailing-whitespace nil))))
+
+(use-package autorevert
+  :ensure nil ; Built-in package, no installation needed
+  :hook (after-init . global-auto-revert-mode)
+  :custom
+  ;; Auto-revert Dired buffers when files change on disk
+  (dired-auto-revert-buffer t)
+  ;; Use fast OS-level file notifications (inotify/w32) instead of polling
+  (auto-revert-use-notify t)
+  ;; Silence the 'Reverting buffer...' messages in the minibuffer
+  (auto-revert-verbose nil))

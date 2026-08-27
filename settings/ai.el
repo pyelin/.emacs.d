@@ -90,6 +90,9 @@
   ;; The surrounding activity group still uses `latest', so a finished thought
   ;; tucks itself away once the agent moves on.
   (agent-shell-thought-process-expand-by-default t)
+  ;; A single frame renders the busy indicator as static text rather than an
+  ;; animation, so the header stops flickering while the agent works.
+  (agent-shell-busy-indicator-frames '("Working…"))
   :config
   (setopt agent-shell-agent-configs
     (list #'agent-shell-anthropic-make-claude-code-config

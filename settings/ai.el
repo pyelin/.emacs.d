@@ -147,24 +147,25 @@
   (require 'sh-script)
   (add-to-list 'agent-shell-markdown-language-mapping '("console" . "sh")))
 
-(use-package agent-shell-sidebar
-  :straight (:host github :repo "cmacrae/agent-shell-sidebar")
-  :after agent-shell
-  :commands (agent-shell-sidebar-toggle agent-shell-sidebar-toggle-focus)
+(use-package agent-shell-hq
+  :straight (:host github :repo "SreenivasVRao/agent-shell-hq")
+  :commands (agent-shell-hq-toggle agent-shell-hq-peek agent-shell-hq-label)
   :custom
-  (agent-shell-sidebar-width "25%")
-  (agent-shell-sidebar-minimum-width 70)
-  (agent-shell-sidebar-maximum-width "40%")
-  (agent-shell-sidebar-position 'left)
-  (agent-shell-sidebar-locked t)
-  :config
-  (setopt agent-shell-sidebar-default-config
-    (agent-shell-pi-make-agent-config)))
-
-;; `agent-shell-sidebar-reset' only kills the session, so its sole visible
-;; effect is the sidebar closing -- indistinguishable from toggling it off.
-(defun my/agent-shell-sidebar-restart ()
-  "Kill the current project's sidebar session and start a fresh one."
-  (interactive)
-  (agent-shell-sidebar-reset)
-  (agent-shell-sidebar-toggle))
+  ;; Width of the sidebar listing agent-shell buffers (columns)
+  (agent-shell-hq-toggle-sidebar-width 50)
+  ;; Where the peek posframe is anchored: top, bottom, left, right
+  (agent-shell-hq-peek-position 'right)
+  ;; Width of the peek posframe (columns)
+  (agent-shell-hq-peek-width 52)
+  ;; Maximum height of the peek posframe (rows)
+  (agent-shell-hq-peek-height 60)
+  ;; CLI command that receives the prompt as its final argument
+  (agent-shell-hq-label-command '("claude" "-p" "--model" "haiku"))
+  ;; Characters of buffer content (from the end) used as context for the title
+  (agent-shell-hq-label-context-chars 2000)
+  ;; Prompt template sent to the command (%s = buffer context)
+  (agent-shell-hq-label-prompt
+   "Reply with ONLY a terse 8-10 word title for this conversation, lowercase, no punctuation:\n\n%s")
+  :bind
+  ("C-c a h" . agent-shell-hq-toggle)
+  ("C-c a p" . agent-shell-hq-peek))

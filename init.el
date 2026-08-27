@@ -410,3 +410,5 @@
   (auto-revert-use-notify t)
   ;; Silence the 'Reverting buffer...' messages in the minibuffer
   (auto-revert-verbose nil))
+
+(use-package posframe)

@@ -130,7 +130,7 @@ _h_   _n_   _o_k        _y_ank
   ("e" agent-shell-sidebar-toggle-focus (hydra-invoker-format 'exa "SIDEBAR FOCUS"))
   ("u" agent-shell-send-dwim (hydra-invoker-format 'umbra "SEND"))
   ("h" agent-shell-new-shell (hydra-invoker-format 'hyper "NEW"))
-  ("t" agent-shell (hydra-invoker-format 'tera "SHELL"))
+  ("t" my/agent-shell-sidebar-restart (hydra-invoker-format 'tera "RESET"))
   ("n" agent-shell-manager-toggle (hydra-invoker-format 'nora "MANAGER" t)))
 
 (defhydra hydra-string-inflection (global-map "C-c u")

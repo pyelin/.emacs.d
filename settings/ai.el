@@ -144,7 +144,15 @@
   (agent-shell-sidebar-locked t)
   :config
   (setopt agent-shell-sidebar-default-config
-    (agent-shell-anthropic-make-claude-code-config)))
+    (agent-shell-pi-make-agent-config)))
+
+;; `agent-shell-sidebar-reset' only kills the session, so its sole visible
+;; effect is the sidebar closing -- indistinguishable from toggling it off.
+(defun my/agent-shell-sidebar-restart ()
+  "Kill the current project's sidebar session and start a fresh one."
+  (interactive)
+  (agent-shell-sidebar-reset)
+  (agent-shell-sidebar-toggle))
 
 
 

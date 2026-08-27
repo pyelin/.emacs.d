@@ -59,5 +59,55 @@
   :ensure t
   :init (defalias 'pi 'pi-coding-agent))
 
+;;;; ACP coding agents
+;; Each agent talks the Agent Client Protocol through an external adapter that
+;; must be on PATH:
+;;   claude-code  npm install -g @zed-industries/claude-agent-acp
+;;   cursor       Cursor CLI's own `agent acp' (cursor.com/install)
+;;   pi           npm install -g pi-acp
+;; Auth lives outside Emacs: `claude' uses the subscription login, Cursor uses
+;; whatever `agent login' left behind.
+;;
+;; pi ships its own node under a version-stamped directory that only `.zshrc'
+;; puts on PATH, so a daemon started before that export existed never inherits
+;; it and `pi-acp' looks missing. Resolve the directory instead of trusting PATH.
+(let ((bin (car (last (file-expand-wildcards
+                        (expand-file-name "~/.local/share/pi-node/node-*/bin"))))))
+  (when (and bin (not (member bin exec-path)))
+    (add-to-list 'exec-path bin)
+    (setenv "PATH" (concat bin path-separator (getenv "PATH")))))
+
+(use-package agent-shell
+  :straight (:host github :repo "xenodium/agent-shell")
+  :commands (agent-shell
+              agent-shell-new-shell
+              agent-shell-send-dwim
+              agent-shell-anthropic-start-claude-code
+              agent-shell-cursor-start-agent
+              agent-shell-pi-start-agent)
+  :config
+  (setopt agent-shell-agent-configs
+    (list #'agent-shell-anthropic-make-claude-code-config
+          #'agent-shell-cursor-make-agent-config
+          #'agent-shell-pi-make-agent-config))
+  (setopt agent-shell-anthropic-authentication
+    (agent-shell-anthropic-make-authentication :login t))
+  (setopt agent-shell-cursor-authentication
+    (agent-shell-cursor-make-authentication :none t)))
+
+(use-package agent-shell-sidebar
+  :straight (:host github :repo "cmacrae/agent-shell-sidebar")
+  :after agent-shell
+  :commands (agent-shell-sidebar-toggle agent-shell-sidebar-toggle-focus)
+  :custom
+  (agent-shell-sidebar-width "25%")
+  (agent-shell-sidebar-minimum-width 70)
+  (agent-shell-sidebar-maximum-width "40%")
+  (agent-shell-sidebar-position 'left)
+  (agent-shell-sidebar-locked t)
+  :config
+  (setopt agent-shell-sidebar-default-config
+    (agent-shell-anthropic-make-claude-code-config)))
+
 
 

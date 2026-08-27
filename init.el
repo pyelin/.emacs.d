@@ -234,6 +234,9 @@
   :bind ("C-c C-g" . magit-status)
   :config
   (setq transient-default-level 5)
+  ;; Open magit-status in the current window (diffs etc. still use another).
+  (setq magit-display-buffer-function
+    #'magit-display-buffer-same-window-except-diff-v1)
   (custom-set-faces
     '(magit-diff-added-highlight ((t (:background nil))))
     '(magit-diff-base-highlight ((t (:background nil))))))

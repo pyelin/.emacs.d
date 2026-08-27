@@ -93,7 +93,26 @@
   (setopt agent-shell-anthropic-authentication
     (agent-shell-anthropic-make-authentication :login t))
   (setopt agent-shell-cursor-authentication
-    (agent-shell-cursor-make-authentication :none t)))
+    (agent-shell-cursor-make-authentication :none t))
+  ;; Skip the ASCII-art logos, keep the plain welcome messages.
+  (advice-add 'agent-shell-anthropic--claude-code-welcome-message
+    :override #'shell-maker-welcome-message)
+  (advice-add 'agent-shell-pi--welcome-message
+    :override #'shell-maker-welcome-message)
+  (advice-add 'agent-shell-cursor--welcome-message
+    :override #'shell-maker-welcome-message)
+  ;; Enable mouse support (scrolling etc.) in terminal Emacs.
+  (unless (display-graphic-p)
+    (xterm-mouse-mode 1))
+  ;; Refresh magit buffers whenever the agent finishes a turn.
+  (defun my/agent-shell-magit-refresh-on-turn-complete ()
+    (agent-shell-subscribe-to
+      :shell-buffer (current-buffer)
+      :event 'turn-complete
+      :on-event (lambda (_event)
+                  (when (fboundp 'magit-refresh-all)
+                    (magit-refresh-all)))))
+  (add-hook 'agent-shell-mode-hook #'my/agent-shell-magit-refresh-on-turn-complete))
 
 (use-package agent-shell-sidebar
   :straight (:host github :repo "cmacrae/agent-shell-sidebar")

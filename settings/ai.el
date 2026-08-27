@@ -95,8 +95,8 @@
   (agent-shell-busy-indicator-frames '("Working…"))
   ;; The project root is sent with a trailing slash, but pi-acp matches session
   ;; cwds by string equality against pi's own session header, which has none, so
-  ;; `session/list' came back empty and the picker never offered past sessions.
-  ;; Harmless for the file paths this hook also sees.
+  ;; `session/list' comes back empty: the picker offers no past sessions and the
+  ;; session title never arrives.  Harmless for the file paths this hook also sees.
   (agent-shell-path-resolver-function #'directory-file-name)
   :config
   (setopt agent-shell-agent-configs
@@ -155,25 +155,35 @@
   (require 'sh-script)
   (add-to-list 'agent-shell-markdown-language-mapping '("console" . "sh")))
 
-(use-package agent-shell-hq
-  :straight (:host github :repo "SreenivasVRao/agent-shell-hq")
-  :commands (agent-shell-hq-toggle agent-shell-hq-peek agent-shell-hq-label)
+;; Replaces agent-shell-hq.  Developed in-tree for now, so no straight recipe.
+;; `user-emacs-directory' is ~/.emacs.d (where straight keeps its clones), but
+;; this config tree lives elsewhere, so derive the path from `settings-dir'
+;; rather than letting `:load-path' resolve it against the wrong root.
+(add-to-list 'load-path
+  (expand-file-name "egent" (file-name-directory (directory-file-name settings-dir))))
+
+(use-package egent
+  :straight nil
+  :commands (egent-sidebar-toggle egent-sidebar-focus egent-peek egent-resume egent-label)
   :custom
-  ;; Width of the sidebar listing agent-shell buffers (columns)
-  (agent-shell-hq-toggle-sidebar-width 50)
+  ;; Width of the sidebar listing sessions (columns)
+  (egent-sidebar-width 50)
+  ;; Ask each project's agents for resumable sessions when the sidebar opens
+  (egent-sidebar-auto-fetch-sessions t)
   ;; Where the peek posframe is anchored: top, bottom, left, right
-  (agent-shell-hq-peek-position 'right)
+  (egent-peek-position 'right)
   ;; Width of the peek posframe (columns)
-  (agent-shell-hq-peek-width 52)
+  (egent-peek-width 52)
   ;; Maximum height of the peek posframe (rows)
-  (agent-shell-hq-peek-height 60)
+  (egent-peek-height 60)
   ;; CLI command that receives the prompt as its final argument
-  (agent-shell-hq-label-command '("claude" "-p" "--model" "haiku"))
+  (egent-label-command '("claude" "-p" "--model" "haiku"))
   ;; Characters of buffer content (from the end) used as context for the title
-  (agent-shell-hq-label-context-chars 2000)
+  (egent-label-context-chars 2000)
   ;; Prompt template sent to the command (%s = buffer context)
-  (agent-shell-hq-label-prompt
+  (egent-label-prompt
    "Reply with ONLY a terse 8-10 word title for this conversation, lowercase, no punctuation:\n\n%s")
   :bind
-  ("C-c a h" . agent-shell-hq-toggle)
-  ("C-c a p" . agent-shell-hq-peek))
+  ("C-c a h" . egent-sidebar-toggle)
+  ("C-c a p" . egent-peek)
+  ("C-c a r" . egent-resume))

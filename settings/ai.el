@@ -85,6 +85,11 @@
               agent-shell-anthropic-start-claude-code
               agent-shell-cursor-start-agent
               agent-shell-pi-start-agent)
+  :custom
+  ;; Follow the agent's reasoning as it streams instead of having to unfold it.
+  ;; The surrounding activity group still uses `latest', so a finished thought
+  ;; tucks itself away once the agent moves on.
+  (agent-shell-thought-process-expand-by-default t)
   :config
   (setopt agent-shell-agent-configs
     (list #'agent-shell-anthropic-make-claude-code-config
@@ -125,7 +130,22 @@
           :event event
           :on-event (lambda (_event)
                       (my/agent-shell--magit-refresh-soon shell-buffer))))))
-  (add-hook 'agent-shell-mode-hook #'my/agent-shell-magit-refresh-setup))
+  (add-hook 'agent-shell-mode-hook #'my/agent-shell-magit-refresh-setup)
+  ;; pi-acp advertises the thinking level twice: as ACP session modes and as a
+  ;; thought_level config option, so the header showed "Thinking: high" twice.
+  ;; Drop the mode segment only when it duplicates the thought level, so real
+  ;; session modes (Claude Code's Accept Edits, etc.) still show.
+  (defun my/agent-shell--drop-duplicate-mode-name (fn state)
+    (let ((mode-name (funcall fn state)))
+      (unless (equal mode-name (agent-shell-get-thought-level-name state))
+        mode-name)))
+  (advice-add 'agent-shell-get-mode-name
+    :around #'my/agent-shell--drop-duplicate-mode-name)
+  ;; Tool-call commands are fenced as ```console, which resolves to a
+  ;; nonexistent console-mode and so renders unhighlighted.  Alias it to
+  ;; sh-mode for shell syntax highlighting in the command panel.
+  (require 'sh-script)
+  (add-to-list 'agent-shell-markdown-language-mapping '("console" . "sh")))
 
 (use-package agent-shell-manager
   :straight (:host github :repo "jethrokuan/agent-shell-manager")

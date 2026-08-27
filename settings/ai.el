@@ -93,6 +93,11 @@
   ;; A single frame renders the busy indicator as static text rather than an
   ;; animation, so the header stops flickering while the agent works.
   (agent-shell-busy-indicator-frames '("Working…"))
+  ;; The project root is sent with a trailing slash, but pi-acp matches session
+  ;; cwds by string equality against pi's own session header, which has none, so
+  ;; `session/list' came back empty and the picker never offered past sessions.
+  ;; Harmless for the file paths this hook also sees.
+  (agent-shell-path-resolver-function #'directory-file-name)
   :config
   (setopt agent-shell-agent-configs
     (list #'agent-shell-anthropic-make-claude-code-config

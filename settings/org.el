@@ -1,3 +1,4 @@
+;;; org.el --- -*- lexical-binding: t; -*-
 (use-package org
   :straight (:type built-in)
   :mode (("\\.org\\'" . org-mode)

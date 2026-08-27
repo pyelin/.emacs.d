@@ -1,3 +1,4 @@
+;;; markdown.el --- -*- lexical-binding: t; -*-
 (use-package markdown-mode
   :mode (("changelog\\.md\\'" . markdown-mode)
          ("\\.md\\'" . markdown-mode))

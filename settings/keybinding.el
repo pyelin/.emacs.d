@@ -1,4 +1,4 @@
-;;; package --- Emacs configurations
+;;; keybinding.el --- Emacs configurations -*- lexical-binding: t; -*-
 ;;; Commentary:
 
 ;;; Code:

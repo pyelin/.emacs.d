@@ -1,4 +1,4 @@
-;;; package --- All configs related to appearance
+;;; appearance.el --- All configs related to appearance -*- lexical-binding: t; -*-
 ;;; Code:
 ;;; Commentary:
 

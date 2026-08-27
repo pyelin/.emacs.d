@@ -1,3 +1,4 @@
+;;; completion.el --- -*- lexical-binding: t; -*-
 (use-package consult
   :bind
   ([remap goto-line] . consult-goto-line)
@@ -19,7 +20,10 @@
   (corfu-auto t)
   (corfu-auto-delay .5))
 
+;; Emacs 31 draws child frames in the terminal natively, so corfu works in TTY
+;; without help; loading corfu-terminal there makes corfu warn.
 (use-package corfu-terminal
+  :if (< emacs-major-version 31)
   :straight '(corfu-terminal
      :type git
      :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")

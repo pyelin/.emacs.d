@@ -1,4 +1,4 @@
-;;; package --- Emacs configurations
+;;; init.el --- Emacs configurations -*- lexical-binding: t; -*-
 ;;; Commentary:
 
 ;;; Code:
@@ -393,12 +393,6 @@
 
   :config
   (add-hook 'eww-mode-hook (lambda () (setq show-trailing-whitespace nil))))
-
-;; for ghostel terminal backend (libghostty):
-(use-package ghostel
-  :straight (:type git :host github :repo "dakra/ghostel")
-  :config
-  (add-hook 'ghostel-mode-hook (lambda () (setq show-trailing-whitespace nil))))
 
 (use-package autorevert
   :ensure nil ; Built-in package, no installation needed

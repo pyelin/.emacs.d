@@ -1,3 +1,4 @@
+;;; ai.el --- -*- lexical-binding: t; -*-
 (use-package flymake
   :straight nil
   :custom
@@ -54,13 +55,9 @@
       (eglot-shutdown server))))
 
 
-(use-package monet
- :straight (:type git :host github :repo "stevemolitor/monet"))
-
 (use-package pi-coding-agent
-  :straight (:host github :repo "dnouri/pi-coding-agent")
-  :commands (pi-coding-agent)
-  :bind ("C-c C-p" . pi-coding-agent))
+  :ensure t
+  :init (defalias 'pi 'pi-coding-agent))
 
-(defalias 'pi 'pi-coding-agent)
+
 

@@ -1,4 +1,4 @@
-;;; package --- Config for javascript
+;;; javascript.el --- Config for javascript -*- lexical-binding: t; -*-
 ;;; Code:
 ;;; Commentary:
 

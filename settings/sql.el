@@ -1,3 +1,4 @@
+;;; sql.el --- -*- lexical-binding: t; -*-
 (use-package sqlformat
   :commands (sqlformat sqlformat-buffer sqlformat-region)
   :init

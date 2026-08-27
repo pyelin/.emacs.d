@@ -104,15 +104,33 @@
   ;; Enable mouse support (scrolling etc.) in terminal Emacs.
   (unless (display-graphic-p)
     (xterm-mouse-mode 1))
-  ;; Refresh magit buffers whenever the agent finishes a turn.
-  (defun my/agent-shell-magit-refresh-on-turn-complete ()
-    (agent-shell-subscribe-to
-      :shell-buffer (current-buffer)
-      :event 'turn-complete
-      :on-event (lambda (_event)
-                  (when (fboundp 'magit-refresh-all)
-                    (magit-refresh-all)))))
-  (add-hook 'agent-shell-mode-hook #'my/agent-shell-magit-refresh-on-turn-complete))
+  ;; Refresh magit buffers as the agent changes files (debounced), plus
+  ;; a final refresh when the turn completes.
+  (defvar my/agent-shell--magit-refresh-timer nil)
+  (defun my/agent-shell--magit-refresh-soon (shell-buffer)
+    (when (timerp my/agent-shell--magit-refresh-timer)
+      (cancel-timer my/agent-shell--magit-refresh-timer))
+    (setq my/agent-shell--magit-refresh-timer
+      (run-with-timer 0.5 nil
+        (lambda ()
+          (when (and (buffer-live-p shell-buffer)
+                     (fboundp 'magit-refresh-all))
+            (with-current-buffer shell-buffer
+              (magit-refresh-all)))))))
+  (defun my/agent-shell-magit-refresh-setup ()
+    (let ((shell-buffer (current-buffer)))
+      (dolist (event '(file-write tool-call-update turn-complete))
+        (agent-shell-subscribe-to
+          :shell-buffer shell-buffer
+          :event event
+          :on-event (lambda (_event)
+                      (my/agent-shell--magit-refresh-soon shell-buffer))))))
+  (add-hook 'agent-shell-mode-hook #'my/agent-shell-magit-refresh-setup))
+
+(use-package agent-shell-manager
+  :straight (:host github :repo "jethrokuan/agent-shell-manager")
+  :after agent-shell
+  :commands (agent-shell-manager-toggle))
 
 (use-package agent-shell-sidebar
   :straight (:host github :repo "cmacrae/agent-shell-sidebar")

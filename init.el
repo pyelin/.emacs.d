@@ -339,11 +339,14 @@
      (css "https://github.com/tree-sitter/tree-sitter-css")
      (html "https://github.com/tree-sitter/tree-sitter-html")
      (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
-     (bash "https://github.com/tree-sitter/tree-sitter-bash")))
+     (bash "https://github.com/tree-sitter/tree-sitter-bash")
+     (markdown "https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown/src")
+     (markdown-inline "https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown-inline/src")))
 
-(use-package treesit-auto
-  :config
-  (global-treesit-auto-mode))
+;; Emacs 31's own replacement for treesit-auto: remap every classic mode in
+;; `treesit-major-mode-remap-alist' to its ts variant. Must go through the
+;; custom setter, so `setopt' rather than `setq'.
+(setopt treesit-enabled-modes t)
 
 
 ;;;; Indentation

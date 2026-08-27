@@ -147,11 +147,6 @@
   (require 'sh-script)
   (add-to-list 'agent-shell-markdown-language-mapping '("console" . "sh")))
 
-(use-package agent-shell-manager
-  :straight (:host github :repo "jethrokuan/agent-shell-manager")
-  :after agent-shell
-  :commands (agent-shell-manager-toggle))
-
 (use-package agent-shell-sidebar
   :straight (:host github :repo "cmacrae/agent-shell-sidebar")
   :after agent-shell
@@ -173,6 +168,3 @@
   (interactive)
   (agent-shell-sidebar-reset)
   (agent-shell-sidebar-toggle))
-
-
-

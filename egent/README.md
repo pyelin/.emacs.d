@@ -4,9 +4,9 @@ Session management for [agent-shell](https://github.com/xenodium/agent-shell):
 one list holding both the sessions open in Emacs and the ones only the agent
 still remembers, with resume from either.
 
-This is the successor to `agent-shell-hq`. The sidebar, peek and label surfaces
-are the same idea; what's new is that a session is no longer required to have a
-buffer to show up.
+This is the successor to `agent-shell-hq`. The sidebar, peek and session-naming
+surfaces are the same idea; what's new is that a session is no longer required
+to have a buffer to show up.
 
 ## Why past sessions need their own machinery
 
@@ -30,7 +30,7 @@ agent that never answers would wedge Emacs.
 | `egent-sidebar-focus`  | Jump to the sidebar, opening the workspace if needed      |
 | `egent-peek`           | Transient posframe switcher over live sessions            |
 | `egent-resume`         | Pick a past session in any project and resume it          |
-| `egent-label`          | Name the current session using an external CLI            |
+| `egent-name-session`   | Name the current session using an external CLI            |
 
 ### Sidebar
 
@@ -60,7 +60,7 @@ starting a second shell against the same session.
 | `TAB`     | Collapse or expand a project                 |
 | `S`       | Re-ask this project's agents for sessions    |
 | `o`       | Resume a session in another project          |
-| `r` / `R` | Label current session / all sessions         |
+| `r` / `R` | Name current session / all sessions          |
 | `K`       | Kill session and its viewport buffer         |
 | `g`       | Refresh                                      |
 | `s`       | New shell in the highlighted project         |
@@ -77,19 +77,20 @@ short-lived subprocess each. Set it to a list of identifiers
 `persp-mode` is used when installed and skipped otherwise, in which case the
 window configuration is saved and restored instead.
 
-### Label
+### Session names
 
-`egent-label` sends the last `egent-label-context-chars` characters of a session
-(the tail — every buffer opens with the same welcome banner, which would
-otherwise be most of the context) to `egent-label-command` and renames the
-buffer to whatever it prints. The rename goes through
+`egent-name-session` sends the last `egent-session-name-context-chars`
+characters of a session (the tail — every buffer opens with the same welcome
+banner, which would otherwise be most of the context) to
+`egent-session-name-command` and renames the buffer to whatever it prints. The
+rename goes through
 `shell-maker-set-buffer-name`, since `agent-shell` resolves a buffer's process by
 name and a plain `rename-buffer` would detach it.
 
 ```elisp
-(setq egent-label-command '("claude" "-p" "--model" "haiku"))  ; default
-(setq egent-label-command '("llm"))
-(setq egent-label-command '("ollama" "run" "llama3.2"))
+(setq egent-session-name-command '("claude" "-p" "--model" "haiku"))  ; default
+(setq egent-session-name-command '("llm"))
+(setq egent-session-name-command '("ollama" "run" "llama3.2"))
 ```
 
 ## Requirements
@@ -115,7 +116,7 @@ With `use-package` and straight.el:
 ```elisp
 (use-package egent
   :straight (:host github :repo "SreenivasVRao/egent")
-  :commands (egent-sidebar-toggle egent-peek egent-resume egent-label)
+  :commands (egent-sidebar-toggle egent-peek egent-resume egent-name-session)
   :custom
   (egent-sidebar-width 50)
   (egent-peek-position 'right)

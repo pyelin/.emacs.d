@@ -20,7 +20,7 @@
 (require 'agent-shell-viewport)
 (require 'cl-lib)
 (require 'egent-core)
-(require 'egent-label)
+(require 'egent-session-name)
 (require 'egent-session)
 (require 'map)
 (require 'seq)
@@ -75,7 +75,7 @@ session switcher rather than turning into an ordinary project window."
     (egent-sidebar-select                    . "select/resume")
     (egent-sidebar-collapse                  . "collapse")
     (egent-sidebar-fetch-sessions            . "past sessions")
-    (egent-sidebar-label                     . "label")
+    (egent-sidebar-name-session              . "name session")
     (egent-sidebar-kill                      . "kill")
     (egent-sidebar-refresh                   . "refresh")
     (egent-sidebar-new-shell                 . "new shell")
@@ -150,8 +150,8 @@ Intentionally dim — enough to show position without glare."
     (define-key map (kbd "TAB") #'egent-sidebar-collapse)
     (define-key map (kbd "S")   #'egent-sidebar-fetch-sessions)
     (define-key map (kbd "o")   #'egent-resume)
-    (define-key map (kbd "r")   #'egent-sidebar-label)
-    (define-key map (kbd "R")   #'egent-sidebar-label-all)
+    (define-key map (kbd "r")   #'egent-sidebar-name-session)
+    (define-key map (kbd "R")   #'egent-sidebar-name-all-sessions)
     (define-key map (kbd "K")   #'egent-sidebar-kill)
     (define-key map (kbd "g")   #'egent-sidebar-refresh)
     (define-key map (kbd "s")   #'egent-sidebar-new-shell)
@@ -589,18 +589,23 @@ Guarded on the cache so re-rendering cannot start a fetch loop."
                            (when (egent-sidebar--active-p)
                              (egent-sidebar-refresh)))))))))))
 
-(defun egent-sidebar-label ()
-  "Label the highlighted live session."
+(defun egent-sidebar-name-session ()
+  "Name the highlighted live session."
   (interactive)
   (when-let* ((entry (egent-sidebar--entry))
               ((eq (plist-get entry :type) 'buffer)))
-    (egent-label (plist-get entry :buffer))))
+    (egent-name-session (plist-get entry :buffer))))
 
-(defun egent-sidebar-label-all ()
-  "Label every live session in turn."
+(defun egent-sidebar-name-all-sessions ()
+  "Name every live session in turn."
   (interactive)
   (dolist (buf (agent-shell-buffers))
-    (egent-label buf)))
+    (egent-name-session buf)))
+
+(define-obsolete-function-alias
+  'egent-sidebar-label #'egent-sidebar-name-session "0.2.0")
+(define-obsolete-function-alias
+  'egent-sidebar-label-all #'egent-sidebar-name-all-sessions "0.2.0")
 
 (defun egent-sidebar-kill ()
   "Kill the highlighted live session and its viewport buffer."
@@ -713,8 +718,8 @@ Sidebar keys:
   TAB    collapse or expand a project group
   S      re-ask the project's agents for past sessions
   o      resume a session in another project
-  r      label the current session
-  R      label every session
+  r      name the current session
+  R      name every session
   K      kill the current session
   g      refresh
   s      new shell in the current project

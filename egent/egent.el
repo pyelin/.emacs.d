@@ -18,7 +18,7 @@
 ;;   `egent-sidebar-toggle'  workspace with a project-grouped sidebar
 ;;   `egent-peek'            transient posframe switcher (live sessions)
 ;;   `egent-resume'          pick a past session in any project
-;;   `egent-label'           name a session using an external CLI
+;;   `egent-name-session'    name a session using an external CLI
 ;;
 ;; `persp-mode' and `posframe' are optional: the sidebar falls back to
 ;; restoring the window configuration, and peek is only loaded when
@@ -27,7 +27,7 @@
 ;;; Code:
 
 (require 'egent-core)
-(require 'egent-label)
+(require 'egent-session-name)
 (require 'egent-session)
 (require 'egent-sidebar)
 

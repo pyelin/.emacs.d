@@ -17,7 +17,7 @@ Public symbols use the `egent-` prefix; internals use `egent-<module>--`.
 | `egent-session.el` | Headless ACP `session/list` fetching, cache, resume             |
 | `egent-sidebar.el` | Sidebar workspace                                               |
 | `egent-peek.el`    | Posframe switcher (live sessions only)                          |
-| `egent-label.el`   | Async labelling via an external CLI subprocess                   |
+| `egent-session-name.el` | Async session naming via an external CLI subprocess         |
 
 ## Dependencies
 

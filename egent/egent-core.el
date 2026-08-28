@@ -20,6 +20,10 @@
 (require 'map)
 (require 'seq)
 
+;; Loaded by `egent', but egent-session requires this file, so the fallback
+;; is reached through `fboundp' rather than a `require'.
+(declare-function egent-session-cached-title "egent-session" (session-id))
+
 ;;;; Customization
 
 (defgroup egent nil
@@ -53,6 +57,11 @@ colour survives the outer `face' properties applied while rendering."
 (defface egent-session-time
   '((t :inherit font-lock-comment-face))
   "Face for the relative timestamp shown next to a resumable session."
+  :group 'egent)
+
+(defface egent-buffer-name
+  '((t :inherit shadow))
+  "Face for the buffer name shown beside a session's name."
   :group 'egent)
 
 ;;;; Status icons
@@ -138,12 +147,58 @@ Used to hide sessions that are already open from the resumable list."
 agent as the conversation grows, so it is empty until something is sent."
   (egent--buffer-state-value buf '(:session :title)))
 
+(defvar-local egent--session-name nil
+  "Name given to this session through egent, or nil.
+Held apart from the buffer name so renaming a session does not detach it
+from the name `switch-to-buffer' knows it by, and apart from the agent's
+own title, which the agent rewrites as the conversation grows.")
+(put 'egent--session-name 'permanent-local t)
+
+(defun egent-buffer-session-name (buf)
+  "Return the name given to BUF through egent, or nil."
+  (when (buffer-live-p buf)
+    (buffer-local-value 'egent--session-name buf)))
+
+(defun egent-set-buffer-session-name (buf name)
+  "Name the session BUF NAME, or clear the name when NAME is empty."
+  (when (buffer-live-p buf)
+    (with-current-buffer buf
+      (setq-local egent--session-name
+                  (egent-nonempty (egent-one-line name))))))
+
 (defun egent-buffer-label (buf)
   "Return the display label for the live session BUF.
-Prefers the session title over the buffer name, which only distinguishes
-sessions by the order they were opened in."
-  (or (egent-nonempty (egent-one-line (egent-buffer-session-title buf)))
+Prefers a name given through egent, then the session title, then the
+title a fetch cached for it, over the buffer name, which only
+distinguishes sessions by the order they were opened in."
+  (or (egent-nonempty (egent-buffer-session-name buf))
+      (egent-nonempty (egent-one-line (egent-buffer-session-title buf)))
+      (and (fboundp 'egent-session-cached-title)
+           (egent-session-cached-title (egent-buffer-session-id buf)))
       (buffer-name buf)))
+
+(defun egent-buffer-row-label (buf &optional width)
+  "Return BUF's label as \"NAME (BUFFER)\", fitted into WIDTH columns.
+The buffer name rides along so a session named something else can still
+be found with `switch-to-buffer'.  The name is served first and the
+buffer name gets what is left, since a session is picked by what it is
+about; it is dropped entirely when nothing is left for it, and when the
+session has no name of its own to distinguish it from."
+  (let* ((name (egent-buffer-label buf))
+         (bname (buffer-name buf))
+         (suffix (lambda (text)
+                   (propertize (concat " (" text ")")
+                               'face 'egent-buffer-name))))
+    (cond
+     ((equal name bname) (egent-truncate name width))
+     ((null width) (concat name (funcall suffix bname)))
+     (t
+      ;; Four columns is the narrowest " (x)" worth appending.
+      (let* ((shown (egent-truncate name (- width 4)))
+             (room (- width (string-width shown) 3)))
+        (if (< room 2)
+            (egent-truncate name width)
+          (concat shown (funcall suffix (egent-truncate bname room)))))))))
 
 ;;;; Text helpers
 

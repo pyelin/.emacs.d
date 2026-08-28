@@ -7,8 +7,12 @@
 
 ;;; Commentary:
 
-;; Names a session by handing its recent transcript to an external CLI and
-;; renaming the buffer to whatever comes back.
+;; Names a session, either by hand or by handing its recent transcript to
+;; an external CLI and taking whatever comes back.
+;;
+;; A session name is egent's own: the buffer keeps the name `agent-shell'
+;; gave it, so `switch-to-buffer' still finds it, and the agent stays free
+;; to rewrite its title on every turn.
 
 ;;; Code:
 
@@ -50,7 +54,37 @@ lowercase, no punctuation:\n\n%s"
   :type 'string
   :group 'egent)
 
+;;;; Internals
+
+(defun egent-session-name--set (buf name)
+  "Name the session BUF NAME and refresh whatever is displaying it."
+  (egent-set-buffer-session-name buf name)
+  (when (fboundp 'egent-sidebar-refresh)
+    (egent-sidebar-refresh)))
+
+(defun egent-session-name--buffer (shell-buf)
+  "Return SHELL-BUF, or the shell buffer of the current context."
+  (or shell-buf
+      (agent-shell--shell-buffer :no-create t :no-error t)
+      (user-error "No agent-shell buffer found")))
+
 ;;;; Public API
+
+;;;###autoload
+(defun egent-rename-session (&optional shell-buf name)
+  "Name SHELL-BUF's session NAME, prompting when NAME is not given.
+The prompt is seeded with the current name; answering with an empty one
+clears it, putting the session back under the agent's own title."
+  (interactive)
+  (let* ((buf (egent-session-name--buffer shell-buf))
+         (name (or name
+                   (read-string
+                    "Session name: "
+                    (or (egent-buffer-session-name buf)
+                        (egent-one-line (egent-buffer-session-title buf))
+                        "")))))
+    (egent-session-name--set buf (string-trim name))
+    (message "egent: %s" (egent-buffer-label buf))))
 
 ;;;###autoload
 (defun egent-name-session (&optional shell-buf)
@@ -58,9 +92,7 @@ lowercase, no punctuation:\n\n%s"
 Interactively, resolves the shell buffer from the current agent-shell
 context."
   (interactive)
-  (let* ((buf (or shell-buf
-                  (agent-shell--shell-buffer :no-create t :no-error t)
-                  (user-error "No agent-shell buffer found")))
+  (let* ((buf (egent-session-name--buffer shell-buf))
          (context
           (with-current-buffer buf
             (buffer-substring-no-properties
@@ -82,20 +114,8 @@ context."
                    (when (string-prefix-p "finished" event)
                      (let ((name (string-trim output)))
                        (when (and (buffer-live-p buf) (> (length name) 0))
-                         ;; `agent-shell'/`shell-maker' resolve a buffer's
-                         ;; process by name, so a plain `rename-buffer'
-                         ;; would detach the session from its process.
-                         (let ((old-viewport
-                                (get-buffer
-                                 (concat (buffer-name buf) " [viewport]"))))
-                           (shell-maker-set-buffer-name buf name)
-                           (when (buffer-live-p old-viewport)
-                             (with-current-buffer old-viewport
-                               (rename-buffer
-                                (concat name " [viewport]") t))))
-                         (message "egent-name-session: named %s" name)
-                         (when (fboundp 'egent-sidebar-refresh)
-                           (egent-sidebar-refresh)))))))))
+                         (egent-session-name--set buf name)
+                         (message "egent-name-session: named %s" name))))))))
       ;; Close stdin so the subprocess doesn't wait for piped input.
       (process-send-eof proc))))
 

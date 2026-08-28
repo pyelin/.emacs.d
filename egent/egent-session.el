@@ -78,6 +78,23 @@ subprocess during redisplay.")
   "Return non-nil when a fetch for ROOT and IDENTIFIER is in flight."
   (and (gethash (egent-session--key root identifier) egent-session--inflight) t))
 
+(defun egent-session-cached-title (session-id)
+  "Return the title a fetch cached for SESSION-ID, or nil.
+A session restored outside egent — through `agent-shell''s own picker,
+say — is never given a title, and the agent only refreshes one when it
+matches the shell's working directory to its own record of it.  The list
+egent fetched for the sidebar has the title eitherway."
+  (when session-id
+    (catch 'found
+      (maphash (lambda (_key entry)
+                 (dolist (session (plist-get entry :sessions))
+                   (when (equal (map-elt session 'sessionId) session-id)
+                     (throw 'found (egent-nonempty
+                                    (egent-one-line
+                                     (map-elt session 'title)))))))
+               egent-session--cache)
+      nil)))
+
 (defun egent-session-forget (&optional root identifier)
   "Drop cached sessions.
 With ROOT and IDENTIFIER, drop just that entry; otherwise drop everything."

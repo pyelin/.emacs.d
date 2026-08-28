@@ -126,9 +126,8 @@ One of `top', `bottom', `left', `right'."
           (dolist (buf bufs)
             (push (list :buffer buf) egent-peek--entries)
             (insert (propertize (concat "      " (egent-icon (egent-buffer-state buf))
-                                        " " (egent-truncate
-                                             (egent-buffer-label buf)
-                                             (max 1 (- egent-peek-width 8)))
+                                        " " (egent-buffer-row-label
+                                             buf (max 1 (- egent-peek-width 8)))
                                         "\n")
                                 'egent-peek-buffer buf)))
           (insert "\n")))

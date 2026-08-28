@@ -76,6 +76,7 @@ session switcher rather than turning into an ordinary project window."
     (egent-sidebar-collapse                  . "collapse")
     (egent-sidebar-fetch-sessions            . "past sessions")
     (egent-sidebar-name-session              . "name session")
+    (egent-sidebar-rename-session            . "rename")
     (egent-sidebar-kill                      . "kill")
     (egent-sidebar-refresh                   . "refresh")
     (egent-sidebar-new-shell                 . "new shell")
@@ -152,6 +153,7 @@ Intentionally dim — enough to show position without glare."
     (define-key map (kbd "o")   #'egent-resume)
     (define-key map (kbd "r")   #'egent-sidebar-name-session)
     (define-key map (kbd "R")   #'egent-sidebar-name-all-sessions)
+    (define-key map (kbd "M-r") #'egent-sidebar-rename-session)
     (define-key map (kbd "K")   #'egent-sidebar-kill)
     (define-key map (kbd "g")   #'egent-sidebar-refresh)
     (define-key map (kbd "s")   #'egent-sidebar-new-shell)
@@ -333,8 +335,8 @@ Rows are indented four columns and carry an icon and a space."
   "Insert a row for the live session BUF under ROOT."
   (push (list :type 'buffer :buffer buf :root root) egent-sidebar--entries)
   (insert (propertize (concat "    " (egent-icon (egent-buffer-state buf))
-                              " " (egent-truncate (egent-buffer-label buf)
-                                                  (egent-sidebar--row-width))
+                              " " (egent-buffer-row-label
+                                   buf (egent-sidebar--row-width))
                               "\n")
                       'egent-buffer buf)))
 
@@ -596,6 +598,13 @@ Guarded on the cache so re-rendering cannot start a fetch loop."
               ((eq (plist-get entry :type) 'buffer)))
     (egent-name-session (plist-get entry :buffer))))
 
+(defun egent-sidebar-rename-session ()
+  "Name the highlighted live session by hand."
+  (interactive)
+  (when-let* ((entry (egent-sidebar--entry))
+              ((eq (plist-get entry :type) 'buffer)))
+    (egent-rename-session (plist-get entry :buffer))))
+
 (defun egent-sidebar-name-all-sessions ()
   "Name every live session in turn."
   (interactive)
@@ -720,6 +729,7 @@ Sidebar keys:
   o      resume a session in another project
   r      name the current session
   R      name every session
+  M-r    rename the current session by hand
   K      kill the current session
   g      refresh
   s      new shell in the current project

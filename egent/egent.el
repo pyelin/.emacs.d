@@ -19,6 +19,7 @@
 ;;   `egent-peek'            transient posframe switcher (live sessions)
 ;;   `egent-resume'          pick a past session in any project
 ;;   `egent-name-session'    name a session using an external CLI
+;;   `egent-rename-session'  name a session by hand
 ;;
 ;; `persp-mode' and `posframe' are optional: the sidebar falls back to
 ;; restoring the window configuration, and peek is only loaded when

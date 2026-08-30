@@ -59,6 +59,7 @@ lowercase, no punctuation:\n\n%s"
 (defun egent-session-name--set (buf name)
   "Name the session BUF NAME and refresh whatever is displaying it."
   (egent-set-buffer-session-name buf name)
+  (force-mode-line-update t)
   (when (fboundp 'egent-sidebar-refresh)
     (egent-sidebar-refresh)))
 

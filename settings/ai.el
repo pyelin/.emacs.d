@@ -325,3 +325,69 @@ ordering with it."
   ("C-c a h" . egent-sidebar-toggle)
   ("C-c a p" . egent-peek)
   ("C-c a r" . egent-resume))
+
+;; What a session is about only shows in the header line, which the graphical
+;; style draws as an image and the viewport does not carry at all, so the mode
+;; line says it too.  Viewport buffers resolve to their shell, so a session
+;; reads the same from either side.
+(defvar my/egent-modeline-name-width 40
+  "Columns the session name is allowed in the mode line.")
+
+(with-eval-after-load 'egent
+  (defun my/egent-shell-buffer (buffer)
+    "Return the agent shell BUFFER belongs to, or nil when it is not one.
+A viewport resolves to the shell it was opened from, so a session reads
+the same from either side.  Strict about what counts, unlike
+`agent-shell--shell-buffer', which answers with the project's shell for
+any buffer at all."
+    (when (buffer-live-p buffer)
+      (with-current-buffer buffer
+        (cond ((derived-mode-p 'agent-shell-mode) buffer)
+              ((derived-mode-p 'agent-shell-viewport-view-mode
+                               'agent-shell-viewport-edit-mode)
+               (agent-shell-viewport--shell-buffer buffer))))))
+
+  (defun my/egent-session-name (buffer)
+    "Return the name of the session BUFFER shows, or the title standing in."
+    (when-let* ((shell-buffer (my/egent-shell-buffer buffer)))
+      (or (egent-buffer-session-name shell-buffer)
+          (egent-nonempty
+           (egent-one-line (egent-buffer-session-title shell-buffer))))))
+
+  (doom-modeline-def-segment egent-session-name
+    "Display the name of the current egent session."
+    (when-let* ((name (my/egent-session-name (current-buffer))))
+      (concat (doom-modeline-spc)
+              (propertize (egent-truncate name my/egent-modeline-name-width)
+                          'face 'doom-modeline-info
+                          'help-echo name))))
+  ;; Adding is not idempotent: it inserts another copy of the segment
+  ;; every time this file is evaluated, and a re-eval runs the whole
+  ;; `with-eval-after-load' body again.  Drop any earlier copy first.
+  (doom-modeline-remove-segment 'egent-session-name)
+  (doom-modeline-add-segment
+   'egent-session-name 'buffer-info :after 'main))
+
+;; The buffer picker lists shells by buffer name, which only says which order
+;; they were opened in.  Annotating them with the session name puts what each
+;; one is about beside it, where `consult-buffer' and `switch-to-buffer' both
+;; read it.
+(with-eval-after-load 'marginalia
+  (defun my/marginalia-annotate-buffer (candidate)
+    "Annotate buffer CANDIDATE, naming the agent session it is showing."
+    (if-let* ((buffer (get-buffer candidate))
+              ((buffer-live-p buffer))
+              ((fboundp 'my/egent-session-name))
+              (name (my/egent-session-name buffer)))
+        (marginalia--fields
+         (name :truncate 0.4 :face 'marginalia-value)
+         ((marginalia--buffer-status buffer))
+         ((marginalia--buffer-file buffer)
+          :truncate -0.5 :face 'marginalia-file-name))
+      (marginalia-annotate-buffer candidate)))
+
+  ;; Ahead of the stock entry, which stays reachable through
+  ;; `marginalia-cycle'.
+  (add-to-list 'marginalia-annotators
+               '(buffer my/marginalia-annotate-buffer
+                        marginalia-annotate-buffer builtin none)))

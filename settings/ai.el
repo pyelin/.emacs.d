@@ -105,7 +105,7 @@ numbers do; a wider number silently loses its leading digits."
   (agent-shell-thought-process-expand-by-default t)
   ;; A single frame renders the busy indicator as a static glyph rather than an
   ;; animation, so the header stops flickering while the agent works.
-  (agent-shell-busy-indicator-frames '("⏳"))
+  (agent-shell-busy-indicator-frames '("ε=┌(＞o＜)┘"))
   ;; The project root is sent with a trailing slash, but pi-acp matches session
   ;; cwds by string equality against pi's own session header, which has none, so
   ;; `session/list' comes back empty: the picker offers no past sessions and the
@@ -120,6 +120,10 @@ numbers do; a wider number silently loses its leading digits."
     (list #'agent-shell-anthropic-make-claude-code-config
           #'agent-shell-cursor-make-agent-config
           #'agent-shell-pi-make-agent-config))
+  ;; Keep the picker, but list pi first and offer it as the default choice.
+  ;; A bare identifier would skip the prompt entirely; the `preselect' cons
+  ;; only reorders and preselects.
+  (setopt agent-shell-preferred-agent-config '(preselect . pi))
   (setopt agent-shell-anthropic-authentication
     (agent-shell-anthropic-make-authentication :login t))
   (setopt agent-shell-cursor-authentication

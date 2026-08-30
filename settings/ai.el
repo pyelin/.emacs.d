@@ -90,21 +90,6 @@ numbers do; a wider number silently loses its leading digits."
             n (/ n 36)))
     out))
 
-(defun my/agent-shell-buffer-name (agent-name _project-name)
-  "Return a short buffer name for AGENT-NAME, ignoring the project name.
-The project is already the egent sidebar's grouping and the shell's
-`default-directory', so repeating it here only made buffer names long
-enough to crowd out the session name shown beside them.
-
-The tag is the current second followed by a random pair, both in base 36:
-it reads as an opaque id, tells two sessions apart, and still sorts by
-age wherever sessions are listed by buffer name.  Seven digits is more
-than the second count needs, so the encoding cannot wrap and take the
-ordering with it."
-  (format "%s %s%s" agent-name
-          (my/base36 (time-convert nil 'integer) 7)
-          (my/base36 (random (* 36 36)) 2)))
-
 (use-package agent-shell
   :straight (:host github :repo "xenodium/agent-shell")
   :commands (agent-shell
@@ -130,9 +115,6 @@ ordering with it."
   ;; GNU/Linux and warns as soon as it is loaded.  Nothing here can block idle
   ;; sleep anyway, so don't ask agent-shell to try.
   (agent-shell-inhibit-system-sleep nil)
-  ;; Buffer names only have to be unique and short; what a session is about is
-  ;; carried by its title and by egent's own name for it.
-  (agent-shell-buffer-name-format #'my/agent-shell-buffer-name)
   :config
   (setopt agent-shell-agent-configs
     (list #'agent-shell-anthropic-make-claude-code-config

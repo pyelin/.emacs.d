@@ -103,9 +103,9 @@ numbers do; a wider number silently loses its leading digits."
   ;; The surrounding activity group still uses `latest', so a finished thought
   ;; tucks itself away once the agent moves on.
   (agent-shell-thought-process-expand-by-default t)
-  ;; A single frame renders the busy indicator as static text rather than an
+  ;; A single frame renders the busy indicator as a static glyph rather than an
   ;; animation, so the header stops flickering while the agent works.
-  (agent-shell-busy-indicator-frames '("Working…"))
+  (agent-shell-busy-indicator-frames '("⏳"))
   ;; The project root is sent with a trailing slash, but pi-acp matches session
   ;; cwds by string equality against pi's own session header, which has none, so
   ;; `session/list' comes back empty: the picker offers no past sessions and the

@@ -266,6 +266,20 @@ ordering with it."
         mode-name)))
   (advice-add 'agent-shell-get-mode-name
     :around #'my/agent-shell--drop-duplicate-mode-name)
+  ;; An attached image is previewed by hanging the image object off the
+  ;; link's `display' property, which this build cannot make: it carries
+  ;; no image support, so the link shows as bare text.  A propertized
+  ;; string is just as good a `display' value, so hand it the same chafa
+  ;; rendering `pye/image-preview' shows, and the preview lands inline.
+  (defun pye/agent-shell-text-image (fn &rest args)
+    "Return FN's image for ARGS, or a text rendering when there is none."
+    (or (apply fn args)
+        (when (fboundp 'pye/image-render-to-string)
+          (let ((columns (max 20 (min 60 (- (window-body-width) 8)))))
+            (pye/image-render-to-string (plist-get args :file-path)
+                                        columns
+                                        (max 8 (/ columns 3)))))))
+  (advice-add 'agent-shell--load-image :around #'pye/agent-shell-text-image)
   ;; Tool-call commands are fenced as ```console, which resolves to a
   ;; nonexistent console-mode and so renders unhighlighted.  Alias it to
   ;; sh-mode for shell syntax highlighting in the command panel.

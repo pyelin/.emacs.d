@@ -287,6 +287,7 @@
        "javascript"
        "python"
        "markdown"
+       "image"
        "move"
        "sql"
        "org"

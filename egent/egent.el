@@ -20,6 +20,7 @@
 ;;   `egent-resume'          pick a past session in any project
 ;;   `egent-name-session'    name a session using an external CLI
 ;;   `egent-rename-session'  name a session by hand
+;;   `egent-usage-string'    pi's footer-style usage stats for a shell
 ;;
 ;; `persp-mode' and `posframe' are optional: the sidebar falls back to
 ;; restoring the window configuration, and peek is only loaded when
@@ -31,6 +32,7 @@
 (require 'egent-session-name)
 (require 'egent-session)
 (require 'egent-sidebar)
+(require 'egent-usage)
 
 ;; Peek is the only surface that hard-depends on posframe.  Loading egent
 ;; without it should still give you the sidebar.

@@ -116,6 +116,16 @@ numbers do; a wider number silently loses its leading digits."
   ;; sleep anyway, so don't ask agent-shell to try.
   (agent-shell-inhibit-system-sleep nil)
   :config
+  ;; The machine-local default model lives in ~/.zshrc (exported there as
+  ;; PI_ACP_PI_COMMAND), because ~/.pi/agent/settings.json is repo-tracked.
+  ;; `pi-acp' spawns the `pi' binary directly, so the `pi' shell function is
+  ;; never consulted and the session would fall back to `defaultModel' from
+  ;; settings.json.  Forward the variable only when the environment defines
+  ;; it, so machines without the wrapper keep their own resolution.
+  (when-let* ((pi-command (getenv "PI_ACP_PI_COMMAND")))
+    (setopt agent-shell-pi-environment
+      (agent-shell-make-environment-variables
+        "PI_ACP_PI_COMMAND" pi-command)))
   (setopt agent-shell-agent-configs
     (list #'agent-shell-anthropic-make-claude-code-config
           #'agent-shell-cursor-make-agent-config
@@ -352,7 +362,22 @@ any buffer at all."
   ;; `with-eval-after-load' body again.  Drop any earlier copy first.
   (doom-modeline-remove-segment 'egent-session-name)
   (doom-modeline-add-segment
-   'egent-session-name 'buffer-info :after 'main))
+   'egent-session-name 'buffer-info :after 'main)
+
+  ;; pi's TUI footer (token totals, cache-hit rate, cost, context fill),
+  ;; derived from the session file: pi-acp does not forward usage over
+  ;; ACP, so agent-shell's own usage readouts stay empty for pi shells.
+  (doom-modeline-def-segment egent-usage
+    "Display pi session usage for the current agent shell."
+    (when-let* ((shell-buffer (my/egent-shell-buffer (current-buffer)))
+                ((fboundp 'egent-usage-string))
+                (usage (egent-usage-string shell-buffer)))
+      (concat (doom-modeline-spc)
+              (propertize usage 'help-echo
+                          "pi session usage: ↑in ↓out R/W cache, CH cache-hit %, cost, context%"))))
+  (doom-modeline-remove-segment 'egent-usage)
+  (doom-modeline-add-segment
+   'egent-usage 'egent-session-name :after 'main))
 
 ;; The buffer picker lists shells by buffer name, which only says which order
 ;; they were opened in.  Annotating them with the session name puts what each

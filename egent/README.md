@@ -93,6 +93,26 @@ name and a plain `rename-buffer` would detach it.
 (setq egent-session-name-command '("ollama" "run" "llama3.2"))
 ```
 
+### Session usage
+
+pi's TUI footer (token totals, cache-hit rate, cost, context fill) never
+crosses ACP — pi-acp forwards no usage data, so `agent-shell`'s own usage
+readouts stay empty for pi shells. `egent-usage-string' re-derives the same
+numbers from the session file pi writes anyway, for a mode line or header
+line:
+
+```elisp
+(egent-usage-string (current-buffer))
+;; => "↑140k ↓11k R1.6M CH99.4% $0.900 5.4%/1.0M"
+```
+
+Parsing is incremental: a file is read fully once, later reads only consume
+what was appended. `egent-show-usage' messages the same string on demand, and
+`egent-usage-include-model' appends the model and thinking level (off by
+default — `agent-shell`'s header already shows them). Unlike the session
+list, this surface is pi-only: the other agents report usage over ACP,
+which `agent-shell` already renders.
+
 ## Requirements
 
 - Emacs 29.1+

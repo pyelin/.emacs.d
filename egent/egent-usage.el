@@ -208,7 +208,10 @@ line by line, and a half-written line is only visible mid-write."
              state (decode-coding-string line 'utf-8))))
         (setq consumed (point)
               bol (point)))
-      (plist-put state :offset (+ start (1- consumed))))))
+      ;; CONSUMED is 0 when the range holds no newline at all; the
+      ;; offset must not move backwards in that case.
+      (when (> consumed 0)
+        (plist-put state :offset (+ start (1- consumed)))))))
 
 (defun egent-usage--parse (file)
   "Return the parse state for FILE, consuming what was appended, or nil.

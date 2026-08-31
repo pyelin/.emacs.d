@@ -13,11 +13,20 @@
 ;; A session name is egent's own: the buffer keeps the name `agent-shell'
 ;; gave it, so `switch-to-buffer' still finds it, and the agent stays free
 ;; to rewrite its title on every turn.
+;;
+;; That name lives in the buffer, so it dies with it.  Every past session
+;; comes from the list the agent answers `session/list' with, under the
+;; agent's own title.  So the name is passed on to the agent too, through
+;; whichever slash command it advertises for naming a session (pi: `/name'),
+;; which is the only place a name outlives the buffer.
 
 ;;; Code:
 
 (require 'agent-shell)
 (require 'egent-core)
+(require 'egent-session)
+(require 'map)
+(require 'seq)
 
 ;;;; Customization
 
@@ -46,6 +55,14 @@ welcome banner, which would otherwise be most of what the namer sees."
   :type 'integer
   :group 'egent)
 
+(defcustom egent-session-name-agent-commands '("name" "rename" "title")
+  "Slash commands that ask an agent to record a session name, best first.
+The first one an agent advertises is submitted, so drop any an agent you
+use means something else by.  An agent that advertises none keeps its own
+title, and the name is remembered for as long as the buffer lives."
+  :type '(repeat string)
+  :group 'egent)
+
 (defcustom egent-session-name-prompt
   "Reply with ONLY a terse 8-10 word title for this conversation, \
 lowercase, no punctuation:\n\n%s"
@@ -56,9 +73,44 @@ lowercase, no punctuation:\n\n%s"
 
 ;;;; Internals
 
+(defun egent-session-name--agent-command (buf)
+  "Return the naming command BUF's agent advertises, or nil."
+  (let ((available (egent-buffer-available-commands buf)))
+    (seq-find (lambda (command)
+                (seq-some (lambda (entry)
+                            (equal (map-elt entry 'name) command))
+                          available))
+              egent-session-name-agent-commands)))
+
+(defun egent-session-name--tell-agent (buf name)
+  "Ask BUF's agent to record NAME, and return non-nil when it was asked.
+The command goes in as an ordinary prompt, which is how a slash command
+reaches an agent over ACP; agents answer it themselves rather than
+spending a turn on it.  A busy shell is left alone: interrupting a turn
+to rename it would cost more than the name is worth."
+  (when-let* ((name (egent-nonempty name))
+              (command (egent-session-name--agent-command buf))
+              ((buffer-live-p buf)))
+    (if (with-current-buffer buf (shell-maker-busy))
+        (progn
+          (message "egent: %s is busy; the new name stays in Emacs"
+                   (buffer-name buf))
+          nil)
+      (agent-shell--insert-to-shell-buffer
+       :shell-buffer buf
+       :text (concat "/" command " " name)
+       :submit t
+       :no-focus t)
+      t)))
+
 (defun egent-session-name--set (buf name)
-  "Name the session BUF NAME and refresh whatever is displaying it."
+  "Name the session BUF NAME and refresh whatever is displaying it.
+The agent is told as well, when it has a command for it, so the name
+survives the buffer: the sessions egent lists once a buffer is gone are
+the agent's, titled by the agent."
   (egent-set-buffer-session-name buf name)
+  (when (egent-session-name--tell-agent buf name)
+    (egent-session-retitle-cached (egent-buffer-session-id buf) name))
   (force-mode-line-update t)
   (when (fboundp 'egent-sidebar-refresh)
     (egent-sidebar-refresh)))

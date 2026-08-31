@@ -17,7 +17,7 @@ Public symbols use the `egent-` prefix; internals use `egent-<module>--`.
 | `egent-session.el` | Headless ACP `session/list` fetching, cache, resume             |
 | `egent-sidebar.el` | Sidebar workspace                                               |
 | `egent-peek.el`    | Posframe switcher (live sessions only)                          |
-| `egent-session-name.el` | Async session naming via an external CLI subprocess         |
+| `egent-session-name.el` | Session naming, by hand or via an external CLI subprocess   |
 
 ## Dependencies
 
@@ -63,6 +63,19 @@ offering the row and a second `RET` would start a second shell against the same
 session. `egent-session--resuming` hides it meanwhile, with a bounded grace
 period so a resume that never completes (failed auth, missing adapter) cannot
 hide the session permanently.
+
+**A name is told to the agent, not just to Emacs.** `egent--session-name` is
+buffer-local, so a name kept only there dies with the buffer, and the session
+reappears in the past list under the agent's own title — which is the only
+title `session/list` ever reports. `egent-session-name--set` therefore submits
+the first command in `egent-session-name-agent-commands` the agent advertises
+(pi: `/name`) as an ordinary prompt, which is how a slash command reaches an
+agent over ACP. Advertised commands come from `available_commands_update`,
+which `agent-shell` keeps in `:available-commands`, so an agent that has no
+such command is never sent one. A busy shell is skipped rather than
+interrupted, and the cached session list is retitled in place
+(`egent-session-retitle-cached`) so closing the buffer does not bring the old
+title back before the next fetch.
 
 **Cache keys are normalized** with `directory-file-name` + `expand-file-name`, so
 a root with a trailing slash and one without hit the same entry. (The ACP request

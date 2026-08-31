@@ -141,6 +141,12 @@ Used to hide sessions that are already open from the resumable list."
   "Return the agent config alist BUF was started with, or nil."
   (egent--buffer-state-value buf '(:agent-config)))
 
+(defun egent-buffer-available-commands (buf)
+  "Return the slash commands BUF's agent advertises, as a list.
+Each element is an alist with at least a `name'.  Empty until the agent
+has sent its command list, which it does while bootstrapping."
+  (append (egent--buffer-state-value buf '(:available-commands)) nil))
+
 (defun egent-buffer-session-title (buf)
   "Return the title BUF's session reports, or nil.
 `agent-shell' seeds this from the first prompt and refreshes it from the

@@ -95,6 +95,21 @@ egent fetched for the sidebar has the title eitherway."
                egent-session--cache)
       nil)))
 
+(defun egent-session-retitle-cached (session-id title)
+  "Record TITLE as the cached title of SESSION-ID.
+The agent has been told the new name, but the session list was fetched
+before that: without this, renaming a session and then closing its
+buffer would bring it back under its old title until the next fetch."
+  (when (and session-id (egent-nonempty title))
+    (maphash (lambda (_key entry)
+               (dolist (session (plist-get entry :sessions))
+                 (when (and (consp session)
+                            (equal (map-elt session 'sessionId) session-id))
+                   (if-let* ((cell (assq 'title session)))
+                       (setcdr cell title)
+                     (nconc session (list (cons 'title title)))))))
+             egent-session--cache)))
+
 (defun egent-session-forget (&optional root identifier)
   "Drop cached sessions.
 With ROOT and IDENTIFIER, drop just that entry; otherwise drop everything."

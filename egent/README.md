@@ -31,6 +31,7 @@ agent that never answers would wedge Emacs.
 | `egent-peek`           | Transient posframe switcher over live sessions            |
 | `egent-resume`         | Pick a past session in any project and resume it          |
 | `egent-name-session`   | Name the current session using an external CLI            |
+| `egent-rename-session` | Name the current session by hand                          |
 
 ### Sidebar
 
@@ -79,19 +80,25 @@ window configuration is saved and restored instead.
 
 ### Session names
 
-`egent-name-session` sends the last `egent-session-name-context-chars`
-characters of a session (the tail — every buffer opens with the same welcome
-banner, which would otherwise be most of the context) to
-`egent-session-name-command` and renames the buffer to whatever it prints. The
-rename goes through
-`shell-maker-set-buffer-name`, since `agent-shell` resolves a buffer's process by
-name and a plain `rename-buffer` would detach it.
+`egent-rename-session` names a session by hand; `egent-name-session` sends the
+last `egent-session-name-context-chars` characters of a session (the tail —
+every buffer opens with the same welcome banner, which would otherwise be most
+of the context) to `egent-session-name-command` and takes whatever it prints.
 
 ```elisp
 (setq egent-session-name-command '("claude" "-p" "--model" "haiku"))  ; default
 (setq egent-session-name-command '("llm"))
 (setq egent-session-name-command '("ollama" "run" "llama3.2"))
 ```
+
+The name is kept beside the buffer rather than as its name, so the session
+stays reachable through `switch-to-buffer` under the name `agent-shell` gave
+it. A name held that way dies with the buffer, though, and every past session
+is listed under the title its agent reports, so the name is passed on to the
+agent as well: the first command in `egent-session-name-agent-commands` the
+agent advertises (pi answers `/name`) is submitted as a prompt. Agents that
+advertise none keep their own title, and the name lasts as long as the buffer
+does. A busy shell is left alone — renaming does not interrupt a turn.
 
 ### Session usage
 

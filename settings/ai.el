@@ -77,19 +77,6 @@
     (add-to-list 'exec-path bin)
     (setenv "PATH" (concat bin path-separator (getenv "PATH")))))
 
-(defconst my/base36-digits "0123456789abcdefghijklmnopqrstuvwxyz"
-  "Digits of base 36, in an order that also sorts them by value in ASCII.")
-
-(defun my/base36 (n width)
-  "Return N written in base 36, zero-padded to WIDTH digits.
-Padding to a fixed width is what makes the result sort the same way the
-numbers do; a wider number silently loses its leading digits."
-  (let ((out ""))
-    (dotimes (_ width)
-      (setq out (concat (string (aref my/base36-digits (mod n 36))) out)
-            n (/ n 36)))
-    out))
-
 (use-package agent-shell
   :straight (:host github :repo "xenodium/agent-shell")
   :commands (agent-shell

@@ -14,7 +14,7 @@ Public symbols use the `egent-` prefix; internals use `egent-<module>--`.
 |--------------------|----------------------------------------------------------------|
 | `egent.el`         | Umbrella entry point; loads peek only when posframe is present  |
 | `egent-core.el`    | `defgroup`, faces, status icons, buffer introspection, grouping |
-| `egent-session.el` | Headless ACP `session/list` fetching, cache, resume             |
+| `egent-session.el` | Headless ACP `session/list` and `session/delete`, cache, resume |
 | `egent-sidebar.el` | Sidebar workspace                                               |
 | `egent-peek.el`    | Posframe switcher (live sessions only)                          |
 | `egent-session-name.el` | Session naming, by hand or via an external CLI subprocess   |
@@ -36,15 +36,21 @@ the sidebar had to pull in posframe to reach it.
 **Past sessions are fetched, not read.** `agent-shell` only issues
 `session/list` during shell bootstrap, and its `session-list` /
 `session-selected` events carry no payload, so there is nothing to subscribe to.
-`egent-session-fetch` builds its own client from the agent config's
+`egent-session--request` builds its own client from the agent config's
 `:client-maker`, initializes, asks, and shuts down. Parsing each agent's on-disk
 history instead would tie the package to pi's JSONL layout and Claude's projects
-directory.
+directory. Deleting goes through the same helper, which is why a session with no
+buffer can be deleted at all: nothing but the agent has to know about it.
 
 **Fetches are async with a timeout.** `acp-send-request` accepts `:sync`, but its
 wait loop (`while (not done) (accept-process-output ...)`) never gives up. Every
-fetch settles exactly once — success, failure or `egent-session-timeout` — via
-the `finish`/`fail` pair in `egent-session-fetch`.
+request settles exactly once — success, failure or `egent-session-timeout` — via
+the `finish`/`fail` pair in `egent-session--request`.
+
+**A capability is checked before the method is sent.** Session capabilities are
+spelled as bare keys (`(list) (delete)`), so membership decides, not the value.
+An agent without `delete` is refused up front rather than through whatever error
+it chooses to answer with.
 
 **Teardown order matters.** `acp` invokes callbacks inside `with-current-buffer`
 on the request's buffer, which errors if that buffer is dead. `finish` therefore
@@ -56,6 +62,12 @@ calls `acp-shutdown` (which clears pending requests and kills the process)
 `egent-session-forget`. Auto-fetch on workspace open is guarded on
 `egent-session-cached-p` and `egent-session-fetching-p`, so a re-render triggered
 by a completing fetch cannot start another one.
+
+**A delete is suppressed while it runs, then dropped from the cache.**
+`egent-session--deleting` hides the row until the agent answers, so a second `K`
+cannot send the request twice, and a delete that fails puts the row back. On
+success `egent-session--drop-cached` removes just that session rather than
+re-fetching, which would spawn a subprocess to be told what we already know.
 
 **A resume is suppressed while it boots.** A resumed shell only reports its
 session id once bootstrapping finishes, so `egent-session-resumable` would keep
@@ -120,7 +132,7 @@ target window's own buffer, which would start the shell in the wrong project.
 
   `egent-session-fetch` can be exercised headlessly in batch against a real
   agent; drive it with an `accept-process-output` loop and assert the callback
-  fires once, no ` *egent-session-fetch*` buffers survive, and no adapter
+  fires once, no ` *egent-session*` buffers survive, and no adapter
   processes are left behind. Cover the missing-binary and never-answers paths
   too — both must settle through the callback rather than signalling or hanging.
   The interactive surfaces have no automated tests.

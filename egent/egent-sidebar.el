@@ -77,7 +77,7 @@ session switcher rather than turning into an ordinary project window."
     (egent-sidebar-fetch-sessions            . "past sessions")
     (egent-sidebar-name-session              . "name session")
     (egent-sidebar-rename-session            . "rename")
-    (egent-sidebar-kill                      . "kill")
+    (egent-sidebar-kill                      . "kill/delete")
     (egent-sidebar-refresh                   . "refresh")
     (egent-sidebar-new-shell                 . "new shell")
     (egent-sidebar-toggle                    . "quit"))
@@ -616,18 +616,47 @@ Guarded on the cache so re-rendering cannot start a fetch loop."
 (define-obsolete-function-alias
   'egent-sidebar-label-all #'egent-sidebar-name-all-sessions "0.2.0")
 
-(defun egent-sidebar-kill ()
-  "Kill the highlighted live session and its viewport buffer."
-  (interactive)
-  (when-let* ((entry (egent-sidebar--entry))
-              ((eq (plist-get entry :type) 'buffer))
-              (shell-buf (plist-get entry :buffer)))
-    (let ((viewport (egent-preferred-buffer shell-buf)))
-      (when (and (buffer-live-p viewport) (not (eq viewport shell-buf)))
-        (kill-buffer viewport))
-      (when (buffer-live-p shell-buf)
-        (kill-buffer shell-buf)))
+(defun egent-sidebar--kill-buffer-entry (entry)
+  "Kill the live session ENTRY points at, along with its viewport buffer."
+  (let* ((shell-buf (plist-get entry :buffer))
+         (viewport (egent-preferred-buffer shell-buf)))
+    (when (and (buffer-live-p viewport) (not (eq viewport shell-buf)))
+      (kill-buffer viewport))
+    (when (buffer-live-p shell-buf)
+      (kill-buffer shell-buf))
     (egent-sidebar-refresh)))
+
+(defun egent-sidebar--delete-session-entry (entry)
+  "Make the agent forget the past session ENTRY points at.
+Confirmed first: killing a shell only closes a window onto a session,
+but this throws the session itself away."
+  (let ((session (plist-get entry :session))
+        (config (plist-get entry :config))
+        (root (plist-get entry :root)))
+    (when (yes-or-no-p (format "Delete session %s from %s? "
+                               (egent-session-label session)
+                               (egent-config-name config)))
+      (egent-session-delete
+       :root root
+       :config config
+       :session-id (map-elt session 'sessionId)
+       :callback (lambda (error)
+                   (egent-session-report-delete session error)
+                   (when (egent-sidebar--active-p)
+                     (egent-sidebar-refresh))))
+      ;; The row is suppressed while the delete is in flight, so redraw now
+      ;; rather than leaving it there to be deleted a second time.
+      (egent-sidebar-refresh))))
+
+(defun egent-sidebar-kill ()
+  "Kill the highlighted live session, or delete the highlighted past one.
+A past session has no buffer to kill: it is deleted from the agent's
+history instead, which cannot be undone."
+  (interactive)
+  (when-let* ((entry (egent-sidebar--entry)))
+    (pcase (plist-get entry :type)
+      ('buffer (egent-sidebar--kill-buffer-entry entry))
+      ('session (egent-sidebar--delete-session-entry entry)))))
 
 (defun egent-sidebar-refresh ()
   "Re-render the sidebar."
@@ -730,7 +759,7 @@ Sidebar keys:
   r      name the current session
   R      name every session
   M-r    rename the current session by hand
-  K      kill the current session
+  K      kill the current session / delete a past one
   g      refresh
   s      new shell in the current project
   q      quit"

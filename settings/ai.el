@@ -360,11 +360,14 @@ any buffer at all."
                 ((fboundp 'egent-usage-string))
                 (usage (egent-usage-string shell-buffer)))
       (concat (doom-modeline-spc)
-              (propertize usage 'help-echo
+              ;; The mode line parses %-constructs even in segment
+              ;; strings, and drops ones it doesn't know (%/, "% ").
+              (propertize (replace-regexp-in-string "%" "%%" usage)
+                          'help-echo
                           "pi session usage: ↑in ↓out R/W cache, CH cache-hit %, cost, context%"))))
   (doom-modeline-remove-segment 'egent-usage)
   (doom-modeline-add-segment
-   'egent-usage 'egent-session-name :after 'main))
+   'egent-usage 'selection-info :after 'main))
 
 ;; The buffer picker lists shells by buffer name, which only says which order
 ;; they were opened in.  Annotating them with the session name puts what each

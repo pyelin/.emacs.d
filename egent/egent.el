@@ -18,6 +18,7 @@
 ;;   `egent-sidebar-toggle'  workspace with a project-grouped sidebar
 ;;   `egent-peek'            transient posframe switcher (live sessions)
 ;;   `egent-resume'          pick a past session in any project
+;;   `egent-delete-session'  make an agent forget a session it remembers
 ;;   `egent-name-session'    name a session using an external CLI
 ;;   `egent-rename-session'  name a session by hand
 ;;   `egent-usage-string'    pi's footer-style usage stats for a shell

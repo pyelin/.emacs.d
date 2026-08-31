@@ -157,6 +157,7 @@
 ;;;; Common packages
 ;; stop creating backup~ file ;;;;
 (setq make-backup-files nil)
+(setq initial-scratch-message nil)
 
 (when (linux-p)
   (setq browse-url-browser-function 'browse-url-xdg-open))
@@ -183,6 +184,9 @@
 (with-eval-after-load "tramp"
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
+;; use the advanced xterm protocol features which often clears up interface glitches.
+(when (not (display-graphic-p))
+  (setq xterm-extra-capabilities '(get-tty-modes)))
 
 (use-package avy
   :config
@@ -257,6 +261,8 @@
 
 (use-package restclient
   :mode ("\\.rest\\'" . restclient-mode))
+
+
 
 (add-hook 'term-mode-hook
   (lambda () (setq show-trailing-whitespace nil)))

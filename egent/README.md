@@ -30,6 +30,7 @@ agent that never answers would wedge Emacs.
 | `egent-sidebar-focus`  | Jump to the sidebar, opening the workspace if needed      |
 | `egent-peek`           | Transient posframe switcher over live sessions            |
 | `egent-resume`         | Pick a past session in any project and resume it          |
+| `egent-delete-session` | Pick a session an agent remembers and delete it           |
 | `egent-name-session`   | Name the current session using an external CLI            |
 | `egent-rename-session` | Name the current session by hand                          |
 
@@ -62,12 +63,20 @@ starting a second shell against the same session.
 | `S`       | Re-ask this project's agents for sessions    |
 | `o`       | Resume a session in another project          |
 | `r` / `R` | Name current session / all sessions          |
-| `K`       | Kill session and its viewport buffer         |
+| `K`       | Kill live session / delete past session      |
 | `g`       | Refresh                                      |
 | `s`       | New shell in the highlighted project         |
 | `q`       | Quit, restoring the previous layout          |
 
 Mouse click and double-click work too.
+
+`K` on a live row kills the shell and its viewport buffer, which leaves the
+session itself untouched — it comes back as a past row on the next fetch. `K` on
+a past row is the other half: it asks the agent to forget the session
+(`session/delete`), so it needs no buffer and cannot be undone, hence the
+confirmation. `egent-delete-session` does the same for a project the sidebar
+isn't showing, since it only lists projects that have a shell open. Agents that
+don't advertise the `delete` session capability say so instead.
 
 Opening the workspace fetches past sessions once per project
 (`egent-sidebar-auto-fetch-sessions`). With `egent-session-agents` left at

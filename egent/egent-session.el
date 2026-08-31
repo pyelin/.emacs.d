@@ -139,41 +139,42 @@ Fetches fail as Lisp errors (missing adapter), as ACP error objects
     (format "%s" (map-elt error 'message)))
    (t (format "%s" error))))
 
-(defun egent-session--supports-list-p (response)
-  "Return non-nil when an initialize RESPONSE advertises `session/list'."
+(defun egent-session--supports-p (response capability)
+  "Return non-nil when an initialize RESPONSE advertises CAPABILITY.
+CAPABILITY is a session capability symbol such as `list' or `delete'.
+Membership is what counts: agents spell these as bare keys, so the value
+is routinely nil for a capability they do support."
   (let ((caps (or (map-elt response 'sessionCapabilities)
                   (map-nested-elt response '(agentCapabilities sessionCapabilities)))))
-    (and (listp caps) (assq 'list caps) t)))
+    (and (listp caps) (assq capability caps) t)))
 
-(cl-defun egent-session-fetch (&key root config callback)
-  "Ask CONFIG's agent which sessions it remembers for ROOT.
+(cl-defun egent-session--request (&key root config capability request callback)
+  "Send REQUEST to CONFIG's agent through a short-lived ACP client in ROOT.
 
-CALLBACK is called with (SESSIONS . ERROR); SESSIONS is a list of ACP
-session alists (newest first) and ERROR is nil or a string.  It is
-called exactly once, including on timeout."
-  (let* ((root (directory-file-name (expand-file-name root)))
-         (identifier (map-elt config :identifier))
-         (key (egent-session--key root identifier))
-         (context (generate-new-buffer (format " *egent-session-fetch %s*" identifier)))
-         (client nil)
-         (timer nil)
-         (settled nil))
+REQUEST is a function of no arguments returning the ACP request, built
+only once the agent has answered `initialize'.  CAPABILITY is the session
+capability symbol the agent has to advertise there, so an agent that does
+not implement the method is refused up front rather than through whatever
+it answers.  CALLBACK is called exactly once with (RESPONSE . ERROR),
+including on timeout."
+  (let ((context (generate-new-buffer
+                  (format " *egent-session %s*" (map-elt config :identifier))))
+        (client nil)
+        (timer nil)
+        (settled nil))
     (cl-labels
-        ((finish (sessions error)
+        ((finish (response error)
            (unless settled
              (setq settled t)
-             (remhash key egent-session--inflight)
              (when (timerp timer) (cancel-timer timer))
              ;; Shut the client down before killing its context buffer:
              ;; `acp' resolves callbacks with `with-current-buffer', which
              ;; would error on a dead buffer if a late reply arrived.
              (when client (ignore-errors (acp-shutdown :client client)))
              (when (buffer-live-p context) (kill-buffer context))
-             (puthash key (list :sessions sessions :error error) egent-session--cache)
-             (when callback (funcall callback (cons sessions error)))))
+             (when callback (funcall callback (cons response error)))))
          (fail (error)
            (finish nil (egent-session--error-string error))))
-      (puthash key t egent-session--inflight)
       (setq timer (run-at-time egent-session-timeout nil
                                (lambda () (fail "timed out"))))
       (condition-case err
@@ -192,21 +193,41 @@ called exactly once, including on timeout."
              :on-failure (lambda (error) (fail error))
              :on-success
              (lambda (response)
-               (if (not (egent-session--supports-list-p response))
-                   (finish nil "agent does not support session/list")
+               (if (not (egent-session--supports-p response capability))
+                   (fail (format "agent does not support session/%s" capability))
                  (condition-case err
                      (acp-send-request
                       :client client
                       :buffer context
-                      :request (acp-make-session-list-request :cwd root)
+                      :request (funcall request)
                       :on-failure (lambda (error) (fail error))
-                      :on-success
-                      (lambda (response)
-                        (finish (egent-session--sort
-                                 (append (or (map-elt response 'sessions) '()) nil))
-                                nil)))
+                      :on-success (lambda (response) (finish response nil)))
                    (error (fail err)))))))
         (error (fail err))))))
+
+(cl-defun egent-session-fetch (&key root config callback)
+  "Ask CONFIG's agent which sessions it remembers for ROOT.
+
+CALLBACK is called with (SESSIONS . ERROR); SESSIONS is a list of ACP
+session alists (newest first) and ERROR is nil or a string.  It is
+called exactly once, including on timeout."
+  (let* ((root (directory-file-name (expand-file-name root)))
+         (key (egent-session--key root (map-elt config :identifier))))
+    (puthash key t egent-session--inflight)
+    (egent-session--request
+     :root root
+     :config config
+     :capability 'list
+     :request (lambda () (acp-make-session-list-request :cwd root))
+     :callback
+     (lambda (result)
+       (let* ((error (cdr result))
+              (sessions (unless error
+                          (egent-session--sort
+                           (append (or (map-elt (car result) 'sessions) '()) nil)))))
+         (remhash key egent-session--inflight)
+         (puthash key (list :sessions sessions :error error) egent-session--cache)
+         (when callback (funcall callback (cons sessions error))))))))
 
 (defun egent-session-agents-for-root (root)
   "Return the agent configs to query for ROOT, honouring `egent-session-agents'."
@@ -239,6 +260,52 @@ caller can re-render incrementally."
                                 (egent-config-name config) (cdr result)))
                      (when callback (funcall callback))))))))
 
+;;;; Delete
+
+(defvar egent-session--deleting (make-hash-table :test 'equal)
+  "Set of session ids with a delete in flight.
+A deleted session keeps being listed until the agent answers, so without
+this its row would sit there inviting a second delete.")
+
+(defun egent-session--drop-cached (root identifier session-id)
+  "Remove SESSION-ID from the sessions cached for ROOT and IDENTIFIER.
+Cheaper than re-fetching, which would spawn another subprocess to be
+told what we already know."
+  (when-let* ((key (egent-session--key root identifier))
+              (entry (gethash key egent-session--cache)))
+    (puthash key
+             (plist-put entry :sessions
+                        (seq-remove (lambda (session)
+                                      (equal (map-elt session 'sessionId) session-id))
+                                    (plist-get entry :sessions)))
+             egent-session--cache)))
+
+(defun egent-session-deleting-p (session-id)
+  "Return non-nil when SESSION-ID has a delete in flight."
+  (and (gethash session-id egent-session--deleting) t))
+
+(cl-defun egent-session-delete (&key root config session-id callback)
+  "Ask CONFIG's agent to forget SESSION-ID, one of its sessions for ROOT.
+
+The session does not have to be open in Emacs: like listing, this drives
+its own short-lived client, so a session nothing is attached to can be
+deleted too.  CALLBACK is called exactly once with nil on success or an
+error string."
+  (let ((root (directory-file-name (expand-file-name root)))
+        (identifier (map-elt config :identifier)))
+    (puthash session-id t egent-session--deleting)
+    (egent-session--request
+     :root root
+     :config config
+     :capability 'delete
+     :request (lambda () (acp-make-session-delete-request :session-id session-id))
+     :callback
+     (lambda (result)
+       (remhash session-id egent-session--deleting)
+       (unless (cdr result)
+         (egent-session--drop-cached root identifier session-id))
+       (when callback (funcall callback (cdr result)))))))
+
 ;;;; Open sessions
 
 (defun egent-session-buffer (session-id)
@@ -268,7 +335,7 @@ adapter) cannot hide the session for the rest of the Emacs session.")
 
 (defun egent-session-resumable (root identifier)
   "Return cached sessions for ROOT and IDENTIFIER that can still be resumed.
-Excludes sessions already open in a buffer and those mid-resume."
+Excludes sessions already open in a buffer, mid-resume or mid-delete."
   (seq-remove (lambda (session)
                 (let ((id (map-elt session 'sessionId)))
                   (cond
@@ -276,7 +343,8 @@ Excludes sessions already open in a buffer and those mid-resume."
                     ;; The shell reported its id, so the resume is done.
                     (remhash id egent-session--resuming)
                     t)
-                   ((egent-session--pending-p id) t))))
+                   ((egent-session--pending-p id) t)
+                   ((egent-session-deleting-p id) t))))
               (egent-session-cached root identifier)))
 
 ;;;; Resume
@@ -314,6 +382,72 @@ resuming twice would leave two shells fighting over one session."
     (or (egent-nonempty title)
         (format "(untitled %s)" (substring id 0 (min 8 (length id)))))))
 
+;;;; Picking
+
+(defun egent-session--read-root (prompt &optional root)
+  "Return ROOT, or a project directory read with PROMPT."
+  (directory-file-name
+   (expand-file-name
+    (or root (read-directory-name prompt (ignore-errors (agent-shell-cwd)))))))
+
+(defun egent-session--read-config (root)
+  "Return the agent config to ask about ROOT, prompting when several apply."
+  (let ((configs (or (egent-session-agents-for-root root)
+                     (egent-agent-configs))))
+    (or (if (length= configs 1)
+            (car configs)
+          (let* ((choices (mapcar (lambda (c) (cons (egent-config-name c) c))
+                                  configs))
+                 (pick (completing-read "Agent: " (mapcar #'car choices) nil t)))
+            (alist-get pick choices nil nil #'equal)))
+        (user-error "No agent selected"))))
+
+(defun egent-session--read (sessions prompt)
+  "Ask with PROMPT which of SESSIONS to act on, and return it."
+  (let* ((width (apply #'max (mapcar (lambda (s)
+                                       (length (egent-session-label s)))
+                                     sessions)))
+         (choices
+          (mapcar (lambda (session)
+                    (cons (concat
+                           (string-pad (egent-session-label session) (1+ width))
+                           (propertize (egent-relative-time
+                                        (map-elt session 'updatedAt))
+                                       'face 'egent-session-time))
+                          session))
+                  sessions))
+         ;; Completion frameworks append "(nil)" to candidates unless
+         ;; `this-command' is bound during the read, and this runs from an
+         ;; asynchronous callback, where it no longer is.
+         (this-command 'egent-session--read)
+         (pick (completing-read
+                prompt
+                (lambda (string pred action)
+                  (if (eq action 'metadata)
+                      '(metadata (display-sort-function . identity))
+                    (complete-with-action action (mapcar #'car choices)
+                                          string pred)))
+                nil t)))
+    (alist-get pick choices nil nil #'equal)))
+
+(cl-defun egent-session--pick (&key root config prompt callback)
+  "Fetch ROOT's sessions from CONFIG, ask with PROMPT, call CALLBACK with one."
+  (message "egent: asking %s for sessions in %s…"
+           (egent-config-name config) (abbreviate-file-name root))
+  (egent-session-fetch
+   :root root
+   :config config
+   :callback
+   (lambda (result)
+     (let ((sessions (car result))
+           (error (cdr result)))
+       (cond
+        (error (user-error "egent: %s" error))
+        ((null sessions) (user-error "egent: no sessions for %s"
+                                     (abbreviate-file-name root)))
+        (t (when-let* ((session (egent-session--read sessions prompt)))
+             (funcall callback session))))))))
+
 ;;;###autoload
 (defun egent-resume (&optional root)
   "Pick a past session for ROOT and resume it.
@@ -321,64 +455,48 @@ resuming twice would leave two shells fighting over one session."
 Prompts for the project directory and agent when they cannot be inferred,
 which is the only way to reach a project that has no session open."
   (interactive)
-  (let* ((root (directory-file-name
-                (expand-file-name
-                 (or root
-                     (read-directory-name "Resume session in project: "
-                                          (ignore-errors (agent-shell-cwd)))))))
-         (configs (or (egent-session-agents-for-root root)
-                      (egent-agent-configs)))
-         (config (if (length= configs 1)
-                     (car configs)
-                   (let* ((choices (mapcar (lambda (c)
-                                             (cons (egent-config-name c) c))
-                                           configs))
-                          (pick (completing-read "Agent: " (mapcar #'car choices) nil t)))
-                     (alist-get pick choices nil nil #'equal)))))
-    (unless config
-      (user-error "No agent selected"))
-    (message "egent: asking %s for sessions in %s…"
-             (egent-config-name config) (abbreviate-file-name root))
-    (egent-session-fetch
+  (let* ((root (egent-session--read-root "Resume session in project: " root))
+         (config (egent-session--read-config root)))
+    (egent-session--pick
      :root root
      :config config
-     :callback
-     (lambda (result)
-       (let ((sessions (car result))
-             (error (cdr result)))
-         (cond
-          (error (user-error "egent: %s" error))
-          ((null sessions) (user-error "egent: no sessions for %s"
-                                       (abbreviate-file-name root)))
-          (t
-           (let* ((width (apply #'max (mapcar (lambda (s)
-                                                (length (egent-session-label s)))
-                                              sessions)))
-                  (choices
-                   (mapcar (lambda (session)
-                             (cons (concat
-                                    (string-pad (egent-session-label session) (1+ width))
-                                    (propertize (egent-relative-time
-                                                 (map-elt session 'updatedAt))
-                                                'face 'egent-session-time))
-                                   session))
-                           sessions))
-                  ;; Completion frameworks append "(nil)" to candidates
-                  ;; unless `this-command' is bound during the read.
-                  (this-command 'egent-resume)
-                  (pick (completing-read
-                         "Resume session: "
-                         (lambda (string pred action)
-                           (if (eq action 'metadata)
-                               '(metadata (display-sort-function . identity))
-                             (complete-with-action action (mapcar #'car choices)
-                                                   string pred)))
-                         nil t))
-                  (session (alist-get pick choices nil nil #'equal)))
-             (egent-session-resume :root root
-                                   :config config
-                                   :session-id (map-elt session 'sessionId)
-                                   :title (map-elt session 'title))))))))))
+     :prompt "Resume session: "
+     :callback (lambda (session)
+                 (egent-session-resume :root root
+                                       :config config
+                                       :session-id (map-elt session 'sessionId)
+                                       :title (map-elt session 'title))))))
+
+(defun egent-session-report-delete (session error)
+  "Report the outcome of deleting SESSION, ERROR being nil on success."
+  (if error
+      (message "egent: could not delete %s (%s)"
+               (egent-session-label session) error)
+    (message "egent: deleted %s" (egent-session-label session))))
+
+;;;###autoload
+(defun egent-delete-session (&optional root)
+  "Pick a session ROOT's agent remembers and make it forget it.
+
+Unlike killing a shell, this reaches sessions with no buffer behind them,
+which are otherwise only ever added to.  It cannot be undone."
+  (interactive)
+  (let* ((root (egent-session--read-root "Delete session in project: " root))
+         (config (egent-session--read-config root)))
+    (egent-session--pick
+     :root root
+     :config config
+     :prompt "Delete session: "
+     :callback (lambda (session)
+                 (when (yes-or-no-p (format "Delete session %s? "
+                                            (egent-session-label session)))
+                   (egent-session-delete
+                    :root root
+                    :config config
+                    :session-id (map-elt session 'sessionId)
+                    :callback
+                    (lambda (error)
+                      (egent-session-report-delete session error))))))))
 
 (provide 'egent-session)
 ;;; egent-session.el ends here

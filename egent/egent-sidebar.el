@@ -78,7 +78,7 @@ session switcher rather than turning into an ordinary project window."
     (egent-sidebar-name-session              . "name session")
     (egent-sidebar-rename-session            . "rename")
     (egent-sidebar-kill                      . "kill/delete")
-    (egent-sidebar-refresh                   . "refresh")
+    (egent-sidebar-reload                    . "refresh")
     (egent-sidebar-new-shell                 . "new shell")
     (egent-sidebar-toggle                    . "quit"))
   "Command/description pairs shown in the sidebar's footer.")
@@ -155,7 +155,7 @@ Intentionally dim — enough to show position without glare."
     (define-key map (kbd "R")   #'egent-sidebar-name-all-sessions)
     (define-key map (kbd "M-r") #'egent-sidebar-rename-session)
     (define-key map (kbd "K")   #'egent-sidebar-kill)
-    (define-key map (kbd "g")   #'egent-sidebar-refresh)
+    (define-key map (kbd "g")   #'egent-sidebar-reload)
     (define-key map (kbd "s")   #'egent-sidebar-new-shell)
     (define-key map (kbd "C-g") #'egent-sidebar-toggle)
     (define-key map (kbd "q")   #'egent-sidebar-toggle)
@@ -669,6 +669,23 @@ history instead, which cannot be undone."
       (egent-sidebar--highlight egent-sidebar--current-idx)
       (egent-sidebar--preview))))
 
+(defun egent-sidebar-reload ()
+  "Re-ask every listed project's agents for sessions, then re-render.
+`egent-sidebar-refresh' only redraws what is already cached, so a session
+started, renamed or deleted outside Emacs stays invisible until the cache
+is dropped — which is what pressing g is expected to do."
+  (interactive)
+  (egent-session-forget)
+  (dolist (group (egent-grouped-buffers))
+    (egent-session-refresh-project
+     :root (car group)
+     :callback (lambda ()
+                 (when (egent-sidebar--active-p)
+                   (egent-sidebar-refresh)))))
+  ;; Redraw now so the rows a fetch is pending for show as such rather than
+  ;; disappearing with the cache they were rendered from.
+  (egent-sidebar-refresh))
+
 (defun egent-sidebar-new-shell ()
   "Start a new shell in the highlighted project and show it."
   (interactive)
@@ -760,7 +777,7 @@ Sidebar keys:
   R      name every session
   M-r    rename the current session by hand
   K      kill the current session / delete a past one
-  g      refresh
+  g      refetch every project's sessions and redraw
   s      new shell in the current project
   q      quit"
   (interactive)

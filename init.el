@@ -199,23 +199,57 @@
   :config
   (setq projectile-git-submodule-command "true"))
 
+;; enable built-in winner mode for temporily maximize a window
+(use-package winner
+  :ensure nil
+  :init
+  (winner-mode 1)
+  :bind
+  (("C-x 4" . my/toggle-maximize-buffer))
+  :config
+  (defun my/toggle-maximize-buffer ()
+    "Maximize current window or restore previous layout, ignoring sidebars."
+    (interactive)
+    (let* ((all-windows (window-list))
+           ;; Filter out windows that contain "sidebar" in their buffer name
+           (filtered-windows
+            (cl-remove-if (lambda (w)
+                            (string-match-p "sidebar" (buffer-name (window-buffer w))))
+                          all-windows)))
+      (if (= 1 (length filtered-windows))
+          (winner-undo)
+        (progn
+          (window-configuration-to-register ?_)
+          (delete-other-windows))))))
+
+;; custom split window
+(defun split-and-follow-horizontally ()
+  "Split the window horizontally and move focus to it."
+  (interactive)
+  (split-window-below)
+  (other-window 1))
+
+(defun split-and-follow-vertically ()
+  "Split the window vertically and move focus to it."
+  (interactive)
+  (split-window-right)
+  (other-window 1))
+
+;; Bind them to replace default behavior
+(global-set-key (kbd "C-x 2") 'split-and-follow-horizontally)
+(global-set-key (kbd "C-x 3") 'split-and-follow-vertically)
+
 (use-package switch-window
   :config
   (global-set-key (kbd "C-x o") 'switch-window)
   (global-set-key (kbd "C-x 1") 'switch-window-then-maximize)
-  (global-set-key (kbd "C-x 2") 'switch-window-then-split-below)
-  (global-set-key (kbd "C-x 3") 'switch-window-then-split-right)
   (global-set-key (kbd "C-x 0") 'switch-window-then-delete)
-
-  (global-set-key (kbd "C-x 4 d") 'switch-window-then-dired)
-  (global-set-key (kbd "C-x 4 f") 'switch-window-then-find-file)
-  (global-set-key (kbd "C-x 4 b") 'switch-window-then-display-buffer)
-  (global-set-key (kbd "C-x 4 0") 'switch-window-then-kill-buffer)
 
   (define-key switch-window-extra-map (kbd "c") 'switch-window-mvborder-up)
   (define-key switch-window-extra-map (kbd "t") 'switch-window-mvborder-down)
   (define-key switch-window-extra-map (kbd "h") 'switch-window-mvborder-left)
   (define-key switch-window-extra-map (kbd "n") 'switch-window-mvborder-right))
+
 
 (use-package exec-path-from-shell
   ;; https://github.com/purcell/exe...

@@ -268,6 +268,27 @@
   ;; sh-mode for shell syntax highlighting in the command panel.
   (require 'sh-script)
   (add-to-list 'agent-shell-markdown-language-mapping '("console" . "sh"))
+  ;; pi-acp puts a bash command in the ACP `title' and sends no `rawInput'
+  ;; (its output travels over an ACP terminal instead), so agent-shell has no
+  ;; `command' parameter to fence into the fragment body.  A multi-line
+  ;; command then ends at the header's "…" with no body to expand.  Copy the
+  ;; title into :command so the body gets its ```console block and the
+  ;; fragment folds open on RET.  Only multi-line commands need it; a single
+  ;; line already shows in full.
+  (defun pye/agent-shell-execute-command-body (args)
+    "Fill in a missing :command for execute tool calls in ARGS."
+    (pcase-let ((`(,state ,tool-call-id ,tool-call) args))
+      (let ((kind (or (map-elt tool-call :kind)
+                      (map-nested-elt state (list :tool-calls tool-call-id :kind))))
+            (title (map-elt tool-call :title)))
+        (if (and (equal kind "execute")
+                 (stringp title)
+                 (string-search "\n" title)
+                 (not (map-elt tool-call :command)))
+            (list state tool-call-id (cons (cons :command title) tool-call))
+          args))))
+  (advice-add 'agent-shell--save-tool-call
+    :filter-args #'pye/agent-shell-execute-command-body)
 
   ;; allow new line
   (with-eval-after-load 'agent-shell

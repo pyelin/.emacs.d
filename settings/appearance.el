@@ -12,6 +12,26 @@
     '(ediff-current-diff-B ((t (:foreground "White" :background "#7bc275"))))
     '(ediff-current-diff-C ((t (:foreground "White" :background "#7bc275"))))))
 
+;; doom ships `vertical-border' with foreground = background, which hides the
+;; glyph and leaves a solid recessed seam. Split them so the glyph shows: the
+;; cell blends into the buffer and only a hairline is drawn on top of it.
+;; `window-divider' already inherits `vertical-border' in doom-themes-base,
+;; so the GUI divider follows along without a separate rule.
+;; Emacs draws the tty separator as an ASCII pipe unless a display table says
+;; otherwise, and a column of pipes has gaps between rows. This built-in helper
+;; swaps it (and the box-drawing glyphs) for their Unicode equivalents, giving a
+;; continuous line. Required here, not cosmetic: once the glyph is visible it
+;; has to be a glyph worth seeing.
+(require 'disp-table)
+(unless standard-display-table
+  (setq standard-display-table (make-display-table)))
+(standard-display-unicode-special-glyphs)
+
+(when (fboundp 'doom-color)
+  (set-face-attribute 'vertical-border nil
+    :foreground (doom-color 'base4)
+    :background (doom-color 'bg)))
+
 ;; ;; default font
 (defun pye/load-font ()
   (interactive)

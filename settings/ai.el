@@ -54,11 +54,6 @@
     (when-let ((server (eglot-current-server)))
       (eglot-shutdown server))))
 
-
-(use-package pi-coding-agent
-  :ensure t
-  :init (defalias 'pi 'pi-coding-agent))
-
 ;;;; ACP coding agents
 ;; Each agent talks the Agent Client Protocol through an external adapter that
 ;; must be on PATH:

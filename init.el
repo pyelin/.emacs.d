@@ -144,8 +144,12 @@
 ;; https://github.com/joaotavora/eglot/issues/1193
 (use-package eglot
   :config
-  ;; disable flymake-mode on eglot-managed-mode-hook
-  (add-hook 'eglot-managed-mode-hook (lambda () (remove-hook 'flymake-diagnostic-functions 'eglot-flymake-backend))))
+  ;; Keep server diagnostics out of flymake -- except in Python, where ruff
+  ;; (hosted by pylsp, see settings/python.el) is the only linter there is.
+  (defun pye/eglot--maybe-drop-flymake-backend ()
+    (unless (derived-mode-p 'python-base-mode)
+      (remove-hook 'flymake-diagnostic-functions 'eglot-flymake-backend)))
+  (add-hook 'eglot-managed-mode-hook #'pye/eglot--maybe-drop-flymake-backend))
 
 ;; Increasing the minimum prime bits size to something larger
 ;; than the default settings stops all the GnuTLS warnings from
@@ -321,6 +325,7 @@
        "appearance"
        "completion"
        "keybinding"
+       "ai"
        "dockerfile"
        "csv"
        "graphql"
@@ -331,7 +336,6 @@
        "move"
        "sql"
        "org"
-       "ai"
        "yaml"
        "just"
        "rust"
@@ -453,3 +457,10 @@
   (auto-revert-verbose nil))
 
 (use-package posframe)
+
+(use-package flymake
+  :straight nil
+  :custom
+  (flymake-fringe-indicator-position 'left-fringe)
+  :custom-face
+  (flymake-warning ((t (:underline nil)))))

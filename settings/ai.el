@@ -12,7 +12,6 @@
   (typescript-ts-mode . eglot-ensure)
   (tsx-ts-mode . eglot-ensure)
   (web-mode . eglot-ensure)
-  (python-ts-mode . eglot-ensure)
   (js2-mode . eglot-ensure)
   (move-mode . eglot-ensure)
   (rust-ts-mode . eglot-ensure)
@@ -22,16 +21,12 @@
   (add-to-list 'eglot-server-programs '(web-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs '(move-mode . ("move-analyzer")))
 
-  ;; python
-  (add-to-list 'eglot-server-programs '(python-base-mode . ("ruff" "server")))
-  (add-hook 'python-base-mode-hook
-    (lambda ()
-      (eglot-ensure)
-      (add-hook 'after-save-hook 'eglot-format nil t)))
+  ;; Python (pylsp + python-lsp-ruff) is configured in settings/python.el.
 
   (add-to-list 'eglot-stay-out-of 'eldoc-documentation-strategy)
-  (put 'eglot-error 'flymake-overlay-control nil)
-  (put 'eglot-warning 'flymake-overlay-control nil)
+  ;; Keep diagnostics in Flymake and the fringe, but do not decorate text.
+  (put 'eglot-warning 'flymake-overlay-control '((face . nil)))
+  (put 'eglot-note 'flymake-overlay-control '((face . nil)))
   (advice-add 'project-kill-buffers :before #'pye/eglot-shutdown-project)
 
   ;; Move packages are nested in sub-directories so look for the relevant Move.toml

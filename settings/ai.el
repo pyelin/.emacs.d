@@ -104,13 +104,8 @@
       (agent-shell-make-environment-variables
         "PI_ACP_PI_COMMAND" pi-command)))
   (setopt agent-shell-agent-configs
-    (list #'agent-shell-anthropic-make-claude-code-config
-          #'agent-shell-cursor-make-agent-config
-          #'agent-shell-pi-make-agent-config))
-  ;; Keep the picker, but list pi first and offer it as the default choice.
-  ;; A bare identifier would skip the prompt entirely; the `preselect' cons
-  ;; only reorders and preselects.
-  (setopt agent-shell-preferred-agent-config '(preselect . pi))
+    (list #'agent-shell-pi-make-agent-config))
+  (setopt agent-shell-preferred-agent-config 'pi)
   (setopt agent-shell-anthropic-authentication
     (agent-shell-anthropic-make-authentication :login t))
   (setopt agent-shell-cursor-authentication

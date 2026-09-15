@@ -60,21 +60,6 @@ Nil when the models store has not been read yet or could not be read.")
 
 ;;;; Locating the session file
 
-(defun egent-usage--agent-dir ()
-  "Return pi's agent directory."
-  (expand-file-name (or (getenv "PI_CODING_AGENT_DIR") "~/.pi/agent")))
-
-(defun egent-usage--session-dir (cwd)
-  "Return the directory pi stores CWD's sessions in.
-Mirrors session-manager.ts: resolve symlinks, drop the leading
-separator, turn the remaining separators and colons into dashes, and
-wrap the result in \"--\"."
-  (let* ((resolved (file-truename (directory-file-name cwd)))
-         (path (replace-regexp-in-string
-                "[/\\:]" "-" (string-remove-prefix "/" resolved))))
-    (expand-file-name (concat "--" path "--")
-                      (expand-file-name "sessions" (egent-usage--agent-dir)))))
-
 (defun egent-usage--session-file (buffer)
   "Return pi's session file for the session BUFFER shows, or nil.
 Only pi shells have a session file to read; other agents report usage
@@ -93,7 +78,7 @@ same id pi-acp reports as the ACP session id."
               (car cached)
             (let ((file (car (file-expand-wildcards
                               (expand-file-name (format "*_%s.jsonl" id)
-                                                (egent-usage--session-dir cwd))))))
+                                                (egent-pi-session-dir cwd))))))
               (puthash key (cons file (float-time)) egent-usage--files)
               file)))))))
 
@@ -234,7 +219,7 @@ and is reparsed from the beginning."
   "Return a hash mapping \"provider\\0id\" to (CONTEXT-WINDOW . REASONING-P).
 Read from pi's models store, re-read when the file changes; nil when
 the store is unavailable."
-  (let* ((file (expand-file-name "models-store.json" (egent-usage--agent-dir)))
+  (let* ((file (expand-file-name "models-store.json" (egent-pi-agent-dir)))
          (mtime (and (file-readable-p file)
                      (file-attribute-modification-time
                       (file-attributes file)))))

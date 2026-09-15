@@ -44,6 +44,17 @@ actually use there.  Alternatively, a list of agent identifier symbols
                  (repeat :tag "Specific agents" symbol))
   :group 'egent)
 
+(defcustom egent-session-hide-subagents t
+  "Whether to leave the sessions pi's subagents ran out of the list.
+
+Every turn that fans out leaves one transcript per child behind, and
+pi's ACP adapter lists them alongside the sessions you started: they
+share the project's cwd, and in a project that delegates they outnumber
+the sessions worth resuming.  They are also of no use resumed, being
+half of a conversation whose other half was a tool call."
+  :type 'boolean
+  :group 'egent)
+
 (defcustom egent-session-timeout 20
   "Seconds to wait for an agent to answer before giving up on it.
 An agent that needs authentication, or one whose adapter is missing, can
@@ -126,6 +137,79 @@ ISO-8601 timestamps sort lexically the same way they sort chronologically."
               (string> (or (map-elt a 'updatedAt) (map-elt a 'createdAt) "")
                        (or (map-elt b 'updatedAt) (map-elt b 'createdAt) "")))
             (copy-sequence sessions)))
+
+(defconst egent-session--header-bytes 8192
+  "Bytes of a pi session file read to find its header.
+The header is its first line and runs to a few hundred bytes; this is
+only a bound on what a file that is not one has to be read to reject.")
+
+(defun egent-session--pi-header (file)
+  "Return the first line of FILE, or nil when it cannot be read."
+  (with-temp-buffer
+    (when (ignore-errors
+            (insert-file-contents file nil 0 egent-session--header-bytes)
+            t)
+      (goto-char (point-min))
+      (buffer-substring-no-properties (point-min) (line-end-position)))))
+
+(defconst egent-session--pi-child-title-regexp "\\`[^ ]+#[0-9a-f]\\{6,\\}\\'"
+  "Matches the name a subagent extension gives the session it runs in.
+Both spell it AGENT#RUNID: `Explore#14202049'.  A parent link alone does
+not imply a subagent — pi writes one into every session a fork, a rewind
+or `/new' descends from — so it takes this as well to hide a session.")
+
+(defun egent-session--pi-children (root)
+  "Return a hash table describing the pi sessions in ROOT that have a parent.
+Keys are session ids; a value of `nested' means the transcript lives
+under another session's directory, `parented' that it names a parent
+session in its header.
+
+Nothing in what `session/list' answers — an id, a cwd, a title and a
+timestamp — says who ran a session, so the transcripts are read instead.
+The two subagent extensions leave different traces: one writes the child
+beside its parent with a `parentSession' path in the header, the other
+writes it under a directory named after the parent, which pi's ACP
+adapter still lists because it walks the project directory recursively.
+
+A session with no transcript here is absent from the table: an unknown
+on-disk layout is likelier than a subagent, and hiding a session that
+could have been resumed is the worse mistake."
+  (let ((dir (egent-pi-session-dir root))
+        (children (make-hash-table :test 'equal)))
+    (when (file-directory-p dir)
+      (dolist (file (directory-files-recursively dir "\\.jsonl\\'"))
+        (let ((header (egent-session--pi-header file)))
+          (when (and header
+                     (string-match-p "\"type\":\"session\"" header)
+                     (string-match "\"id\":\"\\([^\"]+\\)\"" header))
+            (let ((id (match-string 1 header)))
+              (cond
+               ((not (equal (file-name-directory file)
+                            (file-name-as-directory dir)))
+                (puthash id 'nested children))
+               ((string-match-p "\"parentSession\":" header)
+                (puthash id 'parented children))))))))
+    children))
+
+(defun egent-session--without-subagents (sessions root identifier)
+  "Return SESSIONS without the ones a subagent of IDENTIFIER ran in ROOT.
+Only pi is filtered: it is the only agent that lists the sessions its
+subagents ran, and the only one whose transcripts egent knows how to
+find.  A nested transcript is a subagent's whatever it is called; one
+beside its parent has to be named like a subagent's too, so that a fork
+or a rewind — which also records a parent — is kept."
+  (if (not (and egent-session-hide-subagents (eq identifier 'pi) sessions))
+      sessions
+    (let ((children (egent-session--pi-children root)))
+      (seq-remove
+       (lambda (session)
+         (pcase (gethash (map-elt session 'sessionId) children)
+           ('nested t)
+           ('parented
+            (let ((title (egent-one-line (map-elt session 'title))))
+              (and title
+                   (string-match-p egent-session--pi-child-title-regexp title))))))
+       sessions))))
 
 (defun egent-session--error-string (error)
   "Return a readable message for ERROR.
@@ -224,7 +308,10 @@ called exactly once, including on timeout."
        (let* ((error (cdr result))
               (sessions (unless error
                           (egent-session--sort
-                           (append (or (map-elt (car result) 'sessions) '()) nil)))))
+                           (egent-session--without-subagents
+                            (append (or (map-elt (car result) 'sessions) '())
+                                    nil)
+                            root (map-elt config :identifier))))))
          (remhash key egent-session--inflight)
          (puthash key (list :sessions sessions :error error) egent-session--cache)
          (when callback (funcall callback (cons sessions error))))))))

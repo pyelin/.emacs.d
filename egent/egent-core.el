@@ -244,6 +244,27 @@ would otherwise break a single-line row."
       (map-elt config :buffer-name)
       (format "%s" (map-elt config :identifier))))
 
+;;;; Pi's session files
+
+;; Only pi's layout is described here: it is the one agent whose
+;; transcripts egent reads directly, because its ACP adapter forwards
+;; neither token usage nor the parentage of a session it lists.
+
+(defun egent-pi-agent-dir ()
+  "Return pi's agent directory."
+  (expand-file-name (or (getenv "PI_CODING_AGENT_DIR") "~/.pi/agent")))
+
+(defun egent-pi-session-dir (cwd)
+  "Return the directory pi stores CWD's sessions in.
+Mirrors session-manager.ts: resolve symlinks, drop the leading
+separator, turn the remaining separators and colons into dashes, and
+wrap the result in \"--\"."
+  (let* ((resolved (file-truename (directory-file-name cwd)))
+         (path (replace-regexp-in-string
+                "[/\\:]" "-" (string-remove-prefix "/" resolved))))
+    (expand-file-name (concat "--" path "--")
+                      (expand-file-name "sessions" (egent-pi-agent-dir)))))
+
 ;;;; Grouping
 
 (defun egent-grouped-buffers ()

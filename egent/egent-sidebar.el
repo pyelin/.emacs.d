@@ -49,6 +49,14 @@ there.  Set to nil to fetch only on demand."
   :type 'boolean
   :group 'egent)
 
+(defcustom egent-sidebar-session-page-size 10
+  "How many past sessions a project lists before hiding the rest.
+Projects with a long history would otherwise push every other project
+off the sidebar.  The remainder is reachable a page at a time from the
+row at the end of the group."
+  :type 'integer
+  :group 'egent)
+
 (defcustom egent-sidebar-use-perspective 'auto
   "Whether the sidebar opens in a dedicated `persp-mode' perspective.
 `auto' uses one when `persp-mode' is installed and falls back to saving
@@ -74,6 +82,7 @@ session switcher rather than turning into an ordinary project window."
   '(((egent-sidebar-next egent-sidebar-prev) . "navigate")
     (egent-sidebar-select                    . "select/resume")
     (egent-sidebar-collapse                  . "collapse")
+    (egent-sidebar-load-more                 . "more sessions")
     (egent-sidebar-fetch-sessions            . "past sessions")
     (egent-sidebar-name-session              . "name session")
     (egent-sidebar-rename-session            . "rename")
@@ -96,8 +105,8 @@ session switcher rather than turning into an ordinary project window."
 Recorded on entry so exit undoes what entry actually did, even if
 `persp-mode' was loaded in between.")
 
-;; Each entry is a plist with :type (`project', `buffer' or `session'),
-;; :root ROOT and, depending on type, :buffer, :session and :config.
+;; Each entry is a plist with :type (`project', `buffer', `session' or
+;; `more'), :root ROOT and, depending on type, :buffer, :session and :config.
 ;; Project headers are navigable while collapsed so they can be reopened.
 (defvar egent-sidebar--entries nil
   "Flat list of navigable entries backing the rendered sidebar.")
@@ -107,6 +116,10 @@ Recorded on entry so exit undoes what entry actually did, even if
 
 (defvar egent-sidebar--collapsed nil
   "List of project roots currently collapsed.")
+
+(defvar egent-sidebar--page-limits nil
+  "Alist of (ROOT . COUNT) past sessions revealed so far.
+Roots absent from it show `egent-sidebar-session-page-size' sessions.")
 
 (defvar egent-sidebar--main-window nil
   "The main content window in the sidebar workspace.")
@@ -149,6 +162,7 @@ Intentionally dim — enough to show position without glare."
     (define-key map (kbd "p")   #'egent-sidebar-prev)
     (define-key map (kbd "RET") #'egent-sidebar-select)
     (define-key map (kbd "TAB") #'egent-sidebar-collapse)
+    (define-key map (kbd "+")   #'egent-sidebar-load-more)
     (define-key map (kbd "S")   #'egent-sidebar-fetch-sessions)
     (define-key map (kbd "o")   #'egent-resume)
     (define-key map (kbd "r")   #'egent-sidebar-name-session)
@@ -276,6 +290,13 @@ avoids re-rendering merely because a buffer was visited."
   "Return the project root of the highlighted entry, or nil."
   (plist-get (egent-sidebar--entry) :root))
 
+(defun egent-sidebar--last-position (pred)
+  "Return the index of the last entry satisfying PRED, or nil."
+  (let ((idx nil) (i 0))
+    (dolist (entry egent-sidebar--entries idx)
+      (when (funcall pred entry) (setq idx i))
+      (setq i (1+ i)))))
+
 (defun egent-sidebar--restore-idx (buf)
   "Point the selection back at BUF after a re-render.
 Falls back to clamping the previous index when BUF is gone."
@@ -360,17 +381,57 @@ Rows are indented four columns and carry an icon and a space."
                      "\n")
              'egent-session session))))
 
+(defun egent-sidebar--session-time (session)
+  "Return the timestamp SESSION is ordered by."
+  (or (map-elt session 'updatedAt) (map-elt session 'createdAt) ""))
+
+(defun egent-sidebar--resumable-pairs (root)
+  "Return (SESSION . CONFIG) pairs for ROOT, newest first.
+Agents are merged into one list so paging reveals the most recent
+sessions of the project rather than exhausting one agent at a time."
+  (sort (seq-mapcat
+         (lambda (config)
+           (let ((identifier (map-elt config :identifier)))
+             (when (egent-session-cached-p root identifier)
+               (mapcar (lambda (session) (cons session config))
+                       (egent-session-resumable root identifier)))))
+         (egent-session-agents-for-root root))
+        (lambda (a b) (string> (egent-sidebar--session-time (car a))
+                          (egent-sidebar--session-time (car b))))))
+
+(defun egent-sidebar--page-limit (root)
+  "Return how many past sessions ROOT currently shows."
+  (or (alist-get root egent-sidebar--page-limits nil nil #'equal)
+      egent-sidebar-session-page-size))
+
+(defun egent-sidebar--insert-more-row (root hidden)
+  "Insert the row revealing HIDDEN further past sessions of ROOT."
+  (push (list :type 'more :root root) egent-sidebar--entries)
+  (insert (propertize
+           (concat "      "
+                   (propertize
+                    (egent-truncate
+                     (format "Type %s to load more sessions (%d)"
+                             (egent-sidebar--format-hint-key 'egent-sidebar-load-more)
+                             hidden)
+                     (egent-sidebar--row-width))
+                    'face 'shadow)
+                   "\n")
+           'egent-more root)))
+
 (defun egent-sidebar--insert-sessions (root)
-  "Insert resumable session rows for every fetched agent in ROOT."
+  "Insert a page of resumable session rows for the fetched agents in ROOT."
   (dolist (config (egent-session-agents-for-root root))
-    (let ((identifier (map-elt config :identifier)))
-      (cond
-       ((egent-session-fetching-p root identifier)
-        (insert (propertize (format "    … %s sessions\n" (egent-config-name config))
-                            'face 'shadow)))
-       ((egent-session-cached-p root identifier)
-        (dolist (session (egent-session-resumable root identifier))
-          (egent-sidebar--insert-session-row session config root)))))))
+    (when (egent-session-fetching-p root (map-elt config :identifier))
+      (insert (propertize (format "    … %s sessions\n" (egent-config-name config))
+                          'face 'shadow))))
+  (let* ((pairs (egent-sidebar--resumable-pairs root))
+         (shown (seq-take pairs (egent-sidebar--page-limit root)))
+         (hidden (- (length pairs) (length shown))))
+    (dolist (pair shown)
+      (egent-sidebar--insert-session-row (car pair) (cdr pair) root))
+    (when (> hidden 0)
+      (egent-sidebar--insert-more-row root hidden))))
 
 (defun egent-sidebar--render ()
   "Render the sidebar buffer and rebuild the entry list."
@@ -418,7 +479,9 @@ Rows are indented four columns and carry an icon and a space."
     ('buffer  (text-property-any (point-min) (point-max)
                                  'egent-buffer (plist-get entry :buffer)))
     ('session (text-property-any (point-min) (point-max)
-                                 'egent-session (plist-get entry :session)))))
+                                 'egent-session (plist-get entry :session)))
+    ('more    (text-property-any (point-min) (point-max)
+                                 'egent-more (plist-get entry :root)))))
 
 (defun egent-sidebar--highlight (idx)
   "Highlight entry IDX and sync point to its line."
@@ -456,7 +519,7 @@ Rows are indented four columns and carry an icon and a space."
   "Return non-nil when ENTRY can be reached with n/p.
 Collapsing a project hides its rows, leaving the header as the only way
 to expand it again, so headers are navigable exactly while collapsed."
-  (or (memq (plist-get entry :type) '(buffer session))
+  (or (memq (plist-get entry :type) '(buffer session more))
       (member (plist-get entry :root) egent-sidebar--collapsed)))
 
 (defun egent-sidebar--step (step)
@@ -493,6 +556,7 @@ to expand it again, so headers are navigable exactly while collapsed."
            (buf (and pos (get-text-property pos 'egent-buffer)))
            (session (and pos (get-text-property pos 'egent-session)))
            (root (and pos (get-text-property pos 'egent-root)))
+           (more (and pos (get-text-property pos 'egent-more)))
            (idx (cond
                  (buf (cl-position-if (lambda (e)
                                         (eq (plist-get e :buffer) buf))
@@ -500,6 +564,10 @@ to expand it again, so headers are navigable exactly while collapsed."
                  (session (cl-position-if (lambda (e)
                                             (eq (plist-get e :session) session))
                                           egent-sidebar--entries))
+                 (more (cl-position-if (lambda (e)
+                                         (and (eq (plist-get e :type) 'more)
+                                              (equal (plist-get e :root) more)))
+                                       egent-sidebar--entries))
                  (root (cl-position-if (lambda (e)
                                          (and (eq (plist-get e :type) 'project)
                                               (equal (plist-get e :root) root)))
@@ -519,11 +587,13 @@ to expand it again, so headers are navigable exactly while collapsed."
 
 (defun egent-sidebar-select ()
   "Act on the highlighted entry.
-Live session: focus it.  Past session: resume it.  Project: collapse."
+Live session: focus it.  Past session: resume it.  Project: collapse.
+The row at the end of a truncated group loads the next page."
   (interactive)
   (when-let* ((entry (egent-sidebar--entry)))
     (pcase (plist-get entry :type)
       ('project (egent-sidebar-collapse))
+      ('more (egent-sidebar-load-more))
       ('buffer
        (egent-sidebar--preview)
        (when (window-live-p egent-sidebar--main-window)
@@ -559,6 +629,32 @@ Live session: focus it.  Past session: resume it.  Project: collapse."
                               egent-sidebar--entries)
               0))
     (egent-sidebar--highlight egent-sidebar--current-idx)))
+
+(defun egent-sidebar-load-more ()
+  "Reveal another page of past sessions in the highlighted project.
+The selection stays on the row that loads them, so pressing the key
+again keeps walking back through the history."
+  (interactive)
+  (let ((root (egent-sidebar--current-root)))
+    (unless root
+      (user-error "No project selected"))
+    (setf (alist-get root egent-sidebar--page-limits nil nil #'equal)
+          (+ (egent-sidebar--page-limit root) egent-sidebar-session-page-size))
+    (egent-sidebar--render)
+    (egent-sidebar--populate-perspective)
+    (setq egent-sidebar--current-idx
+          (or (cl-position-if (lambda (e)
+                                (and (eq (plist-get e :type) 'more)
+                                     (equal (plist-get e :root) root)))
+                              egent-sidebar--entries)
+              ;; Nothing left to load: fall back to the last row revealed.
+              (egent-sidebar--last-position
+               (lambda (e)
+                 (and (eq (plist-get e :type) 'session)
+                      (equal (plist-get e :root) root))))
+              egent-sidebar--current-idx))
+    (egent-sidebar--highlight egent-sidebar--current-idx)
+    (egent-sidebar--preview)))
 
 (defun egent-sidebar-fetch-sessions ()
   "Ask the highlighted project's agents which sessions they remember."
@@ -725,7 +821,8 @@ is dropped — which is what pressing g is expected to do."
     (setq egent-sidebar--main-window
           (car (seq-filter (lambda (w) (not (eq w sidebar-win))) (window-list)))))
   (setq egent-sidebar--current-idx 0
-        egent-sidebar--collapsed nil)
+        egent-sidebar--collapsed nil
+        egent-sidebar--page-limits nil)
   (egent-sidebar--render)
   (egent-sidebar--populate-perspective)
   (egent-sidebar--highlight 0)
@@ -745,6 +842,7 @@ is dropped — which is what pressing g is expected to do."
   (setq egent-sidebar--entries nil
         egent-sidebar--current-idx 0
         egent-sidebar--collapsed nil
+        egent-sidebar--page-limits nil
         egent-sidebar--main-window nil
         egent-sidebar--state-snapshot nil))
 
@@ -771,6 +869,7 @@ Sidebar keys:
   n/p    navigate and preview
   RET    focus session / resume past session / toggle project
   TAB    collapse or expand a project group
+  +      load the next page of past sessions
   S      re-ask the project's agents for past sessions
   o      resume a session in another project
   r      name the current session

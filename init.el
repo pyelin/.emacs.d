@@ -326,6 +326,7 @@
        "completion"
        "keybinding"
        "ai"
+       "dired-scp"
        "dockerfile"
        "csv"
        "graphql"

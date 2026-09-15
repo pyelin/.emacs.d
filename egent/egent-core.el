@@ -60,8 +60,10 @@ colour survives the outer `face' properties applied while rendering."
   :group 'egent)
 
 (defface egent-buffer-name
-  '((t :inherit shadow))
-  "Face for the buffer name shown beside a session's name."
+  '((t :inherit warning))
+  "Face for the buffer name shown beside a session's name.
+Colour is what separates it from the session's own name, so it inherits
+a face themes render yellow rather than wearing brackets."
   :group 'egent)
 
 ;;;; Status icons
@@ -184,27 +186,29 @@ distinguishes sessions by the order they were opened in."
       (buffer-name buf)))
 
 (defun egent-buffer-row-label (buf &optional width)
-  "Return BUF's label as \"NAME (BUFFER)\", fitted into WIDTH columns.
+  "Return BUF's label as NAME then BUFFER, fitted into WIDTH columns.
 The buffer name rides along so a session named something else can still
-be found with `switch-to-buffer'.  The name is served first and the
-buffer name gets what is left, since a session is picked by what it is
-about; it is dropped entirely when nothing is left for it, and when the
-session has no name of its own to distinguish it from."
+be found with `switch-to-buffer', so a name long enough to fill the row
+on its own must not push it out: the buffer name is reserved half the
+row before the name is fitted, and takes more only when the name leaves
+more.  It is dropped when the session has no name of its own to
+distinguish it from, and when half a row is too narrow to say anything."
   (let* ((name (egent-buffer-label buf))
          (bname (buffer-name buf))
          (suffix (lambda (text)
-                   (propertize (concat " (" text ")")
-                               'face 'egent-buffer-name))))
+                   (concat " " (propertize text 'face 'egent-buffer-name)))))
     (cond
      ((equal name bname) (egent-truncate name width))
      ((null width) (concat name (funcall suffix bname)))
      (t
-      ;; Four columns is the narrowest " (x)" worth appending.
-      (let* ((shown (egent-truncate name (- width 4)))
-             (room (- width (string-width shown) 3)))
+      (let* ((wanted (1+ (string-width bname)))
+             (spare (- width (string-width name)))
+             (room (min wanted (max spare (/ width 2)))))
+        ;; Two columns is the narrowest " x" worth appending.
         (if (< room 2)
             (egent-truncate name width)
-          (concat shown (funcall suffix (egent-truncate bname room)))))))))
+          (concat (egent-truncate name (- width room))
+                  (funcall suffix (egent-truncate bname (1- room))))))))))
 
 ;;;; Text helpers
 

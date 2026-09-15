@@ -350,7 +350,7 @@ Falls back to clamping the previous index when BUF is gone."
 (defun egent-sidebar--row-width (&optional reserved)
   "Return the columns a row's label may use, minus RESERVED.
 Rows are indented four columns and carry an icon and a space."
-  (max 1 (- egent-sidebar-width 6 (or reserved 0))))
+  (max 1 (- egent-sidebar-width 10 (or reserved 0))))
 
 (defun egent-sidebar--insert-buffer-row (buf root)
   "Insert a row for the live session BUF under ROOT."

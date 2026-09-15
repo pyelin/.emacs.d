@@ -76,6 +76,7 @@
               agent-shell-cursor-start-agent
               agent-shell-pi-start-agent)
   :custom
+  (agent-shell-buffer-name-format (lambda (model _project) model))
   ;; Follow the agent's reasoning as it streams instead of having to unfold it.
   ;; The surrounding activity group still uses `latest', so a finished thought
   ;; tucks itself away once the agent moves on.

@@ -4,7 +4,7 @@
 
 (use-package doom-themes
   :config
-  (load-theme 'doom-one t))
+  (load-theme 'doom-vibrant t))
 
 (setq-default cursor-type 'box)
 (global-hl-line-mode t)

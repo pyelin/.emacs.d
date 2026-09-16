@@ -4,18 +4,19 @@
 
 (use-package doom-themes
   :config
-  (load-theme 'doom-vibrant t)
-  (setq-default cursor-type 'box)
-  (global-hl-line-mode t)
-  ;; Use a clean, thin Unicode vertical bar character
-  (unless (display-graphic-p)
-    (set-display-table-slot standard-display-table 'vertical-border ?▏))
-  (custom-set-faces
-    '(trailing-whitespace ((t (:background "slategray3"))))
-    '(ediff-current-diff-B ((t (:foreground "White" :background "#7bc275"))))
-    '(ediff-current-diff-C ((t (:foreground "White" :background "#7bc275"))))
-    ;; Set the color of the thin vertical line
-    '(vertical-border ((t (:foreground "Black" :background nil))))))
+  (load-theme 'doom-one t))
+
+(setq-default cursor-type 'box)
+(global-hl-line-mode t)
+;; Use a clean, thin Unicode vertical bar character
+(unless (display-graphic-p)
+  (set-display-table-slot standard-display-table 'vertical-border ?▏))
+(custom-set-faces
+  '(trailing-whitespace ((t (:background "slategray3"))))
+  '(ediff-current-diff-B ((t (:foreground "White" :background "#7bc275"))))
+  '(ediff-current-diff-C ((t (:foreground "White" :background "#7bc275"))))
+  ;; Set the color of the thin vertical line
+  '(vertical-border ((t (:foreground "Black" :background nil)))))
 
 ;; ;; default font
 (defun pye/load-font ()

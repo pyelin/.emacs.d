@@ -77,7 +77,7 @@ Position the cursor at it's beginning, according to the current mode."
 "
 ?o? ?e? ?u?                ?t?
 "
-  ("o" agent-shell-help-menu (hydra-invoker-format 'ova "AI"))
+  ("o" hydra-agent-shell/body (hydra-invoker-format 'ova "AI"))
   ("e" hydra-org-roam/body (hydra-invoker-format 'exa "ROAM"))
   ("u" kill-this-buffer (hydra-invoker-format 'umbra "CLOSE"))
   ("h" nil)
@@ -170,6 +170,60 @@ _q_uit    _RET_: current
   ("=" smerge-diff-mine-other)
   (">" smerge-diff-base-other)
   ("q" nil :color red))
+
+;; agent-shell
+;; 1. Isolation wrappers for cycling agent buffers exclusively
+(defun my/agent-shell-next-buffer ()
+  "Switch to the next active agent-shell buffer."
+  (interactive)
+  (let ((start-buffer (current-buffer)))
+    (next-buffer)
+    (while (and (not (derived-mode-p 'agent-shell-mode))
+                (not (eq (current-buffer) start-buffer)))
+      (next-buffer))))
+
+(defun my/agent-shell-prev-buffer ()
+  "Switch to the previous active agent-shell buffer."
+  (interactive)
+  (let ((start-buffer (current-buffer)))
+    (previous-buffer)
+    (while (and (not (derived-mode-p 'agent-shell-mode))
+                (not (eq (current-buffer) start-buffer)))
+      (previous-buffer))))
+
+;; 2. Hydra configuration including session renaming
+(defhydra hydra-agent-shell (:color blue :hint nil)
+  "
+^Context & Queue^         ^Navigation^         ^Session^
+----------------------------------------------------------------------
+_s_end region             _n_ext agent         _N_ew session
+switch _b_uffer           _p_rev agent         _R_ename session
+_d_wim insert             _TAB_ / _<backtab>_    _k_ill agent
+_q_ueue prompt            ^ ^                  _C_ancel/interrupt
+^ ^                       ^ ^                  _m_ode cycle / _M_ set
+^ ^                       ^ ^                  _v_iew model
+"
+  ;; Context & Manual selection (Exits Hydra)
+  ("s" agent-shell-send-region-to :exit t)
+  ("b" agent-shell-switch-buffer :exit t)
+  ("d" agent-shell--dwim)
+  ("q" agent-shell-prompt-queue)
+
+  ;; Quick-cycling & Buffer Navigation (Pink heads keep Hydra open)
+  ("n" my/agent-shell-next-buffer :color pink)
+  ("p" my/agent-shell-prev-buffer :color pink)
+  ("TAB" agent-shell-next-item :color pink)
+  ("<backtab>" agent-shell-previous-item :color pink)
+
+  ;; Session Management & Tuning
+  ("N" agent-shell-new-shell :exit t)
+  ("R" agent-shell-rename-buffer :exit t)
+  ("k" agent-shell-kill-process)
+  ("C" agent-shell-interrupt)
+  ("v" agent-shell-set-model :exit t)
+  ("m" agent-shell-cycle-session-mode)
+  ("M" agent-shell-set-mode :exit t))
+
 
 (global-set-key (kbd "<f9>") 'pye/kill-other-buffers)
 (global-set-key (kbd "M-u") 'hydra-umbra/body)

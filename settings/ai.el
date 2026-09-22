@@ -93,17 +93,16 @@
   ;; GNU/Linux and warns as soon as it is loaded.  Nothing here can block idle
   ;; sleep anyway, so don't ask agent-shell to try.
   (agent-shell-inhibit-system-sleep nil)
+  ;; The default `minimal' restores via `session/resume' whenever the agent
+  ;; advertises it, and resume never replays history.  @geohar/pi-acp does
+  ;; advertise it, so a restored shell came back empty.  `full' forces
+  ;; `session/load', which streams the transcript back.
+  (agent-shell-session-restore-verbosity 'full)
   :config
-  ;; The machine-local default model lives in ~/.zshrc (exported there as
-  ;; PI_ACP_PI_COMMAND), because ~/.pi/agent/settings.json is repo-tracked.
-  ;; `pi-acp' spawns the `pi' binary directly, so the `pi' shell function is
-  ;; never consulted and the session would fall back to `defaultModel' from
-  ;; settings.json.  Forward the variable only when the environment defines
-  ;; it, so machines without the wrapper keep their own resolution.
-  (when-let* ((pi-command (getenv "PI_ACP_PI_COMMAND")))
-    (setopt agent-shell-pi-environment
-      (agent-shell-make-environment-variables
-        "PI_ACP_PI_COMMAND" pi-command)))
+  (with-eval-after-load 'agent-shell-pi
+    (setq agent-shell-pi-acp-command
+      (list (expand-file-name "~/.pi/agent/npm/node_modules/.bin/pi-acp"))))
+
   (setopt agent-shell-agent-configs
     (list #'agent-shell-pi-make-agent-config))
   (setopt agent-shell-preferred-agent-config 'pi)

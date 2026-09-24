@@ -12,6 +12,11 @@
 ;;     comes from `dired-scp-default-target', falling back to the system name.
 ;;   - Emacs running locally with a TRAMP dired buffer.  The user, host and
 ;;     port are taken from the TRAMP file name.
+;;
+;; `dired-scp-upload' goes the other way: it uploads the marked (local) files
+;; to a host picked from the Host entries of your ssh config.  The remote
+;; destination directory is browsed with completion over TRAMP, and the scp
+;; command is offered for editing before it runs in `*dired-scp-upload*'.
 
 ;;; Code:
 
@@ -33,6 +38,26 @@ Either a plain host name or USER@HOST, matching an entry in your
   "Default local destination directory offered in the prompt."
   :type 'string
   :group 'dired-scp)
+
+(defcustom dired-scp-ssh-config-files '("~/.ssh/config")
+  "Ssh config files whose Host entries are offered as upload targets.
+Include directives inside them are followed."
+  :type '(repeat file)
+  :group 'dired-scp)
+
+(defcustom dired-scp-upload-destination "~/"
+  "Default remote directory offered when uploading.
+Interpreted relative to the remote host, so ~/ is the remote home."
+  :type 'string
+  :group 'dired-scp)
+
+(defcustom dired-scp-tramp-method "ssh"
+  "TRAMP method used to browse the remote host for the upload destination."
+  :type 'string
+  :group 'dired-scp)
+
+(defvar dired-scp-host-history nil
+  "Minibuffer history of hosts chosen by `dired-scp-upload'.")
 
 (defun dired-scp--remote-quote (path)
   "Quote PATH for scp.
@@ -115,8 +140,106 @@ ones, exactly as other dired commands do."
       (message "Copied to kill ring — run this locally:\n%s" command)
       command)))
 
+(defun dired-scp--ssh-config-hosts (files &optional depth)
+  "Return the concrete Host names declared in the ssh config FILES.
+Wildcard patterns
+\(containing *, ? or a leading !) are skipped, since they cannot be
+connected to.  Include directives are followed up to a small DEPTH."
+  (let ((depth (or depth 0))
+        hosts)
+    (dolist (file files)
+      (setq file (expand-file-name file))
+      (when (and (< depth 8) (file-readable-p file))
+        (with-temp-buffer
+          (insert-file-contents file)
+          (goto-char (point-min))
+          (while (re-search-forward
+                  "^[ \t]*\\(host\\|include\\)\\(?:[ \t]*=[ \t]*\\|[ \t]+\\)\\(.*\\)$"
+                  nil t)
+            (let ((keyword (downcase (match-string 1)))
+                  ;; Drop trailing comments, then split into words,
+                  ;; honouring double quotes.
+                  (args (split-string-and-unquote
+                         (replace-regexp-in-string "[ \t]*#.*\\'" ""
+                                                   (match-string 2)))))
+              (if (equal keyword "host")
+                  (dolist (h args)
+                    (unless (string-match-p "[*?]\\|\\`!" h)
+                      (push h hosts)))
+                ;; Relative Include paths are resolved against ~/.ssh.
+                (dolist (pattern args)
+                  (let ((default-directory (expand-file-name "~/.ssh/")))
+                    (setq hosts
+                          (append (reverse
+                                   (dired-scp--ssh-config-hosts
+                                    (file-expand-wildcards
+                                     (expand-file-name pattern) t)
+                                    (1+ depth)))
+                                  hosts))))))))))
+    (delete-dups (nreverse hosts))))
+
+(defun dired-scp--read-host ()
+  "Read an ssh host, completing on the Host entries of the ssh config."
+  (let ((hosts (dired-scp--ssh-config-hosts dired-scp-ssh-config-files)))
+    (completing-read (format-prompt "Upload to host" (car dired-scp-host-history))
+                     hosts nil nil nil 'dired-scp-host-history
+                     (car dired-scp-host-history))))
+
+(defun dired-scp--read-remote-directory (host)
+  "Browse HOST over TRAMP and return the chosen directory's remote path."
+  (let* ((root (format "/%s:%s:" dired-scp-tramp-method host))
+         (dir (read-directory-name (format "Upload to directory on %s: " host)
+                                   (concat root dired-scp-upload-destination)
+                                   nil nil)))
+    (unless (string-prefix-p root dir)
+      (user-error "Destination %s is not on %s" dir host))
+    ;; Expanding over TRAMP resolves ~ against the remote home, so the
+    ;; path can be quoted for scp without a literal "~" surviving.
+    (file-name-as-directory (file-remote-p (expand-file-name dir) 'localname))))
+
+;;;###autoload
+(defun dired-scp-upload (&optional arg)
+  "Upload the marked files to a host chosen from your ssh config.
+
+The host is completed from the Host entries in `dired-scp-ssh-config-files',
+and the destination directory is browsed on that host over TRAMP.  The scp
+command is then offered for editing, pushed onto the kill ring, and run
+asynchronously in the `*dired-scp-upload*' buffer, where any password
+prompt can be answered.
+
+With a prefix ARG, operate on the next ARG files instead of the marked
+ones, exactly as other dired commands do."
+  (interactive "P")
+  (let ((files (dired-get-marked-files nil arg)))
+    (unless files
+      (user-error "No files marked"))
+    (when (seq-some #'file-remote-p files)
+      (user-error "Upload works on local files; these are on %s"
+                  (file-remote-p (car files))))
+    (let* ((host (dired-scp--read-host))
+           (dest (dired-scp--read-remote-directory host))
+           (command
+            (string-join
+             (append '("scp")
+                     (when (seq-some #'file-directory-p files) '("-r"))
+                     (when (cdr files) '("-C"))
+                     (mapcar (lambda (f)
+                               (shell-quote-argument (expand-file-name f)))
+                             files)
+                     (list (format "%s:%s" host
+                                   (dired-scp--remote-quote dest))))
+             " "))
+           (command (read-shell-command "Upload command: " command)))
+      (kill-new command)
+      ;; Run from a local directory: a TRAMP `default-directory' would run
+      ;; scp on the remote host instead.
+      (let ((default-directory (expand-file-name "~/")))
+        (async-shell-command command "*dired-scp-upload*"))
+      command)))
+
 (with-eval-after-load 'dired
-  (define-key dired-mode-map (kbd "C-c C-s") #'dired-scp-download-command))
+  (define-key dired-mode-map (kbd "C-c C-s") #'dired-scp-download-command)
+  (define-key dired-mode-map (kbd "C-c C-u") #'dired-scp-upload))
 
 (provide 'dired-scp)
 ;;; dired-scp.el ends here

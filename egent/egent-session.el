@@ -396,10 +396,12 @@ error string."
 ;;;; Open sessions
 
 (defun egent-session-buffer (session-id)
-  "Return the live shell buffer attached to SESSION-ID, or nil."
-  (seq-find (lambda (buf)
-              (equal (egent-buffer-session-id buf) session-id))
-            (agent-shell-buffers)))
+  "Return the live shell or terminal buffer attached to SESSION-ID, or nil.
+A terminal counts too: a second client on the same session would race it."
+  (or (seq-find (lambda (buf)
+                  (equal (egent-buffer-session-id buf) session-id))
+                (agent-shell-buffers))
+      (egent-term-buffer session-id)))
 
 (defvar egent-session--resuming (make-hash-table :test 'equal)
   "Maps a session id to the time a resume was started for it.

@@ -22,6 +22,8 @@
 ;;   `egent-name-session'    name a session using an external CLI
 ;;   `egent-rename-session'  name a session by hand
 ;;   `egent-usage-string'    pi's footer-style usage stats for a shell
+;;   `egent-term-new'        new session in the agent's own TUI (ghostel)
+;;   `egent-term-resume'     pick a past session and resume it in a terminal
 ;;
 ;; `persp-mode' and `posframe' are optional: the sidebar falls back to
 ;; restoring the window configuration, and peek is only loaded when
@@ -32,6 +34,7 @@
 (require 'egent-core)
 (require 'egent-session-name)
 (require 'egent-session)
+(require 'egent-term)
 (require 'egent-sidebar)
 (require 'egent-usage)
 

@@ -465,3 +465,6 @@
   (flymake-fringe-indicator-position 'left-fringe)
   :custom-face
   (flymake-warning ((t (:underline nil)))))
+
+
+(use-package ghostel)

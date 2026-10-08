@@ -22,6 +22,7 @@
 (require 'egent-core)
 (require 'egent-session-name)
 (require 'egent-session)
+(require 'egent-term)
 (require 'map)
 (require 'seq)
 
@@ -89,6 +90,7 @@ session switcher rather than turning into an ordinary project window."
     (egent-sidebar-kill                      . "kill/delete")
     (egent-sidebar-reload                    . "refresh")
     (egent-sidebar-new-shell                 . "new shell")
+    (egent-sidebar-term                      . "in terminal")
     (egent-sidebar-toggle                    . "quit"))
   "Command/description pairs shown in the sidebar's footer.")
 
@@ -171,6 +173,7 @@ Intentionally dim — enough to show position without glare."
     (define-key map (kbd "K")   #'egent-sidebar-kill)
     (define-key map (kbd "g")   #'egent-sidebar-reload)
     (define-key map (kbd "s")   #'egent-sidebar-new-shell)
+    (define-key map (kbd "t")   #'egent-sidebar-term)
     (define-key map (kbd "C-g") #'egent-sidebar-toggle)
     (define-key map (kbd "q")   #'egent-sidebar-toggle)
     (define-key map (kbd "<mouse-1>")        #'egent-sidebar-mouse-select)
@@ -216,6 +219,7 @@ enough to get a dedicated workspace without configuring anything."
              (fboundp 'persp-buffers))
     (let* ((persp (get-current-persp))
            (keep (append (agent-shell-buffers)
+                         (egent-term-buffers)
                          (when-let* ((b (get-buffer egent-sidebar--buffer-name)))
                            (list b)))))
       (dolist (buf (copy-sequence (persp-buffers persp)))
@@ -803,6 +807,29 @@ is dropped — which is what pressing g is expected to do."
       (select-window win)
       (egent-sidebar-refresh))))
 
+(defun egent-sidebar-term ()
+  "Resume the highlighted past session in a terminal, or start a new one.
+Off a past row, the new session starts in the highlighted project.  The
+terminal keeps focus, since it is what gets typed into next."
+  (interactive)
+  (let ((entry (egent-sidebar--entry)))
+    (when (window-live-p egent-sidebar--main-window)
+      (select-window egent-sidebar--main-window))
+    (if (eq (plist-get entry :type) 'session)
+        (let ((session (plist-get entry :session)))
+          (egent-term-resume-session :root (plist-get entry :root)
+                                     :config (plist-get entry :config)
+                                     :session-id (map-elt session 'sessionId)
+                                     :title (map-elt session 'title)))
+      (egent-term-new (plist-get entry :root)))
+    ;; Redraw without the preview `egent-sidebar-refresh' does, which would
+    ;; put a shell over the terminal.
+    (let ((buf (egent-sidebar--current-buffer)))
+      (egent-sidebar--render)
+      (egent-sidebar--populate-perspective)
+      (egent-sidebar--restore-idx buf)
+      (egent-sidebar--highlight egent-sidebar--current-idx))))
+
 ;;;; Setup / teardown
 
 (defun egent-sidebar--setup ()
@@ -878,6 +905,7 @@ Sidebar keys:
   K      kill the current session / delete a past one
   g      refetch every project's sessions and redraw
   s      new shell in the current project
+  t      resume past session / new session in a terminal
   q      quit"
   (interactive)
   (if (egent-sidebar--active-p)

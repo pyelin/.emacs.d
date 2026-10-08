@@ -18,6 +18,7 @@ Public symbols use the `egent-` prefix; internals use `egent-<module>--`.
 | `egent-sidebar.el` | Sidebar workspace                                               |
 | `egent-peek.el`    | Posframe switcher (live sessions only)                          |
 | `egent-session-name.el` | Session naming, by hand or via an external CLI subprocess   |
+| `egent-term.el`    | Agent TUI (pi) in a ghostel terminal: new and resume           |
 
 ## Dependencies
 
@@ -26,6 +27,8 @@ Public symbols use the `egent-` prefix; internals use `egent-<module>--`.
 - `acp` ≥ 0.13.1 — used directly by `egent-session.el`
 - `posframe` ≥ 1.4 — optional, peek only
 - `persp-mode` ≥ 2.9 — optional, sidebar only
+- `ghostel` — `ghostel-exec`, required lazily by `egent-term` when a
+  terminal is started
 
 ## Key design decisions
 
@@ -88,6 +91,13 @@ such command is never sent one. A busy shell is skipped rather than
 interrupted, and the cached session list is retitled in place
 (`egent-session-retitle-cached`) so closing the buffer does not bring the old
 title back before the next fetch.
+
+**A terminal session is owned by its buffer-local id.** `egent-term` starts a
+new session under an id it generates (`pi --session-id`) and sets
+`egent-term-session-id` (core, permanent-local) once `ghostel-exec` has run,
+since entering `ghostel-mode` kills ordinary locals. `egent-session-buffer`
+checks terminals too, so resumable filtering and "switch instead of a second
+client" work for both surfaces without a pending-resume grace period.
 
 **Cache keys are normalized** with `directory-file-name` + `expand-file-name`, so
 a root with a trailing slash and one without hit the same entry. (The ACP request

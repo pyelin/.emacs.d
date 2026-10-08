@@ -202,6 +202,7 @@ _d_wim insert             _TAB_ / _<backtab>_    _k_ill agent
 _q_ueue prompt            ^ ^                  _C_ancel/interrupt
 ^ ^                       ^ ^                  _m_ode cycle / _M_ set
 ^ ^                       ^ ^                  _v_iew model
+^ ^                       ^ ^                  _t_erminal pi / _T_ resume
 "
   ;; Context & Manual selection (Exits Hydra)
   ("s" agent-shell-send-region-to :exit t)
@@ -222,7 +223,9 @@ _q_ueue prompt            ^ ^                  _C_ancel/interrupt
   ("C" agent-shell-interrupt)
   ("v" agent-shell-set-model :exit t)
   ("m" agent-shell-cycle-session-mode)
-  ("M" agent-shell-set-mode :exit t))
+  ("M" agent-shell-set-mode :exit t)
+  ("t" egent-term-new :exit t)
+  ("T" egent-term-resume :exit t))
 
 
 (global-set-key (kbd "<f9>") 'pye/kill-other-buffers)

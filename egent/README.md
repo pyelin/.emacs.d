@@ -33,6 +33,8 @@ agent that never answers would wedge Emacs.
 | `egent-delete-session` | Pick a session an agent remembers and delete it           |
 | `egent-name-session`   | Name the current session using an external CLI            |
 | `egent-rename-session` | Name the current session by hand                          |
+| `egent-term-new`       | New session in the agent's own TUI, in a terminal         |
+| `egent-term-resume`    | Pick a past session and resume it in a terminal           |
 
 ### Sidebar
 
@@ -66,6 +68,7 @@ starting a second shell against the same session.
 | `K`       | Kill live session / delete past session      |
 | `g`       | Refresh                                      |
 | `s`       | New shell in the highlighted project         |
+| `t`       | Resume past session / new one in a terminal  |
 | `q`       | Quit, restoring the previous layout          |
 
 Mouse click and double-click work too.
@@ -108,6 +111,24 @@ agent as well: the first command in `egent-session-name-agent-commands` the
 agent advertises (pi answers `/name`) is submitted as a prompt. Agents that
 advertise none keep their own title, and the name lasts as long as the buffer
 does. A busy shell is left alone — renaming does not interrupt a turn.
+
+### Terminal sessions
+
+`egent-term-new` and `egent-term-resume` run the agent's own TUI — `pi`,
+not `pi-acp` — in a [ghostel](https://github.com/dakra/ghostel) buffer.
+ghostel is built on libghostty-vt and advertises synchronized output and
+the Kitty keyboard protocol, so pi's redraws don't tear and its modified
+keys get through. Its native module downloads on first use.
+
+A new session starts under an id egent picks (`pi --session-id`), so the
+buffer knows its session before pi says anything. That id is what keeps
+the session out of the past-session list while its terminal is open, and
+makes resuming it — from either surface — switch to the open buffer
+rather than start a second client. Resuming uses `pi --session`, which
+fails on an unknown id where `--session-id` would quietly create one.
+
+Other agents can be added to `egent-term-commands`; `"%s"` stands for the
+session id. Terminal buffers are not listed as live sidebar rows.
 
 ### Session usage
 

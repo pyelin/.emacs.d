@@ -210,6 +210,27 @@ distinguish it from, and when half a row is too narrow to say anything."
           (concat (egent-truncate name (- width room))
                   (funcall suffix (egent-truncate bname (1- room))))))))))
 
+;;;; Terminal sessions
+
+(defvar-local egent-term-session-id nil
+  "Id of the session the agent in this terminal buffer runs, or nil.
+Set by `egent-term' on the buffers it starts, so a session open in a
+terminal is found the same way as one open in a shell.")
+(put 'egent-term-session-id 'permanent-local t)
+
+(defun egent-term-buffers ()
+  "Return the live buffers running an agent session in a terminal."
+  (seq-filter (lambda (buf) (buffer-local-value 'egent-term-session-id buf))
+              (buffer-list)))
+
+(defun egent-term-buffer (session-id)
+  "Return the live terminal buffer running SESSION-ID, or nil."
+  (when session-id
+    (seq-find (lambda (buf)
+                (equal (buffer-local-value 'egent-term-session-id buf)
+                       session-id))
+              (buffer-list))))
+
 ;;;; Text helpers
 
 (defun egent-one-line (text)

@@ -288,10 +288,15 @@
 (add-to-list 'load-path
   (expand-file-name "egent" (file-name-directory (directory-file-name settings-dir))))
 
+;; Terminal egent runs pi's own TUI in; its native module downloads on first use.
+(use-package ghostel
+  :commands (ghostel ghostel-exec)
+  :hook (ghostel-mode . (lambda () (setq show-trailing-whitespace nil))))
+
 (use-package egent
   :straight nil
   :commands (egent-sidebar-toggle egent-sidebar-focus egent-peek egent-resume
-                                  egent-name-session)
+                                  egent-name-session egent-term-new egent-term-resume)
   :custom
   ;; Width of the sidebar listing sessions (columns)
   (egent-sidebar-width 50)
@@ -313,7 +318,9 @@
   :bind
   ("C-c a h" . egent-sidebar-toggle)
   ("C-c a p" . egent-peek)
-  ("C-c a r" . egent-resume))
+  ("C-c a r" . egent-resume)
+  ("C-c a t" . egent-term-new)
+  ("C-c a T" . egent-term-resume))
 
 ;; What a session is about only shows in the header line, which the graphical
 ;; style draws as an image and the viewport does not carry at all, so the mode

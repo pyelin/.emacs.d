@@ -2,9 +2,11 @@
 ;;; Code:
 ;;; Commentary:
 
-(use-package doom-themes
+(use-package catppuccin-theme
+  :custom
+  ((catppuccin-flavor 'frappe))
   :config
-  (load-theme 'doom-vibrant t))
+  (load-theme 'catppuccin :no-confirm))
 
 (setq-default cursor-type 'box)
 (global-hl-line-mode t)

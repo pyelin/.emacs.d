@@ -291,6 +291,10 @@
 ;; Terminal egent runs pi's own TUI in; its native module downloads on first use.
 (use-package ghostel
   :commands (ghostel ghostel-exec)
+  :custom
+  ;; Defaults plus the M-o/M-e/M-u hydras, so they reach Emacs instead of pi.
+  (ghostel-keymap-exceptions
+   '("C-c" "C-x" "C-u" "C-h" "M-x" "M-:" "C-\\" "M-o" "M-e" "M-u"))
   :hook (ghostel-mode . (lambda () (setq show-trailing-whitespace nil))))
 
 (use-package egent

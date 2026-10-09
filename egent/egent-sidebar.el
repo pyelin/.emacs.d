@@ -130,7 +130,7 @@ Roots absent from it show `egent-sidebar-session-page-size' sessions.")
   "Repeating timer that re-renders when a session's busy state changes.")
 
 (defvar egent-sidebar--state-snapshot nil
-  "Alist of (BUFFER . STATE) captured at last render, used to detect changes.")
+  "List of (BUFFER STATE LABEL) captured at last render, used to detect changes.")
 
 ;;;; Faces
 
@@ -225,7 +225,7 @@ enough to get a dedicated workspace without configuring anything."
       (dolist (buf (copy-sequence (persp-buffers persp)))
         (unless (memq buf keep)
           (persp-remove-buffer buf persp t t)))
-      (dolist (buf (agent-shell-buffers))
+      (dolist (buf (append (agent-shell-buffers) (egent-term-buffers)))
         (when (buffer-live-p buf)
           (persp-add-buffer buf persp nil t))))))
 
@@ -261,11 +261,14 @@ enough to get a dedicated workspace without configuring anything."
 ;;;; Auto refresh
 
 (defun egent-sidebar--capture-states ()
-  "Return an alist of (BUFFER . STATE) sorted by buffer name.
+  "Return a list of (BUFFER STATE LABEL) sorted by buffer name.
 Sorting by name rather than keeping the MRU order of `agent-shell-buffers'
 avoids re-rendering merely because a buffer was visited."
-  (sort (mapcar (lambda (buf) (cons buf (egent-buffer-state buf)))
-                (agent-shell-buffers))
+  (sort (mapcar (lambda (buf)
+                  ;; The label too, so a terminal's title shows once pi
+                  ;; writes it; a terminal's state never changes.
+                  (list buf (egent-buffer-state buf) (egent-buffer-label buf)))
+                (append (agent-shell-buffers) (egent-term-buffers)))
         (lambda (a b) (string< (buffer-name (car a)) (buffer-name (car b))))))
 
 (defun egent-sidebar--maybe-refresh ()

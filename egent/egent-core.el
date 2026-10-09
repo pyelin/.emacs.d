@@ -109,11 +109,15 @@ a face themes render yellow rather than wearing brackets."
 ;;;; Buffer introspection
 
 (defun egent-buffer-state (buf)
-  "Return `busy', `idle', or `dead' for BUF."
-  (if (buffer-live-p buf)
-      (with-current-buffer buf
-        (if (shell-maker-busy) 'busy 'idle))
-    'dead))
+  "Return `busy', `idle', or `dead' for BUF.
+A terminal's busy state is not visible to Emacs, so it is only ever
+`idle' or, once its process exits, `dead'."
+  (cond
+   ((not (buffer-live-p buf)) 'dead)
+   ((buffer-local-value 'egent-term-session-id buf)
+    (if (process-live-p (get-buffer-process buf)) 'idle 'dead))
+   (t (with-current-buffer buf
+        (if (shell-maker-busy) 'busy 'idle)))))
 
 (defun egent-preferred-buffer (shell-buf)
   "Return the best buffer to display for SHELL-BUF.
@@ -131,9 +135,11 @@ KEY is a list of keys walked with `map-nested-elt'."
     (map-nested-elt (buffer-local-value 'agent-shell--state buf) key)))
 
 (defun egent-buffer-session-id (buf)
-  "Return the ACP session id BUF is attached to, or nil.
+  "Return the session id BUF is attached to, shell or terminal, or nil.
 Used to hide sessions that are already open from the resumable list."
-  (egent--buffer-state-value buf '(:session :id)))
+  (or (egent--buffer-state-value buf '(:session :id))
+      (and (buffer-live-p buf)
+           (buffer-local-value 'egent-term-session-id buf))))
 
 (defun egent-buffer-agent-identifier (buf)
   "Return the agent identifier symbol BUF was started with, or nil."
@@ -152,8 +158,13 @@ has sent its command list, which it does while bootstrapping."
 (defun egent-buffer-session-title (buf)
   "Return the title BUF's session reports, or nil.
 `agent-shell' seeds this from the first prompt and refreshes it from the
-agent as the conversation grows, so it is empty until something is sent."
-  (egent--buffer-state-value buf '(:session :title)))
+agent as the conversation grows, so it is empty until something is sent.
+A terminal reports nothing to Emacs, so its title is read from pi's
+session file instead."
+  (if-let* (((buffer-live-p buf))
+            (id (buffer-local-value 'egent-term-session-id buf)))
+      (egent-pi-session-title id (buffer-local-value 'default-directory buf))
+    (egent--buffer-state-value buf '(:session :title))))
 
 (defvar-local egent--session-name nil
   "Name given to this session through egent, or nil.
@@ -290,15 +301,68 @@ wrap the result in \"--\"."
     (expand-file-name (concat "--" path "--")
                       (expand-file-name "sessions" (egent-pi-agent-dir)))))
 
+(defvar egent--pi-titles (make-hash-table :test 'equal)
+  "Maps a session file to (OFFSET NAME FIRST-PROMPT), parsed so far.")
+
+(defun egent--pi-title-line (state line)
+  "Fold session file LINE into the title STATE.
+Only lines that can change the title are parsed."
+  (when (or (string-search "\"session_info\"" line)
+            (and (null (nth 2 state))
+                 (string-search "\"role\":\"user\"" line)))
+    (when-let* ((entry (ignore-errors
+                         (json-parse-string
+                          (decode-coding-string line 'utf-8)
+                          :object-type 'alist :array-type 'list
+                          :null-object nil :false-object nil))))
+      (pcase (alist-get 'type entry)
+        ("session_info" (setf (nth 1 state) (alist-get 'name entry)))
+        ("message"
+         (let ((content (alist-get 'content (alist-get 'message entry))))
+           (setf (nth 2 state)
+                 (if (stringp content)
+                     content
+                   (alist-get 'text (seq-find (lambda (c)
+                                                (equal (alist-get 'type c)
+                                                       "text"))
+                                              content))))))))))
+
+(defun egent-pi-session-title (session-id cwd)
+  "Return the title pi gives SESSION-ID, a session of CWD, or nil.
+Like pi's session list: the latest name, else the first prompt.  Only
+what was appended since the last call is read."
+  (when-let* ((file (car (file-expand-wildcards
+                          (expand-file-name (format "*_%s.jsonl" session-id)
+                                            (egent-pi-session-dir cwd)))))
+              (size (file-attribute-size (file-attributes file))))
+    (let ((state (gethash file egent--pi-titles)))
+      (when (or (null state) (< size (car state)))
+        (setq state (list 0 nil nil))
+        (puthash file state egent--pi-titles))
+      (when (> size (car state))
+        (with-temp-buffer
+          (set-buffer-multibyte nil)
+          (let ((coding-system-for-read 'no-conversion))
+            (insert-file-contents file nil (car state) size))
+          (goto-char (point-min))
+          (let ((bol (point)))
+            ;; A trailing partial line is left for the next call.
+            (while (search-forward "\n" nil t)
+              (egent--pi-title-line state (buffer-substring-no-properties
+                                           bol (1- (point))))
+              (setq bol (point)))
+            (setf (car state) (+ (car state) (1- bol))))))
+      (or (egent-nonempty (nth 1 state)) (nth 2 state)))))
+
 ;;;; Grouping
 
 (defun egent-grouped-buffers ()
   "Return a list of (ROOT PROJECT-NAME BUFFERS) sorted by project name.
 Buffers inside a group are sorted by name so the list does not reshuffle
-as buffers are visited."
+as buffers are visited.  Terminal sessions are grouped alongside shells."
   (let ((table (make-hash-table :test 'equal))
         (order nil))
-    (dolist (buf (agent-shell-buffers))
+    (dolist (buf (append (agent-shell-buffers) (egent-term-buffers)))
       (let ((root  (with-current-buffer buf (agent-shell-cwd)))
             (pname (with-current-buffer buf (agent-shell--project-name))))
         (unless (gethash root table)

@@ -4,7 +4,7 @@
 
 (use-package catppuccin-theme
   :custom
-  ((catppuccin-flavor 'frappe))
+  (catppuccin-flavor 'frappe)
   :config
   (load-theme 'catppuccin :no-confirm))
 
